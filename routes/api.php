@@ -4,6 +4,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\GeoipController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,3 +32,6 @@ Route::post('/auth/logout', [LoginController::class, 'logout'])->middleware('aut
 Route::post('/auth/forgot-password/send', [ResetPasswordController::class, 'send']);
 
 Route::get('/system/geoip/{ip?}', [GeoipController::class, 'show']);
+Route::post('/payments/checkout', [PaymentController::class, 'checkout']);
+Route::post('/payments/customer', [PaymentController::class, 'payment']);
+Route::get('/customer', [PaymentController::class, 'getCustomer']);
