@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-class ResetPasswordController extends Controller
+use App\Notifications\RenewPasswordNotification;
+
+class RenewPasswordController extends Controller
 {
     public function send(Request $request){
         $request->validate([
@@ -18,7 +19,7 @@ class ResetPasswordController extends Controller
         $user = User::where('email', $email)->first();
 
         if(!$user){
-            abort(422, 'Usuario no registrado');
+            return response()->noContent(201);
         }
 
         $verifyUrl = URL::temporarySignedRoute(
@@ -29,28 +30,30 @@ class ResetPasswordController extends Controller
             ],
         );
 
-        $api_url = config('app.url');
-        $web_url = config('app.web_url');
-        $url = str_replace($api_url, $web_url, $verifyUrl);
+        $api_url = config('app.api_url');
+        $app_url = config('app.app_url');
+        $url = str_replace($api_url, $app_url, $verifyUrl);
         $link =  strval($url);
 
-        // $user->notify(new RenewPasswordNotification($link));
-        return $link;
+        $user->notify(new RenewPasswordNotification($link));
+        return response()->noContent(201);
     }
 
     public function verify(Request $request){
 
         if (!$request->hasValidSignature()) {
-            abort(403, 'Invalid email signature');
+            abort(403);
         }
+
 
             $email = $request->email;
             $user = User::where('email', $email)->first();
+            $token = 'Bearer '.$user->createToken('authToken')->plainTextToken;
+            return response()->json([
+                'access_token' => $token
+            ]);
 
-            if (Auth::login($user, true) == null) {
-                $request->session()->regenerate();
-            }
 
-            return auth()->user();
     }
+
 }

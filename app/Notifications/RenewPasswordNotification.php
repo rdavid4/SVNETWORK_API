@@ -5,21 +5,22 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 use App\Models\User;
-class UserVerification extends Notification
+use Illuminate\Notifications\Notification;
+
+class RenewPasswordNotification extends Notification
 {
-     use Queueable;
-    public User $user;
+    use Queueable;
+    protected $link;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(User $user)
-    {
-        $this->user = $user;
 
+    public function __construct($link)
+    {
+        $this->link = $link;
     }
 
     /**
@@ -41,10 +42,9 @@ class UserVerification extends Notification
      */
     public function toMail($notifiable)
     {
-
-        $link = $this->user->link;
+        $link = $this->link;
         return (new MailMessage)
-                    ->subject('Email Verification.')
+                    ->subject('Reset password.')
                     ->line('The introduction to the notification.')
                     ->action('Notification Action', url($link))
                     ->line('Thank you for using our application!');

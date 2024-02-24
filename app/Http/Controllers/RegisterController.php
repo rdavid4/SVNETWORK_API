@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 class RegisterController extends Controller
 {
     function register(Request $request){
-
         $request->validate([
             'email' => 'required|email|max:100',
             'password' => 'required|min:6'
@@ -35,9 +34,9 @@ class RegisterController extends Controller
         );
 
         //Remplazamos la url de la api por la url de la app
-        $api_url = config('app.url').'/app/';
-        $web_url = config('app.web_url');
-        $url = str_replace($api_url, $web_url, $verifyUrl);
+        $api_url = config('app.api_url');
+        $app_url = config('app.app_url');
+        $url = str_replace($api_url, $app_url, $verifyUrl);
         $link =  strval($url);
         $user->link = $link;
 

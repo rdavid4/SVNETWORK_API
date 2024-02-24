@@ -20,4 +20,4 @@ Route::get('/', function () {
 });
 
 Route::get('register/verification', [VerificationController::class, 'verifyEmail'])->name('auth.verify')->middleware('signed');
-Route::get('reset-password', [ResetPasswordController::class, 'verify'])->name('auth.reset-password')->middleware('signed');
+Route::post('reset-password', [ResetPasswordController::class, 'verify'])->name('auth.change-password')->middleware('signed');

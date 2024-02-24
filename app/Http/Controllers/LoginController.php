@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Http\Resources\UserResource;
 class LoginController extends Controller
 {
-    /**
+    /*
      * Handle an authentication attempt.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -17,14 +17,15 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        $request->validate([
+        $credentials = $request->validate([
             'email' => ['required', 'email'],
-            'password' => ['required']
+            'password' => ['required'],
         ]);
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password, fn (Builder $query) => $query->where('email_verified_at','!=', null)])) {
+        if (Auth::attempt($credentials)) {
             return auth()->user();
         }
+
 
         return abort(422,'The provided credentials do not match our records.');
     }
