@@ -40,6 +40,7 @@ Route::post('/auth/renew-password/send', [RenewPasswordController::class, 'send'
 Route::post('/user/password', [UserController::class, 'updatePassword'])->middleware('auth:sanctum');
 
 //SYSTEM DATA
+Route::get('/system/geoip/zipcode/{zipcode?}', [GeoipController::class, 'zipcode']);
 Route::get('/system/geoip/{ip?}', [GeoipController::class, 'show']);
 Route::post('/payments/checkout', [PaymentController::class, 'checkout']);
 Route::post('/payments/customer', [PaymentController::class, 'payment']);

@@ -3,7 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-
+use Illuminate\Support\Str;
+use Cviebrock\EloquentSluggable\Sluggable;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Company>
  */
@@ -16,8 +17,11 @@ class CompanyFactory extends Factory
      */
     public function definition(): array
     {
+
         return [
             'name' => fake()->company(),
+            'slug' => fake()->slug(),
+            'uuid' => Str::uuid(),
             'email' => fake()->unique()->safeEmail(),
             'description' => fake()->realText(),
             'phone' => fake()->phoneNumber(),
@@ -33,5 +37,6 @@ class CompanyFactory extends Factory
             'video_url' => fake()->imageUrl(),
             'logo_url' => fake()->imageUrl()
         ];
+
     }
 }

@@ -18,6 +18,7 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+            'uuid' => Str::uuid(),
             'name' => fake()->company(),
             'email' => fake()->unique()->safeEmail(),
             'surname' => fake()->realText(),

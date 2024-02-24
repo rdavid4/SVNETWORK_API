@@ -6,12 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
+use Cviebrock\EloquentSluggable\Sluggable;
 
 class Company extends Model
 {
-    use HasFactory;
+    use HasFactory, Sluggable;
     protected $fillable = [
         'name',
+        'uuid',
         'description',
         'email',
         'city',
@@ -26,6 +29,25 @@ class Company extends Model
         'video_url',
         'logo_url'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Registering the creating event
+        static::creating(function ($model) {
+            $model->uuid = Str::uuid(); // Genera un UUID único
+        });
+    }
+
+    public function sluggable(): array
+    {
+        return [
+            'slug' => [
+                'source' => 'name'
+            ]
+        ];
+    }
 
     public function users(): BelongsToMany
     {
