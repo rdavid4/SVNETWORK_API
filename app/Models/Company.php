@@ -53,9 +53,17 @@ class Company extends Model
     {
         return $this->belongsToMany(Company::class);
     }
-
-    public function services(): HasMany
+    public function states(): BelongsToMany
     {
-        return $this->hasMany(Service::class);
+        return $this->belongsToMany(State::class)->withTimestamps();
+    }
+
+    public function services(): BelongsToMany
+    {
+        return $this->belongsToMany(Service::class)->withTimestamps();
+    }
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class)->withTimestamps();
     }
 }

@@ -1,0 +1,12 @@
+[
+    {"id": 1, "name": "Building Materials"},
+    {"id": 2, "name": "Plumbing"},
+    {"id": 3, "name": "Power Tools"},
+    {"id": 4, "name": "Paints and Finishes"},
+    {"id": 5, "name": "Lighting and Fans"},
+    {"id": 6, "name": "Carpentry and Moulding"},
+    {"id": 7, "name": "Doors and Windows"},
+    {"id": 8, "name": "Hand Tools"},
+    {"id": 9, "name": "Roofing and Gutters"},
+    {"id": 10, "name": "Flooring and Tiles"}
+  ]

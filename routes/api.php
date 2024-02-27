@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
@@ -7,6 +9,8 @@ use App\Http\Controllers\GeoipController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\RenewPasswordController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\StateController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -42,13 +46,20 @@ Route::post('/user/password', [UserController::class, 'updatePassword'])->middle
 //SYSTEM DATA
 Route::get('/system/geoip/zipcode/{zipcode?}', [GeoipController::class, 'zipcode']);
 Route::get('/system/geoip/{ip?}', [GeoipController::class, 'show']);
+Route::get('/system/states', [StateController::class, 'list']);
+Route::get('/system/categories', [CategoryController::class, 'list']);
+Route::post('/system/categories', [CategoryController::class, 'store']);
+Route::post('/system/services', [ServiceController::class, 'store']);
+Route::get('/system/services', [ServiceController::class, 'list']);
+
 Route::post('/payments/checkout', [PaymentController::class, 'checkout']);
 Route::post('/payments/customer', [PaymentController::class, 'payment']);
 Route::get('/customer', [PaymentController::class, 'getCustomer']);
 
 //DASHBOARD ADMIN
+Route::post('/admin/companies/{company}/logo', [CompanyController::class, 'storeLogo']);
 Route::post('/admin/companies', [CompanyController::class, 'store']);
-Route::get('/admin/companies/{id}', [CompanyController::class, 'show']);
-Route::put('/admin/companies/{id}', [CompanyController::class, 'update']);
-Route::delete('/admin/companies/{id}', [CompanyController::class, 'destroy']);
+Route::get('/admin/companies/{company}', [CompanyController::class, 'show']);
+Route::put('/admin/companies/{copmany}', [CompanyController::class, 'update']);
+Route::delete('/admin/companies/{company}', [CompanyController::class, 'destroy']);
 Route::get('/admin/companies', [CompanyController::class, 'list']);

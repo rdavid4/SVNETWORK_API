@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ServiceResource;
-use App\Models\Service;
+use App\Http\Resources\CategoryResource;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
-class ServiceController extends Controller
+class CategoryController extends Controller
 {
     public function list(){
-        $services =  Service::all();
-        return ServiceResource::collection($services);
+        $categories = Category::all();
+        return CategoryResource::collection($categories);
     }
     public function store(Request $request){
         $request->validate([
@@ -18,7 +18,7 @@ class ServiceController extends Controller
             'category_id' => 'required'
         ]);
 
-        $service = Service::create([
+        $service = Category::create([
             'name' => $request->name,
             'category_id' => $request->category_id,
         ]);
@@ -28,10 +28,10 @@ class ServiceController extends Controller
             $service->save();
         }
 
-        return Service::all();
+        return Category::all();
     }
-    public function destroy(Service $service){
+    public function destroy(Category $service){
         $service->delete();
-        return Service::all();
+        return Category::all();
     }
 }

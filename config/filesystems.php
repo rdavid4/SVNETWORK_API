@@ -39,7 +39,21 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('API_URL').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+        'companies' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/companies'),
+            'url' => env('API_URL').'/storage/companies',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+        'users' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/users'),
+            'url' => env('API_URL').'/storage/users',
             'visibility' => 'public',
             'throw' => false,
         ],
