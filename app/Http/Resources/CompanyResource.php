@@ -26,7 +26,7 @@ class CompanyResource extends JsonResource
             'address_line1' => $this->address_line1,
             'address_line2' => $this->address_line2,
             'zip_code' => $this->zip_code,
-            'logo_url' => $this->logo_url,
+            'logo_url' =>  config('app.api_url').'/'.$this->logo_url,
             'date' => $this->created_at->format('m/d/Y h:i A'),
             'services' => ServiceResource::collection($this->services),
             'states' => StateResource::collection($this->states),
