@@ -56,10 +56,13 @@ Route::post('/payments/checkout', [PaymentController::class, 'checkout']);
 Route::post('/payments/customer', [PaymentController::class, 'payment']);
 Route::get('/customer', [PaymentController::class, 'getCustomer']);
 
+Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug']);
 //DASHBOARD ADMIN
 Route::post('/admin/companies/{company}/logo', [CompanyController::class, 'storeLogo']);
 Route::post('/admin/companies', [CompanyController::class, 'store']);
 Route::get('/admin/companies/{company}', [CompanyController::class, 'show']);
-Route::put('/admin/companies/{copmany}', [CompanyController::class, 'update']);
+Route::put('/admin/companies/{company}', [CompanyController::class, 'update']);
 Route::delete('/admin/companies/{company}', [CompanyController::class, 'destroy']);
 Route::get('/admin/companies', [CompanyController::class, 'list']);
+Route::post('/admin/services', [ServiceController::class, 'store']);
+Route::post('/admin/categories', [CategoryController::class, 'store']);

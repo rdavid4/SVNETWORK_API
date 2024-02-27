@@ -15,7 +15,11 @@ class CompanyController extends Controller
     }
 
     public function show(Company $company){
-        return $company;
+        return new CompanyResource($company);
+    }
+    public function showbySlug($slug){
+        $company = Company::where('slug', $slug)->firstOrFail();
+        return new CompanyResource($company);
     }
 
     public function store(Request $request){
@@ -84,6 +88,10 @@ class CompanyController extends Controller
             $company->social_youtube = $request->social_youtube;
         }
 
+        if($request->filled('video_url')){
+            $company->video_url = $request->video_url;
+        }
+
         if ($request->hasFile('image')) {
             // 'required|mimes:doc,docx,odt,pdf|max:2048'
             // Obtener el archivo de la solicitud
@@ -108,7 +116,7 @@ class CompanyController extends Controller
 
         $company->save();
 
-        return $company;
+        return new Company($company);
 
     }
     public function storeLogo(Company $company, Request $request){
@@ -141,22 +149,33 @@ class CompanyController extends Controller
             'address_line1' => 'required',
             'city' => 'required',
             'zip_code' => 'required',
-            'video_url' => 'required',
+            'services' => 'required',
+            'states' => 'required',
+            'categories' => 'required',
         ]);
+        // 'required|mimes:doc,docx,odt,pdf|max:2048'
 
+        if($request->filled('states')){
+            foreach ($request->states as $key => $state) {
+                $company->states()->syncWithoutDetaching($state["id"]);
+            }
+        }
 
-        $company->name = $request->name;
-        $company->email = $request->email;
-        $company->description = $request->description;
-        $company->phone = $request->phone;
-        $company->address_line1 = $request->address_line1;
-        $company->city = $request->city;
-        $company->zip_code = $request->zip_code;
-        $company->video_url = $request->video_url;
-
-
+        if($request->filled('services')){
+            foreach ($request->services as $key => $service) {
+                $company->services()->syncWithoutDetaching($service["id"]);
+            }
+        }
+        if($request->filled('categories')){
+            foreach ($request->categories as $key => $category) {
+                $company->categories()->syncWithoutDetaching($category["id"]);
+            }
+        }
         if($request->filled('phone_2')){
             $company->phone_2 = $request->phone_2;
+        }
+        if($request->filled('phone')){
+            $company->phone = $request->phone;
         }
 
         if($request->filled('address_line2')){
@@ -174,13 +193,17 @@ class CompanyController extends Controller
         if($request->filled('social_youtube')){
             $company->social_youtube = $request->social_youtube;
         }
+        if($request->filled('video_url')){
+            $company->video_url = $request->video_url;
+        }
 
         if ($request->hasFile('image')) {
+            // 'required|mimes:doc,docx,odt,pdf|max:2048'
             // Obtener el archivo de la solicitud
             $image = $request->file('image');
-            return 'entra';
+
             // Generar un nombre único para el archivo
-            $nombreArchivo = uniqid() . '.' . $image->getClientOriginalExtension();
+            $nombreArchivo = $company->id.'/logo-'.uniqid() . '.' . $image->getClientOriginalExtension();
 
             // Guardar la image en el disco especificado (en este caso, 'public')
             // El segundo parámetro es el nombre del archivo
@@ -193,7 +216,7 @@ class CompanyController extends Controller
             // Por ejemplo, si tienes un modelo llamado 'Image':
             // Image::create(['ruta' => $rutaImage]);
 
-            $company->image = $urlArchivo;
+            $company->logo_url = $urlArchivo;
         }
 
         $company->save();
@@ -204,12 +227,5 @@ class CompanyController extends Controller
     public function destroy(Company $company){
         $company->destroy($company->id);
         return response('Company deleted', 201);
-    }
-
-    public function storeServices(Request $request)
-    {
-        $request->validate(['areas' => 'required']);
-        Area::attachTo(auth()->user(), $request->input('areas'), Area::USO_AREAS_HABILIDADES, false, false);
-        return response()->json(SinglePrivateResource::collection(auth()->user()->habilidades), 201);
     }
 }

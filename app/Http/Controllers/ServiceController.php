@@ -14,13 +14,11 @@ class ServiceController extends Controller
     }
     public function store(Request $request){
         $request->validate([
-            'name' => 'required',
-            'category_id' => 'required'
+            'name' => 'required'
         ]);
 
         $service = Service::create([
-            'name' => $request->name,
-            'category_id' => $request->category_id,
+            'name' => $request->name
         ]);
 
         if($request->filled('description')){
@@ -28,7 +26,7 @@ class ServiceController extends Controller
             $service->save();
         }
 
-        return Service::all();
+        return ServiceResource::collection(Service::all());
     }
     public function destroy(Service $service){
         $service->delete();

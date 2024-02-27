@@ -10,6 +10,11 @@ class Service extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'description'
+    ];
+
     public function category():BelongsTo
     {
         return $this->BelongsTo(Category::class);

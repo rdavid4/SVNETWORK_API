@@ -13,14 +13,13 @@ class CategoryController extends Controller
         return CategoryResource::collection($categories);
     }
     public function store(Request $request){
+
         $request->validate([
-            'name' => 'required',
-            'category_id' => 'required'
+            'name' => 'required'
         ]);
 
         $service = Category::create([
-            'name' => $request->name,
-            'category_id' => $request->category_id,
+            'name' => $request->name
         ]);
 
         if($request->filled('description')){
@@ -28,7 +27,8 @@ class CategoryController extends Controller
             $service->save();
         }
 
-        return Category::all();
+        return CategoryResource::collection(Category::all());
+
     }
     public function destroy(Category $service){
         $service->delete();
