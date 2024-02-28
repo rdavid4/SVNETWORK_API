@@ -12,6 +12,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ZipcodeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,11 +47,13 @@ Route::post('/user/password', [UserController::class, 'updatePassword'])->middle
 //SYSTEM DATA
 Route::get('/system/geoip/zipcode/{zipcode?}', [GeoipController::class, 'zipcode']);
 Route::get('/system/geoip/{ip?}', [GeoipController::class, 'show']);
+Route::get('/system/states/{iso}', [StateController::class, 'show']);
 Route::get('/system/states', [StateController::class, 'list']);
 Route::get('/system/categories', [CategoryController::class, 'list']);
 Route::post('/system/categories', [CategoryController::class, 'store']);
 Route::post('/system/services', [ServiceController::class, 'store']);
 Route::get('/system/services', [ServiceController::class, 'list']);
+Route::get('/system/zipcode/{zipcode}', [ZipcodeController::class, 'show']);
 
 Route::post('/payments/checkout', [PaymentController::class, 'checkout']);
 Route::post('/payments/customer', [PaymentController::class, 'payment']);
