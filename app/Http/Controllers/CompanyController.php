@@ -92,28 +92,6 @@ class CompanyController extends Controller
             $company->video_url = $request->video_url;
         }
 
-        if ($request->hasFile('image')) {
-            // 'required|mimes:doc,docx,odt,pdf|max:2048'
-            // Obtener el archivo de la solicitud
-            $image = $request->file('image');
-
-            // Generar un nombre único para el archivo
-            $nombreArchivo = $company->id.'/logo-'.uniqid() . '.' . $image->getClientOriginalExtension();
-
-            // Guardar la image en el disco especificado (en este caso, 'public')
-            // El segundo parámetro es el nombre del archivo
-            Storage::disk('companies')->put($nombreArchivo, file_get_contents($image));
-
-            // La ruta donde se guardó la image (relativa al disco especificado)
-
-            $urlArchivo = Storage::disk('companies')->url($nombreArchivo);
-            // Hacer lo que necesites con la ruta de la image, como guardarla en la base de datos
-            // Por ejemplo, si tienes un modelo llamado 'Image':
-            // Image::create(['ruta' => $rutaImage]);
-
-            $company->logo_url = $urlArchivo;
-        }
-
         $company->save();
 
         return new Company($company);
@@ -131,7 +109,7 @@ class CompanyController extends Controller
             $nombreArchivo = $company->id.'/logo-'.uniqid() . '.' . $image->extension();;
             Storage::disk('companies')->put($nombreArchivo, file_get_contents($image));
             $urlArchivo = Storage::disk('companies')->url($nombreArchivo);
-            $company->logo_url = $urlArchivo;
+            $company->logo_url = config('app.api_url').'/'.$urlArchivo;
         }
 
         $company->save();
@@ -195,28 +173,6 @@ class CompanyController extends Controller
         }
         if($request->filled('video_url')){
             $company->video_url = $request->video_url;
-        }
-
-        if ($request->hasFile('image')) {
-            // 'required|mimes:doc,docx,odt,pdf|max:2048'
-            // Obtener el archivo de la solicitud
-            $image = $request->file('image');
-
-            // Generar un nombre único para el archivo
-            $nombreArchivo = $company->id.'/logo-'.uniqid() . '.' . $image->getClientOriginalExtension();
-
-            // Guardar la image en el disco especificado (en este caso, 'public')
-            // El segundo parámetro es el nombre del archivo
-            Storage::disk('companies')->put($nombreArchivo, file_get_contents($image));
-
-            // La ruta donde se guardó la image (relativa al disco especificado)
-
-            $urlArchivo = Storage::disk('companies')->url($nombreArchivo);
-            // Hacer lo que necesites con la ruta de la image, como guardarla en la base de datos
-            // Por ejemplo, si tienes un modelo llamado 'Image':
-            // Image::create(['ruta' => $rutaImage]);
-
-            $company->logo_url = $urlArchivo;
         }
 
         $company->save();
