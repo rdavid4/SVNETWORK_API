@@ -23,7 +23,8 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            return auth()->user();
+            $request->session()->regenerate();
+            return new UserResource(auth()->user());
         }
 
 

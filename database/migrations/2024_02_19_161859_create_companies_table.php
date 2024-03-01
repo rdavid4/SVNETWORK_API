@@ -26,8 +26,10 @@ return new class extends Migration
             $table->string('social_facebook')->nullable();
             $table->string('social_x')->nullable();
             $table->string('social_youtube')->nullable();
+            $table->string('web')->nullable();
             $table->string('zip_code')->nullable();
             $table->string('video_url')->nullable();
+            $table->boolean('verified')->default(false);
             $table->unsignedInteger('country_id')->nullable();
             $table->string('logo_url')->nullable();
             $table->timestamps();

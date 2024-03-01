@@ -63,4 +63,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Company::class);
     }
+    public function getAvatarTextAttribute(){
+        $text = substr($this->name, 0, 1).substr($this->surname, 0, 1);
+        return strtoupper($text);
+    }
+
 }

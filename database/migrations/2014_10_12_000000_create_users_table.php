@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('google_id')->nullable();
             $table->boolean('is_admin')->default(false);
             $table->boolean('is_blocked')->default(false);
-            $table->boolean('premium')->default(false);
+            $table->boolean('pro')->default(false);
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();

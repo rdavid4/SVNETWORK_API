@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Notifications\UserVerification;
 use Illuminate\Support\Facades\URL;
 use App\Http\Resources\UserResource;
+use App\Notifications\CompanyCreatedNotification;
+use App\Notifications\UserCreatedNotification;
 use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
@@ -40,9 +42,46 @@ class RegisterController extends Controller
         $link =  strval($url);
         $user->link = $link;
 
-        $user->notify(new UserVerification($user));
+        $user->notify(new UserCreatedNotification($user));
 
         return response()->json(["message" => "Succesful user registration"], 201);
+    }
+    function registerCompany(Request $request){
+        $request->validate([
+            'name' => 'required',
+            'surname' => 'required',
+            'email' => 'required|email|max:100',
+            'password' => 'required|min:6'
+        ]);
+
+
+        $params = [
+            'name' => $request->name,
+            'surname' => $request->surname,
+            'password' => $request->password,
+            'email' => $request->email,
+            'pro' => true
+        ];
+
+        $user = User::create($params);
+
+        $verifyUrl = URL::temporarySignedRoute(
+            'auth.verify',
+            now()->addMinutes(60),
+            [
+                'user' => $user->id
+            ],
+        );
+
+        //Remplazamos la url de la api por la url de la app
+        $api_url = config('app.api_url');
+        $app_url = config('app.app_url');
+        $url = str_replace($api_url, $app_url, $verifyUrl);
+        $link =  strval($url);
+        $user->link = $link;
+
+        $user->notify(new UserCreatedNotification($user));
+        return new UserResource($user);
     }
     function registerGoogle(Request $request){
 

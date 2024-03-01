@@ -18,7 +18,7 @@ class ServicesSeeder extends Seeder
         $services = json_decode($contenidoJson, true);
 
         foreach ($services as $key => $service) {
-
+            
             Service::create([
                 'name' => $service['name'],
                 'category_id' => $service['category_id'],

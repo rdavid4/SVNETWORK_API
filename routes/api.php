@@ -32,7 +32,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // AUTH REGISTER + LOGIN
+Route::get('/auth/user', [UserController::class, 'show'])->middleware('auth:sanctum');
 Route::get('/auth/user/check-email/{email}', [UserController::class, 'emailExist']);
+Route::post('/auth/register/company', [RegisterController::class, 'registerCompany']);
 Route::post('/auth/register', [RegisterController::class, 'register']);
 Route::post('/auth/register/google', [RegisterController::class, 'registerGoogle']);
 Route::post('/auth/login', [LoginController::class, 'login']);
@@ -45,7 +47,7 @@ Route::post('/auth/renew-password/send', [RenewPasswordController::class, 'send'
 Route::post('/user/password', [UserController::class, 'updatePassword'])->middleware('auth:sanctum');
 
 //SYSTEM DATA
-Route::get('/system/geoip/zipcode/{zipcode?}', [GeoipController::class, 'zipcode']);
+
 Route::get('/system/geoip/{ip?}', [GeoipController::class, 'show']);
 Route::get('/system/states/{iso}', [StateController::class, 'show']);
 Route::get('/system/states', [StateController::class, 'list']);
@@ -60,12 +62,18 @@ Route::post('/payments/customer', [PaymentController::class, 'payment']);
 Route::get('/customer', [PaymentController::class, 'getCustomer']);
 
 Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug']);
+Route::post('/companies', [CompanyController::class, 'storeFromRegister']);
+
 //DASHBOARD ADMIN
 Route::post('/admin/companies/{company}/logo', [CompanyController::class, 'storeLogo']);
 Route::post('/admin/companies', [CompanyController::class, 'store']);
-Route::get('/admin/companies/{company}', [CompanyController::class, 'show']);
+Route::post('/admin/companies/verify', [CompanyController::class, 'verify']);
+Route::post('/admin/companies/user', [CompanyController::class, 'addUser']);
 Route::put('/admin/companies/{company}', [CompanyController::class, 'update']);
 Route::delete('/admin/companies/{company}', [CompanyController::class, 'destroy']);
+Route::get('/admin/companies/unverified', [CompanyController::class, 'listUnverified']);
 Route::get('/admin/companies', [CompanyController::class, 'list']);
+Route::get('/admin/companies/{company}', [CompanyController::class, 'show']);
+Route::get('/admin/users', [UserController::class, 'list']);
 Route::post('/admin/services', [ServiceController::class, 'store']);
 Route::post('/admin/categories', [CategoryController::class, 'store']);

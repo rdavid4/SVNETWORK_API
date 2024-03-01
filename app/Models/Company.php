@@ -51,7 +51,7 @@ class Company extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(Company::class);
+        return $this->belongsToMany(User::class);
     }
     public function states(): BelongsToMany
     {

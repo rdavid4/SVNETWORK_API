@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Models\User;
-class UserVerification extends Notification
+class UserCreatedNotification extends Notification
 {
      use Queueable;
     public User $user;
@@ -45,9 +45,11 @@ class UserVerification extends Notification
         $link = $this->user->link;
         return (new MailMessage)
                     ->subject('Email Verification.')
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url($link))
-                    ->line('Thank you for using our application!');
+                    ->greeting('Hello '. $this->user->name)
+                    ->line('Thank you for signing up with our service. To complete your registration and gain access to all the features of our platform, we need you to verify your email address. Please click on the following link to verify your email address:')
+                    ->action('Click to verify', url($link))
+                    ->line('If you did not create an account with our service, you can safely ignore this email.')
+                    ->line('Thank you,');
     }
 
     /**
