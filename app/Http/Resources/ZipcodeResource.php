@@ -15,13 +15,13 @@ class ZipcodeResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'country_iso' => $this->ISO,
-            'zipcode' => $this->ZIPCODE,
-            'location' => $this->LOCATION,
-            'state' => $this->STATE,
-            'state_iso' => $this->STATE_ISO,
-            'lat' => $this->LAT,
-            'lon' => $this->LON,
+            'country_iso' => $this->iso,
+            'zipcode' => $this->zipcode,
+            'location' => $this->location,
+            'state' => $this->state,
+            'state_iso' => $this->state_iso,
+            'lat' => $this->lat,
+            'lon' => $this->lon,
         ];
     }
 }

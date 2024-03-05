@@ -12,4 +12,8 @@ class ZipcodeController extends Controller
         $zipcode = Zipcode::where('zipcode', $zipcode)->firstOrFail();
         return new ZipcodeResource($zipcode);
     }
+    public function list(){
+        $zipcode = Zipcode::all();
+        return $zipcode;
+    }
 }

@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('answers', function (Blueprint $table) {
             $table->id();
+            $table->string('value');
+            $table->integer('type_id');
             $table->timestamps();
         });
     }

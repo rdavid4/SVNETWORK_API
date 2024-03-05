@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 class CompanyController extends Controller
 {
     public function list(){
-        $companies = Company::where('verified', 1)->get();
+        $companies = Company::orderBy('updated_at','desc')->get();
         return CompanyResource::collection($companies);
     }
     public function listUnverified(){
@@ -128,7 +128,7 @@ class CompanyController extends Controller
 
         $company->save();
 
-        return new Company($company);
+        return new CompanyResource($company);
 
     }
     public function storeFromRegister(Request $request){
@@ -255,6 +255,15 @@ class CompanyController extends Controller
         ]);
         // 'required|mimes:doc,docx,odt,pdf|max:2048'
 
+        $company->name = $request->name;
+        $company->email = $request->email;
+        $company->description = $request->description;
+        $company->phone = $request->phone;
+        $company->address_line1 = $request->address_line1;
+        $company->city = $request->city;
+        $company->zip_code = $request->zip_code;
+        $company->video_url = $request->video_url;
+
         if($request->filled('states')){
             foreach ($request->states as $key => $state) {
                 $company->states()->syncWithoutDetaching($state["id"]);
@@ -298,8 +307,8 @@ class CompanyController extends Controller
         }
 
         $company->save();
-
-        return $company;
+        $companies = Company::orderBy('id', 'desc')->get();
+        return CompanyResource::collection($companies);
     }
 
     public function destroy(Company $company){

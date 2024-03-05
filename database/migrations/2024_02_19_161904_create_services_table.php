@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
+            $table->float('price')->default(0);
             $table->unsignedInteger('category_id')->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -18,7 +18,9 @@ class DashboardUserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'surname' => $this->surname,
+            'avatar_text' => $this->avatarText,
             'email' => $this->email,
+            'image' => $this->image,
             'date' => $this->created_at->format('m/d/Y h:i A'),
         ];
     }

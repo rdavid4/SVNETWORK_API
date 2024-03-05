@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
             CompanySeeder::class,
             UserSeeder::class,
             CategoriesSeeder::class,
-            ServicesSeeder::class
+            ServicesSeeder::class,
+            ZipcodesSeeder::class
         ]);
         // \App\Models\User::factory(10)->create();
 

@@ -12,6 +12,7 @@ use Cviebrock\EloquentSluggable\Sluggable;
 class Company extends Model
 {
     use HasFactory, Sluggable;
+    public $timestamps = true;
     protected $fillable = [
         'name',
         'uuid',

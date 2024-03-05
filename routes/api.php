@@ -9,6 +9,7 @@ use App\Http\Controllers\GeoipController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\RenewPasswordController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\UserController;
@@ -56,6 +57,7 @@ Route::post('/system/categories', [CategoryController::class, 'store']);
 Route::post('/system/services', [ServiceController::class, 'store']);
 Route::get('/system/services', [ServiceController::class, 'list']);
 Route::get('/system/zipcode/{zipcode}', [ZipcodeController::class, 'show']);
+Route::get('/system/zipcode', [ZipcodeController::class, 'list']);
 
 Route::post('/payments/checkout', [PaymentController::class, 'checkout']);
 Route::post('/payments/customer', [PaymentController::class, 'payment']);
@@ -74,6 +76,11 @@ Route::delete('/admin/companies/{company}', [CompanyController::class, 'destroy'
 Route::get('/admin/companies/unverified', [CompanyController::class, 'listUnverified']);
 Route::get('/admin/companies', [CompanyController::class, 'list']);
 Route::get('/admin/companies/{company}', [CompanyController::class, 'show']);
+Route::post('/admin/users/{user}/image', [UserController::class, 'storeImage']);
 Route::get('/admin/users', [UserController::class, 'list']);
+Route::post('/admin/users', [UserController::class, 'store']);
 Route::post('/admin/services', [ServiceController::class, 'store']);
+Route::put('/admin/services{service}', [ServiceController::class, 'update']);
+Route::post('/admin/questions', [QuestionController::class, 'store']);
 Route::post('/admin/categories', [CategoryController::class, 'store']);
+Route::get('/admin/user/check-email/{email}', [UserController::class, 'AdminEmailExist']);
