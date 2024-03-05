@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 class CompanyController extends Controller
 {
     public function list(){
-        $companies = Company::orderBy('updated_at','desc')->get();
+        $companies = Company::orderBy('updated_at','asc')->get();
         return CompanyResource::collection($companies);
     }
     public function listUnverified(){
