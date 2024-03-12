@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DashboardCompanyResource;
 use App\Http\Resources\DashboardUserResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -11,12 +12,21 @@ use App\Models\User;
 class UserController extends Controller
 {
     public function list(){
-        $users = User::where('is_admin', 0)->orderBy('id', 'DESC')->get();
+        $users = User::where('is_admin', 0)->orderBy('updated_at', 'DESC')->get();
+        return DashboardUserResource::collection($users);
+    }
+    public function listPro(){
+        $users = User::where('is_admin', 1)->orderBy('updated_at', 'DESC')->get();
         return DashboardUserResource::collection($users);
     }
     public function show(){
         $user = auth()->user();
         return new UserResource($user);
+    }
+    public function company(){
+        $user = auth()->user();
+        $company = $user->companies->first();
+        return new DashboardCompanyResource($company);
     }
     public function store(Request $request){
         $request->validate([

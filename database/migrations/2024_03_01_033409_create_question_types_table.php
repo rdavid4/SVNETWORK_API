@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('question_types', function (Blueprint $table) {
             $table->id();
-            $table->text('question');
-            $table->integer('type');
+            $table->text('name');
             $table->timestamps();
         });
     }

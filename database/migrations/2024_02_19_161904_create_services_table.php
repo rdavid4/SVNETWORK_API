@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('slug');
             $table->string('description')->nullable();
             $table->float('price')->default(0);
             $table->unsignedInteger('category_id')->nullable();

@@ -13,8 +13,14 @@ return new class extends Migration
     {
         Schema::create('answers', function (Blueprint $table) {
             $table->id();
-            $table->string('value');
-            $table->integer('type_id');
+            $table->integer('question_id');
+            $table->integer('answer_type_id');
+            $table->integer('comparator_id')->nullable();
+            $table->integer('meassure_id')->nullable();
+            $table->integer('order')->nullable();
+            $table->integer('value_1')->nullable();
+            $table->integer('value_2')->nullable();
+            $table->string('text')->nullable();
             $table->timestamps();
         });
     }

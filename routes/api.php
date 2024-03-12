@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\LoginController;
@@ -10,10 +11,12 @@ use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\RenewPasswordController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\QuestionTypeController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ZipcodeController;
+use App\Models\QuestionType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -65,7 +68,7 @@ Route::get('/customer', [PaymentController::class, 'getCustomer']);
 
 Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug']);
 Route::post('/companies', [CompanyController::class, 'storeFromRegister']);
-
+Route::get('/user/companies', [UserController::class, 'company'])->middleware('auth:sanctum');
 //DASHBOARD ADMIN
 Route::post('/admin/companies/{company}/logo', [CompanyController::class, 'storeLogo']);
 Route::post('/admin/companies', [CompanyController::class, 'store']);
@@ -77,10 +80,15 @@ Route::get('/admin/companies/unverified', [CompanyController::class, 'listUnveri
 Route::get('/admin/companies', [CompanyController::class, 'list']);
 Route::get('/admin/companies/{company}', [CompanyController::class, 'show']);
 Route::post('/admin/users/{user}/image', [UserController::class, 'storeImage']);
+Route::get('/admin/users/pro', [UserController::class, 'listPro']);
 Route::get('/admin/users', [UserController::class, 'list']);
 Route::post('/admin/users', [UserController::class, 'store']);
 Route::post('/admin/services', [ServiceController::class, 'store']);
+Route::delete('/admin/questions/{question}', [QuestionController::class, 'destroy']);
+Route::get('/admin/services/{service}', [ServiceController::class, 'show']);
 Route::put('/admin/services{service}', [ServiceController::class, 'update']);
 Route::post('/admin/questions', [QuestionController::class, 'store']);
+Route::get('/admin/question-types', [QuestionTypeController::class, 'list']);
+Route::post('/admin/answers', [AnswerController::class, 'store']);
 Route::post('/admin/categories', [CategoryController::class, 'store']);
 Route::get('/admin/user/check-email/{email}', [UserController::class, 'AdminEmailExist']);

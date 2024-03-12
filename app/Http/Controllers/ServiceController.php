@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DashboardServiceResource;
 use App\Http\Resources\ServiceResource;
 use App\Models\Service;
 use Illuminate\Http\Request;
@@ -67,6 +68,10 @@ class ServiceController extends Controller
     }
     public function destroy(Service $service){
         $service->delete();
-        return Service::all();
+        return DashboardServiceResource::collection(Service::all());
+    }
+    public function show(Service $service){
+       $service = new DashboardServiceResource($service);
+        return $service;
     }
 }
