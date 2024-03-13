@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\DashboardServicePricesResource;
 use App\Http\Resources\DashboardServiceResource;
+use App\Http\Resources\ServicePublicResource;
 use App\Http\Resources\ServiceResource;
 use App\Models\Service;
 use Illuminate\Http\Request;
@@ -82,6 +83,10 @@ class ServiceController extends Controller
     }
     public function show(Service $service){
        $service = new DashboardServiceResource($service);
+        return $service;
+    }
+    public function showPublic(Service $service){
+       $service = new ServicePublicResource($service);
         return $service;
     }
 }

@@ -35,5 +35,9 @@ class Service extends Model
     {
         return $this->hasMany(Question::class)->orderBy('id', 'asc');
     }
+    public function getQuestionsPaginatedAttribute()
+    {
+        return $this->questions()->paginate(1);
+    }
 
 }
