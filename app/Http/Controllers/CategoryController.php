@@ -18,7 +18,7 @@ class CategoryController extends Controller
             'name' => 'required'
         ]);
 
-        $service = Category::create([
+        $service = Category::firstOrCreate([
             'name' => $request->name
         ]);
 
