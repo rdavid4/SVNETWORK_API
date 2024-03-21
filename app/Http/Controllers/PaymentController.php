@@ -52,4 +52,5 @@ class PaymentController extends Controller
 
         return $charges;
     }
+
 }

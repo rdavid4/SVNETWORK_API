@@ -60,7 +60,7 @@ class RegisterController extends Controller
             'surname' => $request->surname,
             'password' => $request->password,
             'email' => $request->email,
-            'pro' => true
+            'pro' => 1
         ];
 
         $user = User::create($params);

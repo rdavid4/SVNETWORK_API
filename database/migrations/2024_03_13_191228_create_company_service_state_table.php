@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('company_service', function (Blueprint $table) {
+        Schema::create('company_service_state', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id');
-            $table->foreignId('service_id');
-            $table->boolean('pause')->default(false);
+            $table->integer('company_id');
+            $table->integer('service_id');
+            $table->boolean('active')->default(0);
+            $table->integer('state_id');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('company_service');
+        Schema::dropIfExists('company_service_state');
     }
 };

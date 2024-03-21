@@ -23,6 +23,7 @@ return new class extends Migration
             $table->boolean('is_blocked')->default(false);
             $table->boolean('pro')->default(false);
             $table->string('email')->unique();
+            $table->string('stripe_client_id')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->rememberToken();

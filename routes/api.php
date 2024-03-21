@@ -10,8 +10,10 @@ use App\Http\Controllers\GeoipController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\RenewPasswordController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionTypeController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\UserController;
@@ -19,6 +21,7 @@ use App\Http\Controllers\ZipcodeController;
 use App\Models\QuestionType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Stripe\SearchResult;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,19 +66,31 @@ Route::get('/system/services/{service}', [ServiceController::class, 'showPublic'
 Route::get('/system/zipcode/{zipcode}', [ZipcodeController::class, 'show']);
 Route::get('/system/zipcode', [ZipcodeController::class, 'list']);
 
+Route::post('/search', [SearchController::class, 'search']);
+
 Route::post('/payments/checkout', [PaymentController::class, 'checkout']);
 Route::post('/payments/customer', [PaymentController::class, 'payment']);
+Route::post('/payments-methods/card', [PaymentMethodController::class, 'storeCard'])->middleware('auth:sanctum');
 Route::get('/customer', [PaymentController::class, 'getCustomer']);
 
 Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug']);
+Route::get('/companies/config/{company}', [CompanyController::class, 'getConfiguration'])->middleware('auth:sanctum');
+Route::post('/companies/services/remove', [CompanyController::class, 'destroyService'])->middleware('auth:sanctum');
+Route::post('/companies/services', [CompanyController::class, 'addService'])->middleware('auth:sanctum');
+Route::post('/companies/services/zipcodes', [ServiceController::class, 'zipcodesByRegion'])->middleware('auth:sanctum');
+Route::post('/companies/services/states', [CompanyController::class, 'storeStates'])->middleware('auth:sanctum');
+Route::post('/companies/services/zipcodes/update', [ServiceController::class, 'updateZipcodes'])->middleware('auth:sanctum');
+Route::post('/companies/services/pause', [ServiceController::class, 'pause'])->middleware('auth:sanctum');
+Route::get('/companies/services/{slug}/{company_id}', [CompanyController::class, 'getService'])->middleware('auth:sanctum');
 Route::post('/companies', [CompanyController::class, 'storeFromRegister']);
+
 Route::get('/user/companies', [UserController::class, 'company'])->middleware('auth:sanctum');
 //DASHBOARD ADMIN
 Route::post('/admin/companies/{company}/logo', [CompanyController::class, 'storeLogo']);
 Route::post('/admin/companies', [CompanyController::class, 'store']);
 Route::post('/admin/companies/verify', [CompanyController::class, 'verify']);
 Route::post('/admin/companies/user', [CompanyController::class, 'addUser']);
-Route::put('/admin/companies/{company}', [CompanyController::class, 'update']);
+Route::put('/admin/companies/{company}', [CompanyController::class, 'updateAdmin']);
 Route::delete('/admin/companies/{company}', [CompanyController::class, 'destroy']);
 Route::get('/admin/companies/unverified', [CompanyController::class, 'listUnverified']);
 Route::get('/admin/companies', [CompanyController::class, 'list']);

@@ -22,6 +22,7 @@ class UserResource extends JsonResource
             'image' => $this->image,
             'email' => $this->email,
             'is_pro' => $this->pro,
+            'stripe_client_id' => $this->stripe_client_id,
             'date' => $this->created_at->format('m/d/Y h:i A'),
         ];
     }

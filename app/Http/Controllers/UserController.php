@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\DashboardCompanyResource;
 use App\Http\Resources\DashboardUserResource;
+use App\Http\Resources\UserCompanyResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -16,7 +17,7 @@ class UserController extends Controller
         return DashboardUserResource::collection($users);
     }
     public function listPro(){
-        $users = User::where('is_admin', 1)->orderBy('updated_at', 'DESC')->get();
+        $users = User::where('pro', 1)->orderBy('updated_at', 'DESC')->get();
         return DashboardUserResource::collection($users);
     }
     public function show(){
@@ -26,7 +27,7 @@ class UserController extends Controller
     public function company(){
         $user = auth()->user();
         $company = $user->companies->first();
-        return new DashboardCompanyResource($company);
+        return new UserCompanyResource($company);
     }
     public function store(Request $request){
         $request->validate([

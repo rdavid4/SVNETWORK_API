@@ -13,4 +13,16 @@ class State extends Model
     {
         return $this->belongsToMany(Company::class);
     }
+
+    public function zipcodes()
+    {
+        return $this->hasMany(Zipcode::class, 'state_iso', 'iso_code');
+    }
+    public function regions()
+    {
+        return $this->zipcodes->groupBy('region')->keys()->map(function($region){
+            return ["name" => $region];
+        });
+
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ZipcodeResource;
+use App\Models\CompanyServiceZip;
 use App\Models\Zipcode;
 use Illuminate\Http\Request;
 
@@ -16,4 +17,5 @@ class ZipcodeController extends Controller
         $zipcode = Zipcode::all();
         return $zipcode;
     }
+
 }

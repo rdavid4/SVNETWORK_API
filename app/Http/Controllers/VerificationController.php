@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
+use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Auth;
 class VerificationController extends Controller
 {
         public function __construct()
@@ -23,14 +25,17 @@ class VerificationController extends Controller
             $userId = $request->input('user');
             $user = User::findOrFail($userId);
 
-            if($user->email_verified_at !== null){
-                abort(422,'Este email ya ha sido verificado');
-            }
+            // if($user->email_verified_at !== null){
+            //     abort(422,'Este email ya ha sido verificado');
+            // }
 
             $user->markEmailAsVerified();
             $user->save();
 
-            return $user;
+            Auth::login($user);
+            $request->session()->regenerate();
+            return new UserResource(auth()->user());
+
         }
 
         public function resend(Request $request, string $email): JsonResponse

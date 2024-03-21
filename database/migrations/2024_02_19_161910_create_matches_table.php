@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('matches', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
+            $table->integer('user_id')->nullable();
             $table->foreignId('service_id')->constrained();
             $table->foreignId('company_id')->constrained();
+            $table->string('email')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

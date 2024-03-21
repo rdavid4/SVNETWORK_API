@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class DashboardCompanyResource extends JsonResource
+class UserCompanyResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -25,21 +25,19 @@ class DashboardCompanyResource extends JsonResource
             "zip_code" => $this->zip_code ,
             "address_line1" => $this->address_line1 ,
             "address_line2" => $this->address_line2 ,
-            "state_id" => $this->state_id,
-            "state" => $this->state,
+            "state_id" => $this->state_id ,
             "phone" => $this->phone,
             "phone_2" => $this->phone_2,
             "social_facebook" => $this->social_facebook,
             "social_x" => $this->social_x,
             "social_youtube" => $this->social_youtube,
             "web" => $this->web,
-            "matches" => $this->matches,
             "video_url" => $this->video_url,
             "verified" => $this->verified,
             "country_id" => $this->country_id,
             "logo_url" => $this->logo_url,
-            "services" => $this->services,
-            "format_date" => $this->created_at,
+            "services" =>  CompanyServiceListResource::collection($this->services),
+            "created_at" => $this->created_at,
             "updated_at" => $this->updated_at
         ];
     }

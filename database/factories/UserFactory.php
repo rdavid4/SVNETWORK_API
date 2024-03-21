@@ -20,6 +20,7 @@ class UserFactory extends Factory
         return [
             'uuid' => Str::uuid(),
             'name' => fake()->firstName(),
+            'password' => bcrypt(12341234),
             'email' => fake()->unique()->safeEmail(),
             'surname' => fake()->lastName(),
             'image' => fake()->imageUrl()

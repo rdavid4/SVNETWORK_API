@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title')->nullable();
             $table->string('description')->nullable();
             $table->integer('user_id');
+            $table->integer('zipcode_id');
             $table->integer('service_id');
             $table->timestamps();
         });

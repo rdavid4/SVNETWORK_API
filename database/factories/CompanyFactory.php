@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\State;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Cviebrock\EloquentSluggable\Sluggable;
@@ -24,6 +25,7 @@ class CompanyFactory extends Factory
             'uuid' => Str::uuid(),
             'email' => fake()->unique()->safeEmail(),
             'description' => fake()->realText(),
+            'state_id' => $this->getState(),
             'phone' => fake()->phoneNumber(),
             'phone_2' => fake()->phoneNumber(),
             'address_line1' => fake()->address(),
@@ -38,5 +40,10 @@ class CompanyFactory extends Factory
             'logo_url' => fake()->imageUrl()
         ];
 
+    }
+
+    function getState(){
+        $state =  State::inRandomOrder()->first();
+        return $state->id;
     }
 }

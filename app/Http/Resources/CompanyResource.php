@@ -28,7 +28,7 @@ class CompanyResource extends JsonResource
             'zip_code' => $this->zip_code,
             'verified' => $this->verified,
             'logo_url' => $this->logo_url,
-            'states' => $this->states,
+            'state' => $this->state,
             'owners' => $this->users,
             'date' => $this->created_at->format('m/d/Y h:i A'),
             'services' => ServiceResource::collection($this->services),
