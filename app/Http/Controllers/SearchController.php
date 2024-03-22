@@ -6,6 +6,7 @@ use App\Http\Resources\MatchResource;
 use App\Models\CompanyService;
 use App\Models\Matches;
 use App\Models\Service;
+use App\Models\Zipcode;
 use Illuminate\Http\Request;
 
 class SearchController extends Controller
@@ -20,27 +21,30 @@ class SearchController extends Controller
         $service_id = $request->service_id;
         $service = Service::find($service_id);
         $user = auth()->user();
-
+        $zipcode = Zipcode::where('zipcode', $zipcode)->first();
         //Companies conditions
         //1.- Non users repeated matches
-        $companiesMatchIds = Matches::where('service_id', $service_id)->where('email', 'rogerdavid444@gmail.com')->pluck('company_id')
+        $companiesMatchIds = Matches::where('service_id', $service_id)->where('email', $user->email)->pluck('company_id')
         ->toArray();
         //2.-Non companies where service is paused
         $companiesServicePause = CompanyService::where('service_id', $service_id)->where('pause',1)->pluck('company_id');
-
         $matches = $service->companyServiceZip
-        ->where('zipcode_id',$zipcode['id'])
+        ->where('zipcode_id',$zipcode->id)
         ->whereNotIn('company_id', $companiesMatchIds)
         ->whereNotIn('company_id', $companiesServicePause)
         ->take(3);
 
-        $matches = $matches->map(function($match) use($service_id){
+        $matches = $matches->map(function($match) use($service_id,$user){
             //Inserto Matches
             Matches::create([
-                'email' => 'rogerdavid444@gmail.com',
+                'email' => $user->email,
+                'user_id' => $user->id,
                 'company_id' => $match->company->id,
                 'service_id' => $service_id
             ]);
+
+            //Envio cobro a compania
+            //Guardo proyectos
 
             //Envio correos a cliente y compañia
             return $match->company;

@@ -374,7 +374,7 @@ class CompanyController extends Controller
         $company = Company::find($request->company_id);
         $service = Service::find($request->service);
                 $company->services()->syncWithoutDetaching([
-                    $service->id => [
+                    $request->service => [
                         'pause' => 1
                     ]
                 ]);
