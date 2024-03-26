@@ -46,6 +46,26 @@ class UserController extends Controller
 
         return new UserResource($user);
     }
+    public function storeGuess(Request $request){
+        $request->validate([
+            'name' => 'required',
+            'surname' => 'required',
+            'email' => 'required',
+            'phone' => 'required'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        if(!$user){
+            $user = User::create([
+                'name' => $request->name,
+                'surname' => $request->surname,
+                'email' => $request->email,
+                'phone' => $request->phone
+            ]);
+        }
+
+        return new UserResource($user);
+    }
     public function updatePassword(Request $request){
         $request->validate([
             'password' => 'required'

@@ -11,6 +11,7 @@ use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\RenewPasswordController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentMethodController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionTypeController;
 use App\Http\Controllers\SearchController;
@@ -43,6 +44,7 @@ Route::get('/auth/user', [UserController::class, 'show'])->middleware('auth:sanc
 Route::get('/auth/user/check-email/{email}', [UserController::class, 'emailExist']);
 Route::post('/auth/register/company', [RegisterController::class, 'registerCompany']);
 Route::post('/auth/register', [RegisterController::class, 'register']);
+Route::post('/auth/register-guess', [UserController::class, 'storeGuess']);
 Route::post('/auth/register/google', [RegisterController::class, 'registerGoogle']);
 Route::post('/auth/login', [LoginController::class, 'login']);
 Route::post('/auth/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
@@ -85,6 +87,9 @@ Route::get('/companies/services/{slug}/{company_id}', [CompanyController::class,
 Route::post('/companies', [CompanyController::class, 'storeFromRegister']);
 
 Route::get('/user/companies', [UserController::class, 'company'])->middleware('auth:sanctum');
+
+Route::post('/projects/images', [ProjectController::class, 'storeImage']);
+Route::post('/projects', [ProjectController::class, 'store']);
 //DASHBOARD ADMIN
 Route::post('/admin/companies/{company}/logo', [CompanyController::class, 'storeLogo']);
 Route::post('/admin/companies', [CompanyController::class, 'store']);
@@ -109,3 +114,4 @@ Route::get('/admin/question-types', [QuestionTypeController::class, 'list']);
 Route::post('/admin/answers', [AnswerController::class, 'store']);
 Route::post('/admin/categories', [CategoryController::class, 'store']);
 Route::get('/admin/user/check-email/{email}', [UserController::class, 'AdminEmailExist']);
+

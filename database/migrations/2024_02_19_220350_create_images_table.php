@@ -16,10 +16,10 @@ return new class extends Migration
             $table->morphs('imageable');
 			$table->string('slug')->nullable();
 			$table->string('filename')->nullable();
-            $table->string('mime_type');
+            $table->string('mime_type')->nullable();
 			$table->string('extension')->nullable();
             $table->text('description')->nullable();
-            $table->integer('size')->unsigned();
+            $table->integer('size')->unsigned()->nullable();
             $table->timestamps();
         });
     }
