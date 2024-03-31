@@ -13,14 +13,12 @@ class AnswerController extends Controller
     public function store(Request $request){
         $request->validate([
             'question_id' => 'required',
-            'value_1' => 'required',
             'text' => 'required'
         ]);
         $question = Question::findOrFail($request->question_id);
         $answer = Answer::create([
             'question_id' =>  $request->question_id,
             'answer_type_id' => $question->type_id,
-            'value_1' =>  $request->value_1,
             'text' =>  $request->text
         ]);
 
@@ -32,12 +30,20 @@ class AnswerController extends Controller
             $answer->meassure_id = $request->meassure_id;
         }
 
+        if($request->filled('value_1')){
+            $answer->value_1 = $request->value_1;
+        }
         if($request->filled('value_2')){
             $answer->value_2 = $request->value_2;
         }
 
         $answer->save();
 
+        return DashboardServiceResource::collection(Service::all());
+    }
+
+    public function destroy(Answer $answer){
+        $answer->delete();
         return DashboardServiceResource::collection(Service::all());
     }
 }

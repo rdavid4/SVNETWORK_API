@@ -42,7 +42,8 @@ class ProjectController extends Controller
         $project = Project::find($request->project_id);
 
         //Save image
-        $image = $request->image;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
         $filename = $project->uuid.'/image-'.uniqid() . '.' . $image->extension();
         Storage::disk('projects')->put($filename, file_get_contents($image));
         $extension = $image->extension();
@@ -57,5 +58,6 @@ class ProjectController extends Controller
         ]);
 
         return $image;
+    }
     }
 }

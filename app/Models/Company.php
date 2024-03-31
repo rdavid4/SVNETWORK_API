@@ -58,6 +58,10 @@ class Company extends Model
     {
         return $this->belongsToMany(State::class)->withTimestamps();
     }
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class)->withTimestamps();
+    }
     public function services(): BelongsToMany
     {
         return $this->belongsToMany(Service::class)->withPivot('pause');

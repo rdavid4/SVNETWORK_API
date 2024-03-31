@@ -70,6 +70,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Project::class);
     }
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transactions::class);
+    }
 
     public function getAvatarTextAttribute(){
         $text = substr($this->name, 0, 1).substr($this->surname, 0, 1);
