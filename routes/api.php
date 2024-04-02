@@ -117,5 +117,5 @@ Route::delete('/admin/answers/{answer}', [AnswerController::class, 'destroy']);
 Route::post('/admin/categories', [CategoryController::class, 'store']);
 Route::get('/admin/user/check-email/{email}', [UserController::class, 'AdminEmailExist']);
 Route::get('/admin/companies/services/{slug}/{company_id}', [CompanyController::class, 'getService'])->middleware('auth:sanctum');
-Route::post('/companies/services/states', [CompanyController::class, 'storeStates'])->middleware('auth:sanctum');
+Route::post('/admin/companies/services/states', [CompanyController::class, 'storeStates'])->middleware('auth:sanctum');
 
