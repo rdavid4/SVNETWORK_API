@@ -33,7 +33,7 @@ class CompanyController extends Controller
 
     public function show(Company $company)
     {
-        return new CompanyResource($company);
+        return new DashboardCompanyResource($company);
     }
     public function verify(Request $request)
     {

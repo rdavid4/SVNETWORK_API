@@ -54,7 +54,7 @@ Route::post('/auth/renew-password/send', [RenewPasswordController::class, 'send'
 
 // USER PRIVATE
 Route::post('/user/password', [UserController::class, 'updatePassword'])->middleware('auth:sanctum');
-
+Route::get('/user/companies', [UserController::class, 'company'])->middleware('auth:sanctum');
 //SYSTEM DATA
 
 Route::get('/system/geoip/{ip?}', [GeoipController::class, 'show']);
@@ -86,8 +86,6 @@ Route::post('/companies/services/pause', [ServiceController::class, 'pause'])->m
 Route::get('/companies/services/{slug}/{company_id}', [CompanyController::class, 'getService'])->middleware('auth:sanctum');
 Route::post('/companies', [CompanyController::class, 'storeFromRegister']);
 
-Route::get('/user/companies', [UserController::class, 'company'])->middleware('auth:sanctum');
-
 Route::post('/projects/images', [ProjectController::class, 'storeImage']);
 Route::post('/projects', [ProjectController::class, 'store']);
 //DASHBOARD ADMIN
@@ -104,6 +102,8 @@ Route::post('/admin/users/{user}/image', [UserController::class, 'storeImage']);
 Route::get('/admin/users/pro', [UserController::class, 'listPro']);
 Route::get('/admin/users', [UserController::class, 'list']);
 Route::post('/admin/users', [UserController::class, 'store']);
+Route::post('/admin/services/add', [ServiceController::class, 'addService']);
+Route::delete('/admin/services/remove', [ServiceController::class, 'removeService']);
 Route::post('/admin/services', [ServiceController::class, 'store']);
 Route::delete('/admin/services/{service}', [ServiceController::class, 'destroy']);
 Route::get('/admin/services/prices', [ServiceController::class, 'prices']);
@@ -116,4 +116,6 @@ Route::post('/admin/answers', [AnswerController::class, 'store']);
 Route::delete('/admin/answers/{answer}', [AnswerController::class, 'destroy']);
 Route::post('/admin/categories', [CategoryController::class, 'store']);
 Route::get('/admin/user/check-email/{email}', [UserController::class, 'AdminEmailExist']);
+Route::get('/admin/companies/services/{slug}/{company_id}', [CompanyController::class, 'getService'])->middleware('auth:sanctum');
+Route::post('/companies/services/states', [CompanyController::class, 'storeStates'])->middleware('auth:sanctum');
 

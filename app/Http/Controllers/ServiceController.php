@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DashboardCompanyResource;
 use App\Http\Resources\DashboardServicePricesResource;
 use App\Http\Resources\DashboardServiceResource;
 use App\Http\Resources\ServicePublicResource;
@@ -23,7 +24,22 @@ class ServiceController extends Controller
         $services = Service::all();
         return DashboardServicePricesResource::collection($services);
     }
+    public function addService(Request $request){
+        $request->validate([
+            'company_id' => 'required',
+            'service' => 'required',
+        ]);
 
+        $company = Company::find($request->company_id);
+        $service = Service::find($request->service);
+                $company->services()->syncWithoutDetaching([
+                    $request->service => [
+                        'pause' => 1
+                    ]
+                ]);
+
+        return new DashboardCompanyResource($company);
+    }
     public function store(Request $request){
         $request->validate([
             'name' => 'required'
@@ -43,6 +59,19 @@ class ServiceController extends Controller
         }
 
         return ServiceResource::collection(Service::all());
+    }
+
+    public function removeService(Request $request){
+        $request->validate([
+            'company_id' => 'required',
+            'service_id' => 'required',
+        ]);
+
+        $company = Company::find($request->company_id);
+        $service = Service::find($request->service_id);
+                $company->services()->where('service_id', $service->id)->delete();
+
+        return new DashboardCompanyResource($company);
     }
 
     public function update(Service $service, Request $request){

@@ -38,7 +38,7 @@ class DashboardCompanyResource extends JsonResource
             "verified" => $this->verified,
             "country_id" => $this->country_id,
             "logo_url" => $this->logo_url,
-            "services" => $this->services,
+            "services" => CompanyServiceListResource::collection($this->services),
             "format_date" => $this->created_at,
             "updated_at" => $this->updated_at
         ];
