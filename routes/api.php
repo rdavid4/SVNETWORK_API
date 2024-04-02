@@ -118,4 +118,5 @@ Route::post('/admin/categories', [CategoryController::class, 'store']);
 Route::get('/admin/user/check-email/{email}', [UserController::class, 'AdminEmailExist']);
 Route::get('/admin/companies/services/{slug}/{company_id}', [CompanyController::class, 'getService'])->middleware('auth:sanctum');
 Route::post('/admin/companies/services/states', [CompanyController::class, 'storeStates'])->middleware('auth:sanctum');
+Route::post('/admin/companies/services/zipcodes', [ServiceController::class, 'zipcodesByRegion'])->middleware('auth:sanctum');
 
