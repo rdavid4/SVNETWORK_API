@@ -305,9 +305,7 @@ class CompanyController extends Controller
             'address_line1' => 'required',
             'city' => 'required',
             'zip_code' => 'required',
-            'services' => 'required',
             'state' => 'required',
-            'categories' => 'required',
         ]);
         // 'required|mimes:doc,docx,odt,pdf|max:2048'
 
