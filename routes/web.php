@@ -3,11 +3,15 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Resources\CompanyResource;
 use App\Models\Company;
+use App\Models\Matches;
+use App\Models\Service;
 use App\Notifications\UserVerification;
 use App\Models\User;
 use App\Notifications\CompanyCreatedNotification;
 use App\Notifications\CompanyVerifiedNotification;
+use App\Notifications\MatchesUserNotification;
 use App\Notifications\UserCreatedNotification;
 
 /*
@@ -29,8 +33,19 @@ Route::get('register/verification', [VerificationController::class, 'verifyEmail
 Route::post('reset-password', [ResetPasswordController::class, 'verify'])->name('auth.change-password')->middleware('signed');
 
 Route::get('/notification', function () {
-    $user = Company::first();
+    $user = User::where('email', 'rogerdavid444@gmail.com')->first();
     $user->link = 'localhost:8000/asdasdadsdadasd.com';
-    return (new CompanyCreatedNotification($user))
+    $match = Matches::all();
+    $service = Service::find(1);
+    $matches = $service->companyServiceZip
+    ->where('zipcode_id', 16281)
+    ->take(3);
+    $matches = $matches->map(function($match) use($user,$service){
+        return new CompanyResource($match->company);
+    });
+
+    $data = ['matches' => $matches, 'service'=>$service];
+    //  $user->notify(new MatchesUserNotification($matches));
+    return (new MatchesUserNotification($data))
                 ->toMail($user);
 });

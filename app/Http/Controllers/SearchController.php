@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MatchProcessed;
 use App\Http\Resources\MatchResource;
 use App\Models\CompanyService;
 use App\Models\Matches;
+use App\Models\Company;
 use App\Models\Service;
 use App\Models\Zipcode;
 use App\Models\User;
+use App\Notifications\MatchesUserNotification;
 use Illuminate\Http\Request;
 
 class SearchController extends Controller
@@ -46,12 +49,9 @@ class SearchController extends Controller
         //No matches actions
         //Send information to admin
 
-
-
-
         $matches = $matches->map(function($match) use($service_id,$user, $project_id, $service){
             //Inserto Matches
-            // Matches::create([
+            // $match = Matches::create([
             //     'email' => $user->email,
             //     'user_id' => $user->id,
             //     'company_id' => $match->company->id,
@@ -59,9 +59,50 @@ class SearchController extends Controller
             // ]);
 
             //Envio cobro a compania en caso de que sea verificada y creada por usuario
-            $match->company->projects()->attach($project_id);
+            $company = Company::find($match->company->id);
+            $company->projects()->attach($project_id);
 
             if($match->company->users){
+                $payment_method_id = null;
+                if($match->company->users[0]->stripe_client_id){
+                    try{
+                        $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
+                        $payment_methods = $stripe->paymentMethods->all([
+                        'type' => 'card',
+                        'limit' => 3,
+                        'customer' => $user->stripe_client_id,
+                        ]);
+
+                        $payment_method_id = $payment_methods->data[0]->id;
+                    }catch (\Stripe\Exception\ApiErrorException $e) {
+                        // Maneja el error de Stripe aquí
+                        // Puedes registrar el error, mostrar un mensaje al usuario, etc.
+                        // Pero el código continuará ejecutándose después de este bloque catch
+                        echo 'Error: ' . $e->getMessage();
+                    }
+
+                    if($payment_method_id){
+                        if($service->price > 0){
+                            $payment = $stripe->paymentIntents->create([
+                                'amount' => $service->price  * 100,
+                                'currency' => 'usd',
+                                'customer' => $user->stripe_client_id,
+                                'payment_method' => $payment_method_id,
+                                'confirm' => true,
+                                'description' => 'Match '.$service->name,
+                                'confirmation_method' => 'automatic', // Utiliza 'automatic' para pagos automáticos
+                                'metadata' => [
+                                    'customer_name' => 'Juan Pérez',
+                                    // Agrega más metadatos según sea necesario
+                                ],
+                                'return_url'=>'https://example.com/success'
+                            ]);
+                        }
+                    }
+
+                }
+
+
                 foreach ($match->company->users as $key => $user) {
                     $user->transactions()->create([
                         'project_id' => $project_id,
@@ -69,12 +110,17 @@ class SearchController extends Controller
                         'price'=> $service->price
                     ]);
                 }
+
+                //Envio contacto a compañia
             }
 
-
-            //Envio correos a cliente y compañia verificada y creada por usuario en otro caso no enviar correo a la compania
             return $match->company;
         });
+
+        if(count($matches)){
+            $data = ['matches' => $matches, 'service'=>$service];
+            $user->notify(new MatchesUserNotification($data));
+        }
 
         return MatchResource::collection($matches);
     }

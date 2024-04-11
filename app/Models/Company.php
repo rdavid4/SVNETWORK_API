@@ -60,7 +60,7 @@ class Company extends Model
     }
     public function projects(): BelongsToMany
     {
-        return $this->belongsToMany(Project::class)->withTimestamps();
+        return $this->BelongsToMany(Project::class)->orderBy('created_at','desc')->withTimestamps();
     }
     public function services(): BelongsToMany
     {
@@ -73,5 +73,9 @@ class Company extends Model
 
     public function state(){
         return $this->belongsTo(State::class);
+    }
+
+    public function getPublicUrlAttribute(){
+        return config('app.app_url').'/companies/'.$this->slug;
     }
 }

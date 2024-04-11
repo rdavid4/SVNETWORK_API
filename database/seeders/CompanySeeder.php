@@ -16,10 +16,12 @@ class CompanySeeder extends Seeder
     public function run(): void
     {
         $user = User::where('email', 'rogerdavid444@gmail.com')->first();
-        $company = Company::factory()
+        Company::factory()
             ->count(1)
             ->create(['name' => 'Qsoftcom']);
 
+        $company = Company::where('name', 'Qsoftcom')->first();
+        $company->users()->syncWithoutDetaching($user->id);
         Company::factory()
             ->count(50)
             ->create();

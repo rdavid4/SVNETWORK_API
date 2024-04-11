@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserContractorRegistered;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Notifications\UserVerification;
@@ -13,6 +14,10 @@ use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
+    public function __construct() {
+        echo "Se ha creado una nueva instancia de la clase MiClase.";
+    }
+
     function register(Request $request){
         $request->validate([
             'email' => 'required|email|max:100',
@@ -80,6 +85,7 @@ class RegisterController extends Controller
         $link =  strval($url);
         $user->link = $link;
 
+        UserContractorRegistered::dispatch($user);
         $user->notify(new UserCreatedNotification($user));
         return new UserResource($user);
     }

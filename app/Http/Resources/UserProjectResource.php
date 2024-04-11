@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ZipcodeResource extends JsonResource
+class UserProjectResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,13 +16,11 @@ class ZipcodeResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'country_iso' => $this->iso,
-            'zipcode' => $this->zipcode,
-            'location' => $this->location,
-            'state' => $this->state,
-            'state_iso' => $this->state_iso,
-            'lat' => $this->lat,
-            'lon' => $this->lon,
+            'title' => $this->title,
+            'desciption' => $this->description,
+            'date' => $this->date,
+            'images' => ImageResource::collection($this->images),
+            'companies' => SearchCompanyResource::collection($this->companies)
         ];
     }
 }

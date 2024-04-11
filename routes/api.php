@@ -55,6 +55,8 @@ Route::post('/auth/renew-password/send', [RenewPasswordController::class, 'send'
 // USER PRIVATE
 Route::post('/user/password', [UserController::class, 'updatePassword'])->middleware('auth:sanctum');
 Route::get('/user/companies', [UserController::class, 'company'])->middleware('auth:sanctum');
+Route::get('/user/projects/{project}', [UserController::class, 'showProject']);
+Route::get('/user/projects', [UserController::class, 'projects']);
 //SYSTEM DATA
 
 Route::get('/system/geoip/{ip?}', [GeoipController::class, 'show']);
@@ -70,9 +72,14 @@ Route::get('/system/zipcode', [ZipcodeController::class, 'list']);
 
 Route::post('/search', [SearchController::class, 'search']);
 
-Route::post('/payments/checkout', [PaymentController::class, 'checkout']);
-Route::post('/payments/customer', [PaymentController::class, 'payment']);
+Route::get('/payments/methods/{setup}', [PaymentController::class, 'addPaymentMethod']);
+Route::get('/payments/retrieve/session/{id}', [PaymentController::class, 'retrieveSession']);
+Route::get('/payments/retrieve/setup/{id}', [PaymentController::class, 'retrieveIntent']);
+Route::post('/payments/checkout', [PaymentController::class, 'checkout'])->middleware('auth:sanctum');
+Route::post('/payments/custom', [PaymentController::class, 'customCard'])->middleware('auth:sanctum');
+Route::post('/payments/customer', [PaymentController::class, 'payment'])->middleware('auth:sanctum');
 Route::post('/payments-methods/card', [PaymentMethodController::class, 'storeCard'])->middleware('auth:sanctum');
+Route::get('/payments/methods', [PaymentController::class, 'getMethodCard']);
 Route::get('/customer', [PaymentController::class, 'getCustomer']);
 
 Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug']);
@@ -85,11 +92,13 @@ Route::post('/companies/services/zipcodes/update', [ServiceController::class, 'u
 Route::post('/companies/services/pause', [ServiceController::class, 'pause'])->middleware('auth:sanctum');
 Route::get('/companies/services/{slug}/{company_id}', [CompanyController::class, 'getService'])->middleware('auth:sanctum');
 Route::post('/companies', [CompanyController::class, 'storeFromRegister']);
-
+Route::put('/companies/{company}', [CompanyController::class, 'update']);
+Route::post('/companies/{company}/logo', [CompanyController::class, 'storeLogo']);
 Route::post('/projects/images', [ProjectController::class, 'storeImage']);
 Route::post('/projects', [ProjectController::class, 'store']);
+Route::get('/projects/{project}', [ProjectController::class, 'show']);
 //DASHBOARD ADMIN
-Route::post('/admin/companies/{company}/logo', [CompanyController::class, 'storeLogo']);
+Route::post('/admin/companies/{company}/logo', [CompanyController::class, 'storeLogoAdmin']);
 Route::post('/admin/companies', [CompanyController::class, 'store']);
 Route::post('/admin/companies/verify', [CompanyController::class, 'verify']);
 Route::post('/admin/companies/user', [CompanyController::class, 'addUser']);

@@ -30,10 +30,11 @@ class CompanyResource extends JsonResource
             'logo_url' => $this->logo_url,
             'state' => $this->state,
             'owners' => $this->users,
+            'public_url' => $this->publicUrl,
             'date' => $this->created_at->format('m/d/Y h:i A'),
             'services' => CompanyServiceListResource::collection($this->services),
             'states' => StateResource::collection($this->states),
-            'categories' => CategoryResource::collection($this->categories),
+            'categories' => CategoryResource::collection($this->categories)
         ];
     }
 }

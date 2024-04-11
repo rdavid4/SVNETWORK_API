@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProjectResource;
+use App\Http\Resources\UserProjectResource;
 use App\Models\Project;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Zipcode;
 use Illuminate\Support\Facades\Storage;
+
 class ProjectController extends Controller
 {
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $request->validate([
             'user_id' => 'required',
             'details' => 'required',
@@ -21,7 +25,7 @@ class ProjectController extends Controller
         $user = User::findOrfail($request->user_id);
         $service = Service::find($request->service_id);
         $zipcode = Zipcode::find($request->zipcode_id);
-        $title = $service->name . ' in ' .$zipcode->location . ', '.$zipcode->state . ' '.$zipcode->zipcode;
+        $title = $service->name . ' in ' . $zipcode->location . ', ' . $zipcode->state . ' ' . $zipcode->zipcode;
 
         $project = $user->projects()->create([
             'details' => $request->details,
@@ -31,11 +35,12 @@ class ProjectController extends Controller
         ]);
         return $project;
     }
-    public function storeImage(Request $request){
+    public function storeImage(Request $request)
+    {
         $request->validate([
             'project_id' => 'required',
-            'user_id'=>'required',
-            'image'=>'required'
+            'user_id' => 'required',
+            'image' => 'required'
         ]);
 
         $user = User::findOrfail($request->user_id);
@@ -44,20 +49,24 @@ class ProjectController extends Controller
         //Save image
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-        $filename = $project->uuid.'/image-'.uniqid() . '.' . $image->extension();
-        Storage::disk('projects')->put($filename, file_get_contents($image));
-        $extension = $image->extension();
-        $size = $image->getSize();
-        $mimetype = $image->getMimeType();
+            $filename = $project->uuid . '/image-' . uniqid() . '.' . $image->extension();
+            Storage::disk('projects')->put($filename, file_get_contents($image));
+            $extension = $image->extension();
+            $size = $image->getSize();
+            $mimetype = $image->getMimeType();
 
-        $image = $project->images()->create([
-            'filename'=> $filename,
-            'mime_type'=>$mimetype,
-            'extension'=>$extension,
-            'size'=>$size
-        ]);
+            $image = $project->images()->create([
+                'filename' => $filename,
+                'mime_type' => $mimetype,
+                'extension' => $extension,
+                'size' => $size
+            ]);
 
-        return $image;
+            return $image;
+        }
     }
+
+    public function show(Project $project){
+        return new ProjectResource($project);
     }
 }

@@ -14,9 +14,11 @@ class MatchesUserNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public $matches;
+
+    public function __construct($matches)
     {
-        //
+        $this->matches = $matches;
     }
 
     /**
@@ -34,10 +36,11 @@ class MatchesUserNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        ->theme('default')
+        ->subject('Your Service matches')
+        ->view('mail.invoice.paid', ['matches' => $this->matches]);
     }
 
     /**

@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Resources\DashboardCompanyResource;
 use App\Http\Resources\DashboardUserResource;
 use App\Http\Resources\UserCompanyResource;
+use App\Http\Resources\UserProjectResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use App\Models\Project;
 
 class UserController extends Controller
 {
@@ -23,6 +25,9 @@ class UserController extends Controller
     public function show(){
         $user = auth()->user();
         return new UserResource($user);
+    }
+    public function showProject(Project $project){
+        return new UserProjectResource($project);
     }
     public function company(){
         $user = auth()->user();
@@ -98,6 +103,11 @@ class UserController extends Controller
         $user->save();
 
         return $user;
+
+    }
+    public function projects(User $user){
+        $user = User::first();
+        return UserProjectResource::collection($user->projects);
 
     }
 

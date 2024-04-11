@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\MatchProcessed;
+use App\Events\UserClientRegistered;
+use App\Events\UserContractorRegistered;
+use App\Listeners\CreateStripeClient;
+use App\Listeners\SendEmailMacthes;
+use App\Listeners\SendEmailMatches;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,6 +24,12 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        UserContractorRegistered::class => [
+            CreateStripeClient::class
+        ],
+        MatchProcessed::class => [
+            SendEmailMatches::class
+        ]
     ];
 
     /**

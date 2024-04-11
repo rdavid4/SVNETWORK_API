@@ -70,6 +70,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Project::class);
     }
+    public function answers(): BelongsToMany
+    {
+        return $this->belongsToMany(Answer::class, 'answer_project', 'user_id', 'answer_id');
+    }
     public function transactions(): HasMany
     {
         return $this->hasMany(Transactions::class);

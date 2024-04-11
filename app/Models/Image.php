@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Image extends Model
 {
@@ -23,5 +24,10 @@ class Image extends Model
 
     public function getSizeMegas(){
         return $this->size / (1024 * 1024);
+    }
+
+    public function getUrlAttribute(){
+        $url = Storage::disk('projects')->url($this->filename);
+        return $url;
     }
 }

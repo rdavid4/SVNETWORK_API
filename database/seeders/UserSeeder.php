@@ -13,13 +13,20 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()
+         User::factory()
         ->count(1)
         ->create([
             'email'=>'rogerdavid444@gmail.com',
             'is_admin'=>0,
             'name' => 'Roger',
             'surname' => 'Quinonez',
+        ]);
+
+        $user = User::where('email', 'rogerdavid444@gmail.com')->first();
+        $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
+        $stripe->customers->create([
+        'name' => $user->name.' '.$user->surname,
+        'email' => $user->email,
         ]);
 
         User::factory()

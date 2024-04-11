@@ -26,6 +26,7 @@ class UserCompanyResource extends JsonResource
             "address_line1" => $this->address_line1 ,
             "address_line2" => $this->address_line2 ,
             "state_id" => $this->state_id ,
+            "state" => $this->state,
             "phone" => $this->phone,
             "phone_2" => $this->phone_2,
             "social_facebook" => $this->social_facebook,
@@ -37,8 +38,8 @@ class UserCompanyResource extends JsonResource
             "country_id" => $this->country_id,
             "logo_url" => $this->logo_url,
             "services" =>  CompanyServiceListResource::collection($this->services),
-            "created_at" => $this->created_at,
-            "updated_at" => $this->updated_at
+            'projects' => CompanyProjectsResource::collection($this->projects),
+            'date' => $this->created_at->format('m/d/Y h:i A'),
         ];
     }
 }

@@ -274,6 +274,26 @@ class CompanyController extends Controller
         return new CompanyServiceResource($service);
     }
 
+    public function storeLogoAdmin(Company $company, Request $request)
+    {
+        $request->validate([
+            'image' => 'required'
+        ]);
+        // 'required|mimes:doc,docx,odt,pdf|max:2048'
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+
+            $nombreArchivo = $company->id . '/logo-' . uniqid() . '.' . $image->extension();;
+            Storage::disk('companies')->put($nombreArchivo, file_get_contents($image));
+            $urlArchivo = Storage::disk('companies')->url($nombreArchivo);
+            $company->logo_url = $urlArchivo;
+        }
+
+        $company->save();
+
+        return $company;
+    }
     public function storeLogo(Company $company, Request $request)
     {
         $request->validate([
@@ -356,6 +376,82 @@ class CompanyController extends Controller
         }
         if ($request->filled('video_url')) {
             $company->video_url = $request->video_url;
+        }
+
+        $company->save();
+        $companies = Company::orderBy('id', 'desc')->get();
+        return CompanyResource::collection($companies);
+    }
+    public function update(Company $company, Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'description' => 'required',
+            'phone' => 'required',
+            'address_line1' => 'required',
+            'city' => 'required',
+            'zip_code' => 'required',
+            'state' => 'required',
+        ]);
+        // 'required|mimes:doc,docx,odt,pdf|max:2048'
+
+        $company->name = $request->name;
+        $company->email = $request->email;
+        $company->description = $request->description;
+        $company->phone = $request->phone;
+        $company->address_line1 = $request->address_line1;
+        $company->city = $request->city;
+        $company->zip_code = $request->zip_code;
+        $company->video_url = $request->video_url;
+
+        if ($request->filled('states')) {
+            $company->state_id = $request->state["id"];
+        }
+
+        if ($request->filled('services')) {
+            foreach ($request->services as $key => $service) {
+                $company->services()->syncWithoutDetaching($service["id"]);
+            }
+        }
+        if ($request->filled('categories')) {
+            foreach ($request->categories as $key => $category) {
+                $company->categories()->syncWithoutDetaching($category["id"]);
+            }
+        }
+        if ($request->filled('phone_2')) {
+            $company->phone_2 = $request->phone_2;
+        }
+        if ($request->filled('phone')) {
+            $company->phone = $request->phone;
+        }
+
+        if ($request->filled('address_line2')) {
+            $company->address_line2 = $request->address_line2;
+        }
+
+        if ($request->filled('social_facebook')) {
+            $company->social_facebook = $request->social_facebook;
+        }else{
+            $company->social_facebook = '';
+        }
+
+        if ($request->filled('social_x')) {
+            $company->social_x = $request->social_x;
+        }else{
+            $company->social_x = '';
+        }
+
+        if ($request->filled('social_youtube')) {
+            $company->social_youtube = $request->social_youtube;
+        }else{
+            $company->social_youtube = '';
+        }
+
+        if ($request->filled('video_url')) {
+            $company->video_url = $request->video_url;
+        }else{
+            $company->video_url = '';
         }
 
         $company->save();
