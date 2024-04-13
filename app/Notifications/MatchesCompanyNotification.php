@@ -14,9 +14,10 @@ class MatchesCompanyNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    public $user;
+    public function __construct($user)
     {
-        //
+        $this->user = $user;
     }
 
     /**
@@ -35,8 +36,8 @@ class MatchesCompanyNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
+                    ->line("You have received a new match for the xxx service. To view the user's details, click here.")
+                    ->action('View contact details', url($this->user->link))
                     ->line('Thank you for using our application!');
     }
 

@@ -10,6 +10,7 @@ use App\Models\Company;
 use App\Models\Service;
 use App\Models\Zipcode;
 use App\Models\User;
+use App\Notifications\MatchesCompanyNotification;
 use App\Notifications\MatchesUserNotification;
 use Illuminate\Http\Request;
 
@@ -103,15 +104,16 @@ class SearchController extends Controller
                 }
 
 
-                foreach ($match->company->users as $key => $user) {
-                    $user->transactions()->create([
+                foreach ($match->company->users as $key => $userCompany) {
+                    $userCompany->transactions()->create([
                         'project_id' => $project_id,
                         'service_id' => $service_id,
                         'price'=> $service->price
                     ]);
                 }
-
-                //Envio contacto a compañia
+                $user->link = config('app.app_url').'/user/companies/profile/projects/'. $project_id;
+                $user->service = $service;
+                $userCompany->notify(new MatchesCompanyNotification($user));
             }
 
             return $match->company;
