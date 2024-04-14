@@ -36,7 +36,9 @@ class MatchesCompanyNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->line("You have received a new match for the xxx service. To view the user's details, click here.")
+                    ->greeting('Hello '. $this->user->name)
+                    ->subject('You have a new client for '.$this->user->service->name)
+                    ->line("You have received a new match for the ".$this->user->service->name." service. To view the user's details, click here.")
                     ->action('View contact details', url($this->user->link))
                     ->line('Thank you for using our application!');
     }

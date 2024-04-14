@@ -10,6 +10,7 @@ use App\Http\Resources\ServiceResource;
 use App\Http\Resources\UserCompanyResource;
 use App\Models\Company;
 use App\Models\CompanyServiceZip;
+use App\Models\Project;
 use App\Models\Service;
 use App\Models\User;
 use App\Models\Zipcode;
@@ -34,6 +35,11 @@ class CompanyController extends Controller
     public function show(Company $company)
     {
         return new DashboardCompanyResource($company);
+    }
+    public function projects(Company $company)
+    {
+        $project = $company->projects()->paginate();
+        return $project;
     }
     public function verify(Request $request)
     {

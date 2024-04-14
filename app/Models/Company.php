@@ -62,6 +62,7 @@ class Company extends Model
     {
         return $this->BelongsToMany(Project::class)->orderBy('created_at','desc')->withTimestamps();
     }
+
     public function services(): BelongsToMany
     {
         return $this->belongsToMany(Service::class)->withPivot('pause');
@@ -69,6 +70,10 @@ class Company extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class)->withTimestamps();
+    }
+    public function reviews():HasMany
+    {
+        return $this->hasMany(Review::class);
     }
 
     public function state(){

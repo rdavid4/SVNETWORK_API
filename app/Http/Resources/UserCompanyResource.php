@@ -37,6 +37,7 @@ class UserCompanyResource extends JsonResource
             "verified" => $this->verified,
             "country_id" => $this->country_id,
             "logo_url" => $this->logo_url,
+            "reviews" => ReviewResource::collection($this->reviews),
             "services" =>  CompanyServiceListResource::collection($this->services),
             'projects' => CompanyProjectsResource::collection($this->projects),
             'date' => $this->created_at->format('m/d/Y h:i A'),

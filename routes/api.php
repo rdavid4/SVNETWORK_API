@@ -14,6 +14,7 @@ use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionTypeController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StateController;
@@ -91,12 +92,18 @@ Route::post('/companies/services/states', [CompanyController::class, 'storeState
 Route::post('/companies/services/zipcodes/update', [ServiceController::class, 'updateZipcodes'])->middleware('auth:sanctum');
 Route::post('/companies/services/pause', [ServiceController::class, 'pause'])->middleware('auth:sanctum');
 Route::get('/companies/services/{slug}/{company_id}', [CompanyController::class, 'getService'])->middleware('auth:sanctum');
+Route::get('/companies/{company}/projects', [CompanyController::class, 'projects']);
 Route::post('/companies', [CompanyController::class, 'storeFromRegister']);
 Route::put('/companies/{company}', [CompanyController::class, 'update']);
 Route::post('/companies/{company}/logo', [CompanyController::class, 'storeLogo']);
+Route::get('/companies/{company}/reviews', [CompanyController::class, 'reviews'])->middleware('auth:sanctum');
 Route::post('/projects/images', [ProjectController::class, 'storeImage']);
 Route::post('/projects', [ProjectController::class, 'store']);
 Route::get('/projects/{project}', [ProjectController::class, 'show']);
+
+Route::post('/reviews', [ReviewController::class, 'store'])->middleware('auth:sanctum');
+Route::get('/reviews', [ReviewController::class, 'list']);
+Route::post('/reviews/{review}/report', [ReviewController::class, 'report'])->middleware('auth:sanctum');
 //DASHBOARD ADMIN
 Route::post('/admin/companies/{company}/logo', [CompanyController::class, 'storeLogoAdmin']);
 Route::post('/admin/companies', [CompanyController::class, 'store']);
