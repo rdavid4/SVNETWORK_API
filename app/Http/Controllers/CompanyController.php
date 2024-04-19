@@ -320,6 +320,39 @@ class CompanyController extends Controller
 
         return $company;
     }
+    public function storeVideo(Company $company, Request $request)
+    {
+        $request->validate([
+            'video' => 'required|file|mimetypes:video/mp4,video/mpeg,video/quicktime|max:102400'
+        ]);
+        $video = $request->file('video');
+
+        // Verificar si el archivo se ha cargado correctamente
+        if ($video->isValid()) {
+            // Generar un nombre único para el archivo de video
+            $nombreArchivo = '/video-' . uniqid() . '.' . $video->getClientOriginalExtension();
+            $patch = $company->id.'/'.$nombreArchivo;
+            try {
+                // Guardar el archivo de video en el disco 'companies'
+                $video->storeAs($company->id, $nombreArchivo, 'companies');
+
+                // Obtener la URL del archivo de video almacenado
+                $urlArchivo = Storage::disk('companies')->url($patch);
+
+                // Actualizar la URL del video en el modelo $company
+                $company->video_url = $urlArchivo;
+
+                // Guardar los cambios en la base de datos
+                $company->save();
+
+                return response()->json(['message' => 'Video guardado correctamente', 'url' => $urlArchivo]);
+            } catch (\Exception $e) {
+                return response()->json(['message' => 'Error al guardar el video', 'error' => $e->getMessage()], 500);
+            }
+        } else {
+            return response()->json(['message' => 'El video no es válido'], 400);
+        }
+    }
 
     public function updateAdmin(Company $company, Request $request)
     {
@@ -475,7 +508,7 @@ class CompanyController extends Controller
         $service = Service::find($request->service);
                 $company->services()->syncWithoutDetaching([
                     $request->service => [
-                        'pause' => 1
+                        'pause' => 0
                     ]
                 ]);
 
@@ -511,10 +544,10 @@ class CompanyController extends Controller
         $service = Service::where('slug', $slug)->first();
         $states = $service->states()->where('company_id', $company_id)->get();
         $states->map(function ($state) use ($service, $company_id) {
-            $state->regions = $state->regions()->map(function ($region) use ($service, $company_id) {
+            $state->regions = $state->regions()->map(function ($region) use ($service, $company_id, $state) {
 
                 $serviceZipCodes = CompanyServiceZip::where('service_id', $service->id)
-                    ->where('company_id', $company_id)->where('region_text', $region)
+                    ->where('company_id', $company_id)->where('region_text', $region)->where('state_iso', $state->iso_code)
                     ->get();
                 $serviceZipCodes = $serviceZipCodes->map(function ($zipcodes) {
                     return $zipcodes->zipcode;

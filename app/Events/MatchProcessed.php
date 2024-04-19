@@ -18,7 +18,7 @@ class MatchProcessed
      * Create a new event instance.
      */
     public $match;
-
+    
     public function __construct($match)
     {
         $this->match = $match;

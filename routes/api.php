@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnswerController;
+use App\Http\Controllers\AnswerProjectController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\LoginController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ZipcodeController;
+use App\Models\AnswerProject;
 use App\Models\QuestionType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +45,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // AUTH REGISTER + LOGIN
 Route::get('/auth/user', [UserController::class, 'show'])->middleware('auth:sanctum');
 Route::get('/auth/user/check-email/{email}', [UserController::class, 'emailExist']);
+Route::post('/check/robot', [UserController::class, 'checkRobot']);
 Route::post('/auth/register/company', [RegisterController::class, 'registerCompany']);
 Route::post('/auth/register', [RegisterController::class, 'register']);
 Route::post('/auth/register-guess', [UserController::class, 'storeGuess']);
@@ -58,6 +61,8 @@ Route::post('/user/password', [UserController::class, 'updatePassword'])->middle
 Route::get('/user/companies', [UserController::class, 'company'])->middleware('auth:sanctum');
 Route::get('/user/projects/{project}', [UserController::class, 'showProject']);
 Route::get('/user/projects', [UserController::class, 'projects']);
+Route::post('/user/image', [UserController::class, 'storeImageAuthUser'])->middleware('auth:sanctum');
+Route::put('/user', [UserController::class, 'update'])->middleware('auth:sanctum');
 //SYSTEM DATA
 
 Route::get('/system/geoip/{ip?}', [GeoipController::class, 'show']);
@@ -71,8 +76,10 @@ Route::get('/system/services/{service}', [ServiceController::class, 'showPublic'
 Route::get('/system/zipcode/{zipcode}', [ZipcodeController::class, 'show']);
 Route::get('/system/zipcode', [ZipcodeController::class, 'list']);
 
+//SEARCH
 Route::post('/search', [SearchController::class, 'search']);
 
+//PAYMENTS
 Route::get('/payments/methods/{setup}', [PaymentController::class, 'addPaymentMethod']);
 Route::get('/payments/retrieve/session/{id}', [PaymentController::class, 'retrieveSession']);
 Route::get('/payments/retrieve/setup/{id}', [PaymentController::class, 'retrieveIntent']);
@@ -80,9 +87,13 @@ Route::post('/payments/checkout', [PaymentController::class, 'checkout'])->middl
 Route::post('/payments/custom', [PaymentController::class, 'customCard'])->middleware('auth:sanctum');
 Route::post('/payments/customer', [PaymentController::class, 'payment'])->middleware('auth:sanctum');
 Route::post('/payments-methods/card', [PaymentMethodController::class, 'storeCard'])->middleware('auth:sanctum');
+Route::delete('/payments-methods/card/{id}', [PaymentMethodController::class, 'deleteCard'])->middleware('auth:sanctum');
 Route::get('/payments/methods', [PaymentController::class, 'getMethodCard']);
 Route::get('/customer', [PaymentController::class, 'getCustomer']);
+Route::get('/user/payments', [PaymentController::class, 'getCharges']);
 
+
+//COMPANIES
 Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug']);
 Route::get('/companies/config/{company}', [CompanyController::class, 'getConfiguration'])->middleware('auth:sanctum');
 Route::post('/companies/services/remove', [CompanyController::class, 'destroyService'])->middleware('auth:sanctum');
@@ -90,20 +101,31 @@ Route::post('/companies/services', [CompanyController::class, 'addService'])->mi
 Route::post('/companies/services/zipcodes', [ServiceController::class, 'zipcodesByRegion'])->middleware('auth:sanctum');
 Route::post('/companies/services/states', [CompanyController::class, 'storeStates'])->middleware('auth:sanctum');
 Route::post('/companies/services/zipcodes/update', [ServiceController::class, 'updateZipcodes'])->middleware('auth:sanctum');
+Route::post('/companies/services/zipcodes/all', [ServiceController::class, 'selectAllState'])->middleware('auth:sanctum');
+Route::post('/companies/services/zipcodes/remove', [ServiceController::class, 'removeAllState'])->middleware('auth:sanctum');
 Route::post('/companies/services/pause', [ServiceController::class, 'pause'])->middleware('auth:sanctum');
 Route::get('/companies/services/{slug}/{company_id}', [CompanyController::class, 'getService'])->middleware('auth:sanctum');
 Route::get('/companies/{company}/projects', [CompanyController::class, 'projects']);
 Route::post('/companies', [CompanyController::class, 'storeFromRegister']);
 Route::put('/companies/{company}', [CompanyController::class, 'update']);
 Route::post('/companies/{company}/logo', [CompanyController::class, 'storeLogo']);
+Route::post('/companies/{company}/video', [CompanyController::class, 'storeVideo']);
 Route::get('/companies/{company}/reviews', [CompanyController::class, 'reviews'])->middleware('auth:sanctum');
+
+//PROJECTS
 Route::post('/projects/images', [ProjectController::class, 'storeImage']);
 Route::post('/projects', [ProjectController::class, 'store']);
 Route::get('/projects/{project}', [ProjectController::class, 'show']);
 
+//ANSWERS
+Route::post('/answers', [AnswerProjectController::class, 'store'])->middleware('auth:sanctum');
+
+
+//REVIEWS
 Route::post('/reviews', [ReviewController::class, 'store'])->middleware('auth:sanctum');
 Route::get('/reviews', [ReviewController::class, 'list']);
 Route::post('/reviews/{review}/report', [ReviewController::class, 'report'])->middleware('auth:sanctum');
+
 //DASHBOARD ADMIN
 Route::post('/admin/companies/{company}/logo', [CompanyController::class, 'storeLogoAdmin']);
 Route::post('/admin/companies', [CompanyController::class, 'store']);
@@ -115,6 +137,7 @@ Route::get('/admin/companies/unverified', [CompanyController::class, 'listUnveri
 Route::get('/admin/companies', [CompanyController::class, 'list']);
 Route::get('/admin/companies/{company}', [CompanyController::class, 'show']);
 Route::post('/admin/users/{user}/image', [UserController::class, 'storeImage']);
+Route::post('/admin/companies/{company}/video', [CompanyController::class, 'storeVideo']);
 Route::get('/admin/users/pro', [UserController::class, 'listPro']);
 Route::get('/admin/users', [UserController::class, 'list']);
 Route::post('/admin/users', [UserController::class, 'store']);

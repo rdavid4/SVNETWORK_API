@@ -19,7 +19,8 @@ class CompanyProjectsResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'tags' => $this->tags,
-            'date' => $this->dateHumans
+            'date' => $this->dateHumans,
+            'matches' => ProjectMatchesResource::collection($this->matches)
         ];
     }
 }

@@ -34,6 +34,7 @@ class CompanyResource extends JsonResource
             'date' => $this->created_at->format('m/d/Y h:i A'),
             'services' => CompanyServiceListResource::collection($this->services),
             'states' => StateResource::collection($this->states),
+            'reviews' => ReviewResource::collection($this->reviews),
             'categories' => CategoryResource::collection($this->categories)
         ];
     }

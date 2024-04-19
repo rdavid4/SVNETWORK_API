@@ -11,30 +11,54 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\Project;
-
+use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
-    public function list(){
+    public function list()
+    {
         $users = User::where('is_admin', 0)->orderBy('updated_at', 'DESC')->get();
         return DashboardUserResource::collection($users);
     }
-    public function listPro(){
+    public function listPro()
+    {
         $users = User::where('pro', 1)->orderBy('updated_at', 'DESC')->get();
         return DashboardUserResource::collection($users);
     }
-    public function show(){
+    public function show()
+    {
         $user = auth()->user();
         return new UserResource($user);
     }
-    public function showProject(Project $project){
+    public function showProject(Project $project)
+    {
         return new UserProjectResource($project);
     }
-    public function company(){
+    public function company()
+    {
         $user = auth()->user();
         $company = $user->companies->first();
         return new UserCompanyResource($company);
     }
-    public function store(Request $request){
+    public function update(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'surname' => 'required'
+        ]);
+
+        $user = auth()->user();
+        $user->name =  $request->name;
+        $user->surname =  $request->surname;
+
+        if ($request->filled('phone')) {
+            $user->phone = $request->phone;
+        }
+        $user->save();
+        return new UserResource($user);
+    }
+    public function store(Request $request)
+    {
         $request->validate([
             'name' => 'required',
             'surname' => 'required',
@@ -51,7 +75,8 @@ class UserController extends Controller
 
         return new UserResource($user);
     }
-    public function storeGuess(Request $request){
+    public function storeGuess(Request $request)
+    {
         $request->validate([
             'name' => 'required',
             'surname' => 'required',
@@ -60,7 +85,7 @@ class UserController extends Controller
         ]);
 
         $user = User::where('email', $request->email)->first();
-        if(!$user){
+        if (!$user) {
             $user = User::create([
                 'name' => $request->name,
                 'surname' => $request->surname,
@@ -69,9 +94,13 @@ class UserController extends Controller
             ]);
         }
 
+        Auth::login($user);
+
+
         return new UserResource($user);
     }
-    public function updatePassword(Request $request){
+    public function updatePassword(Request $request)
+    {
         $request->validate([
             'password' => 'required'
         ]);
@@ -84,7 +113,8 @@ class UserController extends Controller
         return $user;
     }
 
-    public function storeImage(User $user, Request $request){
+    public function storeImage(User $user, Request $request)
+    {
 
         $request->validate([
             'image' => 'required'
@@ -94,7 +124,7 @@ class UserController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
 
-            $nombreArchivo = $user->id.'/image-'.uniqid() . '.' . $image->extension();;
+            $nombreArchivo = $user->id . '/image-' . uniqid() . '.' . $image->extension();;
             Storage::disk('users')->put($nombreArchivo, file_get_contents($image));
             $urlArchivo = Storage::disk('users')->url($nombreArchivo);
             $user->image = $urlArchivo;
@@ -103,22 +133,57 @@ class UserController extends Controller
         $user->save();
 
         return $user;
-
     }
-    public function projects(User $user){
+    public function storeImageAuthUser(Request $request)
+    {
+
+        $request->validate([
+            'image' => 'required'
+        ]);
+        // 'required|mimes:doc,docx,odt,pdf|max:2048'
+        $user = auth()->user();
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+
+            $nombreArchivo = $user->id . '/image-' . uniqid() . '.' . $image->extension();;
+            Storage::disk('users')->put($nombreArchivo, file_get_contents($image));
+            $urlArchivo = Storage::disk('users')->url($nombreArchivo);
+            $user->image = $urlArchivo;
+        }
+
+        $user->save();
+
+        return $user;
+    }
+    public function projects(User $user)
+    {
         $user = User::first();
         return UserProjectResource::collection($user->projects);
-
     }
 
     function emailExist($email)
     {
-        $exist = User::where("email",$email)->whereNotNull('password')->exists();
+        $exist = User::where("email", $email)->whereNotNull('password')->exists();
         return $exist;
     }
     function AdminEmailExist($email)
     {
-        $exist = User::where("email",$email)->exists();
+        $exist = User::where("email", $email)->exists();
         return $exist;
+    }
+    function checkRobot(Request $request)
+    {
+        $client = new Client(); // Instancia de Guzzle
+        $secret = '6Ldhxr4pAAAAABRZA1oXE9I3SgHS9syhmt9NpHs3'; // Clave secreta de reCAPTCHA
+        $response = $request->input('response'); // Respuesta de reCAPTCHA
+
+
+
+        $response = $client->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [ 'form_params'=>['secret' => $secret, 'response' => $response]]);
+
+        $body = $response->getBody();
+        $data = json_decode($body, true);
+
+       return $data;
     }
 }

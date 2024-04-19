@@ -14,6 +14,8 @@ class Matches extends Model
         'email',
         'company_id',
         'service_id',
+        'project_id',
+        'user_id'
     ];
 
     public function client():BelongsTo
@@ -22,6 +24,6 @@ class Matches extends Model
     }
     public function company():BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Company::class);
     }
 }

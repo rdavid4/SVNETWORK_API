@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('user_id')->nullable();
             $table->foreignId('service_id')->constrained();
             $table->foreignId('company_id')->constrained();
+            $table->foreignId('project_id');
             $table->string('email')->nullable();
             $table->timestamps();
             $table->softDeletes();

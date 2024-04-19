@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class StateController extends Controller
 {
     public function list(){
-        return State::all();
+        return State::orderBy('name_en', 'asc')->get();
     }
 
     public function show($iso){

@@ -23,7 +23,9 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'is_pro' => $this->pro,
             'is_admin' => $this->is_admin,
+            'phone' => $this->phone,
             'companies' => CompanyResource::collection($this->companies),
+            'projects' => CompanyProjectsResource::collection($this->projects),
             'stripe_client_id' => $this->stripe_client_id,
             'date' => $this->created_at->format('m/d/Y h:i A'),
         ];

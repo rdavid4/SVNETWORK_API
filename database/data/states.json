@@ -249,6 +249,11 @@
           "name_en": "Wyoming",
           "name_es": "Wyoming",
           "iso_code": "WY"
+        },
+        {
+          "name_en": "District of Columbia",
+          "name_es": "Distrito Columbia",
+          "iso_code": "DC"
         }
       ]
   }

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 class RegisterController extends Controller
 {
     public function __construct() {
-        echo "Se ha creado una nueva instancia de la clase MiClase.";
+
     }
 
     function register(Request $request){
@@ -115,11 +115,12 @@ class RegisterController extends Controller
             ];
 
             $user = User::create($params);
-
             $user->markEmailAsVerified();
             $user->save();
 
         }
+
+        Auth::login($user);
 
         return new UserResource($user);
 

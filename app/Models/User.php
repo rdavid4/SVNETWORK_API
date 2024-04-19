@@ -26,7 +26,9 @@ class User extends Authenticatable
         'google_id',
         'surname',
         'image',
-        'pro'
+        'pro',
+        'phone',
+        'description'
     ];
 
     /**
@@ -68,7 +70,7 @@ class User extends Authenticatable
 
     public function projects(): HasMany
     {
-        return $this->hasMany(Project::class);
+        return $this->hasMany(Project::class)->orderBy('created_at', 'asc');
     }
     public function answers(): BelongsToMany
     {

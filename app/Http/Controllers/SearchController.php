@@ -48,16 +48,20 @@ class SearchController extends Controller
         ->take(3);
 
         //No matches actions
+        if(!$matches){
+
+        }
         //Send information to admin
 
         $matches = $matches->map(function($match) use($service_id,$user, $project_id, $service){
             //Inserto Matches
-            // $match = Matches::create([
-            //     'email' => $user->email,
-            //     'user_id' => $user->id,
-            //     'company_id' => $match->company->id,
-            //     'service_id' => $service_id
-            // ]);
+            Matches::create([
+                'email' => $user->email,
+                'user_id' => $user->id,
+                'company_id' => $match->company->id,
+                'project_id' => $project_id,
+                'service_id' => $service_id
+            ]);
 
             //Envio cobro a compania en caso de que sea verificada y creada por usuario
             $company = Company::find($match->company->id);
@@ -74,7 +78,10 @@ class SearchController extends Controller
                         'customer' => $user->stripe_client_id,
                         ]);
 
-                        $payment_method_id = $payment_methods->data[0]->id;
+                        if($payment_methods->data){
+                            $payment_method_id = $payment_methods->data[0]->id;
+                        }
+
                     }catch (\Stripe\Exception\ApiErrorException $e) {
                         // Maneja el error de Stripe aquí
                         // Puedes registrar el error, mostrar un mensaje al usuario, etc.

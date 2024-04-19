@@ -69,4 +69,7 @@ class Project extends Model
             'has_image' => $hasImage
         ];
     }
+    public function matches(){
+        return $this->hasMany(Matches::class);
+    }
 }

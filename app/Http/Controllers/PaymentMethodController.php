@@ -25,11 +25,23 @@ class PaymentMethodController extends Controller
             ],
         ]);
 
-
         $stripe->paymentMethods->attach(
         'pm_1MqM05LkdIwHu7ixlDxxO6Mc',
         ['customer' => $user->stripe_client_id]
         );
+
+        return $paymentMethod;
+    }
+    public function deleteCard($id)
+    {
+        //Comprobar que el metodo pertenece al usuario;
+        $user = auth()->user();
+        $client_id = $user->stripe_client_id;
+        $stripe = new \Stripe\StripeClient("sk_test_51OkclSL4tJJe6uDw32VnV8I1sqyoCRmJs10oGZApZeG4JQuP1rHeAnOwjOJrsPGlecS7LbYC9vObiLSU4bp0TcIh00NfFbEFhK");
+        $paymentMethod = $stripe->paymentMethods->detach(
+            $id
+        );
+
 
         return $paymentMethod;
     }

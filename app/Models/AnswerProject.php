@@ -9,4 +9,10 @@ class AnswerProject extends Model
 {
     use HasFactory;
     protected $table = 'answer_project';
+    protected $fillable = [
+        'answer_id',
+        'user_id',
+        'project_id',
+        'text'
+    ];
 }

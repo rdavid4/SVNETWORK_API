@@ -13,6 +13,8 @@ use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Models\Zipcode;
 use App\Models\CompanyServiceZip;
+use App\Models\State;
+
 class ServiceController extends Controller
 {
     public function list(){
@@ -132,7 +134,7 @@ class ServiceController extends Controller
 
         $zipcodes = Zipcode::where('region', $request->region)->where('state_iso', $request->state_iso)->get();
         $serviceZipCodes = CompanyServiceZip::where('service_id', $request->service_id)
-        ->where('company_id', $request->company_id)
+        ->where('company_id', $request->company_id)->where('state_iso', $request->state_iso)
         ->get();
         $serviceZipCodes = $serviceZipCodes->map(function($zipcodes){
             return $zipcodes->zipcode_id;
@@ -178,6 +180,51 @@ class ServiceController extends Controller
             }
         }
         return  $zipcodes;
+    }
+
+    public function selectAllState(Request $request){
+        $request->validate([
+            'company_id' => 'required',
+            'service_id' => 'required',
+            'state_id' => 'required',
+        ]);
+
+        $service = Service::find($request->service_id);
+        $state = State::find($request->state_id);
+        $zipcodes = Zipcode::where('state_iso', $state->iso_code)->get();
+        foreach ($zipcodes as $key => $zip) {
+            # code...
+            $service->zipcodes()->syncWithoutDetaching([
+                $zip->id => ['company_id' => $request->company_id, 'region_text' => $zip->region,'active' => true, 'state_iso' => $state->iso_code]
+            ]);
+        }
+
+        return response()->json([
+            'Updated successfully'
+        ]);
+
+    }
+    public function removeAllState(Request $request){
+        $request->validate([
+            'company_id' => 'required',
+            'service_id' => 'required',
+            'state_id' => 'required',
+        ]);
+
+        $service = Service::find($request->service_id);
+        $state = State::find($request->state_id);
+        $zipcodes = Zipcode::where('state_iso', $state->iso_code)->get();
+        foreach ($zipcodes as $key => $zip) {
+            # code...
+            $service->zipcodes()->detach(
+                $zip->id
+            );
+        }
+
+        return response()->json([
+            'Updated successfully'
+        ]);
+
     }
     public function pause(Request $request){
         $request->validate([
