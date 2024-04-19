@@ -86,7 +86,7 @@ class SearchController extends Controller
                         // Maneja el error de Stripe aquí
                         // Puedes registrar el error, mostrar un mensaje al usuario, etc.
                         // Pero el código continuará ejecutándose después de este bloque catch
-                        echo 'Error: ' . $e->getMessage();
+
                     }
 
                     if($payment_method_id){
