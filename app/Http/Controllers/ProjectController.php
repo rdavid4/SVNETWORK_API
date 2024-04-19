@@ -28,7 +28,7 @@ class ProjectController extends Controller
         $title = $service->name . ' in ' . $zipcode->location . ', ' . $zipcode->state . ' ' . $zipcode->zipcode;
 
         $project = $user->projects()->create([
-            'details' => $request->details,
+            'description' => $request->details,
             'service_id' => $request->service_id,
             'title' => $title,
             'zipcode_id' => $request->zipcode_id,
