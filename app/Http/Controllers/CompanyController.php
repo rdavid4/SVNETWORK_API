@@ -252,10 +252,11 @@ class CompanyController extends Controller
         $company_id = $request->company_id;
         $states = $service->states()->where('company_id', $company_id)->get();
         $states->map(function ($state) use ($service, $company_id) {
-            $state->regions = $state->regions()->map(function ($region) use ($service, $company_id) {
+            $state->regions = $state->regions()->map(function ($region) use ($service, $company_id, $state) {
 
                 $serviceZipCodes = CompanyServiceZip::where('service_id', $service->id)
                     ->where('company_id', $company_id)->where('region_text', $region)
+                    ->where('state_iso', $state->iso_code)
                     ->get();
                 $serviceZipCodes = $serviceZipCodes->map(function ($zipcodes) {
                     return $zipcodes->zipcode;
@@ -514,6 +515,23 @@ class CompanyController extends Controller
 
         return new UserCompanyResource($company);
     }
+    public function addState(Request $request)
+    {
+        $request->validate([
+            'company_id' => 'required',
+            'state_id' => 'required',
+        ]);
+
+        $company = Company::find($request->company_id);
+        $service = Service::find($request->state_id);
+                $company->services()->syncWithoutDetaching([
+                    $request->service => [
+                        'pause' => 0
+                    ]
+                ]);
+
+        return new UserCompanyResource($company);
+    }
     public function destroyService(Request $request)
     {
         $request->validate([
@@ -544,6 +562,7 @@ class CompanyController extends Controller
         $service = Service::where('slug', $slug)->first();
         $states = $service->states()->where('company_id', $company_id)->get();
         $states->map(function ($state) use ($service, $company_id) {
+
             $state->regions = $state->regions()->map(function ($region) use ($service, $company_id, $state) {
 
                 $serviceZipCodes = CompanyServiceZip::where('service_id', $service->id)

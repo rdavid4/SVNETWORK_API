@@ -163,21 +163,25 @@ class ServiceController extends Controller
 
         $service = Service::find($request->service_id);
         if(isset($request->zipcodes)){
-            $zipcodes = array_map(function($zip){
-                return $zip['id'];
-            }, $request->zipcodes);
-
             $service->companyServiceZip()
             ->where('region_text',$request->region)
             ->where('company_id', $request->company_id)
             ->delete();
 
-            foreach ($zipcodes as $key => $zip) {
-                # code...
+            $zipcodes = array_map(function($zip)use($service, $request){
                 $service->zipcodes()->syncWithoutDetaching([
-                    $zip => ['company_id' => $request->company_id, 'region_text' => $request->region,'active' => true]
+                    $zip['id'] => ['company_id' => $request->company_id, 'region_text' => $request->region,'active' => true, 'state_iso' => $zip['state_iso']]
                 ]);
-            }
+            }, $request->zipcodes);
+
+
+
+            // foreach ($zipcodes as $key => $zip) {
+            //     # code...
+            //     $service->zipcodes()->syncWithoutDetaching([
+            //         $zip => ['company_id' => $request->company_id, 'region_text' => $request->region,'active' => true]
+            //     ]);
+            // }
         }
         return  $zipcodes;
     }
