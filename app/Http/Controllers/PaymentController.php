@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PaymentResource;
+use Exception;
 use Illuminate\Http\Request;
+use PhpParser\Node\Expr\Cast\Object_;
 
 class PaymentController extends Controller
 {
@@ -11,21 +13,34 @@ class PaymentController extends Controller
     {
         $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
         $user = auth()->user();
-        $methods = $stripe->paymentMethods->all([
-            'customer' => $user->stripe_client_id,
-            'type' => 'card',
-        ]);
-        return $methods;
+        if($user->stripe_client_id){
+            $methods = $stripe->paymentMethods->all([
+                'customer' => $user->stripe_client_id,
+                'type' => 'card',
+            ]);
+            return $methods;
+        }else{
+            return null;
+        }
     }
     public function getCharges()
     {
         $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
         $user = auth()->user();
-        $charges = $stripe->charges->all([
-            'customer' => $user->stripe_client_id,
-        ]);
 
-        return new PaymentResource($charges);
+        if($user->stripe_client_id){
+            try{
+                $charges = $stripe?->charges->all([
+                    'customer' => $user->stripe_client_id,
+                ]);
+            }catch(Exception $e){
+
+            }
+            return new PaymentResource($charges);
+        }else{
+            return null;
+        }
+
     }
     public function checkout()
     {
@@ -92,7 +107,7 @@ class PaymentController extends Controller
 
     public function payment()
     {
-        $stripe = new \Stripe\StripeClient('sk_test_51OkclSL4tJJe6uDw32VnV8I1sqyoCRmJs10oGZApZeG4JQuP1rHeAnOwjOJrsPGlecS7LbYC9vObiLSU4bp0TcIh00NfFbEFhK');
+        $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
         $payment = $stripe->paymentIntents->create([
             'amount' => 2000,
             'currency' => 'usd',
@@ -108,7 +123,7 @@ class PaymentController extends Controller
     public function getCustomer()
     {
 
-        $stripe = new \Stripe\StripeClient('sk_test_51OkclSL4tJJe6uDw32VnV8I1sqyoCRmJs10oGZApZeG4JQuP1rHeAnOwjOJrsPGlecS7LbYC9vObiLSU4bp0TcIh00NfFbEFhK');
+        $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
         $charges = $stripe->charges->all([
             'customer' => 'cus_PZnSg9mitjTacZ',
         ]);

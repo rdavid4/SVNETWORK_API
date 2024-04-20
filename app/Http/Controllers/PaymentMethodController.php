@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 
 class PaymentMethodController extends Controller
@@ -14,7 +15,7 @@ class PaymentMethodController extends Controller
 
         $user = auth()->user();
 
-        $stripe = new \Stripe\StripeClient("sk_test_51OkclSL4tJJe6uDw32VnV8I1sqyoCRmJs10oGZApZeG4JQuP1rHeAnOwjOJrsPGlecS7LbYC9vObiLSU4bp0TcIh00NfFbEFhK");
+        $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
         $paymentMethod = $stripe->paymentMethods->create([
             'type' => 'card',
             'card' => [
@@ -24,11 +25,15 @@ class PaymentMethodController extends Controller
                 'cvc' => '314',
             ],
         ]);
+        try{
+            $stripe->paymentMethods->attach(
+            'pm_1MqM05LkdIwHu7ixlDxxO6Mc',
+            ['customer' => $user->stripe_client_id]
+            );
 
-        $stripe->paymentMethods->attach(
-        'pm_1MqM05LkdIwHu7ixlDxxO6Mc',
-        ['customer' => $user->stripe_client_id]
-        );
+        }catch(Exception $e){
+
+        }
 
         return $paymentMethod;
     }
@@ -37,7 +42,7 @@ class PaymentMethodController extends Controller
         //Comprobar que el metodo pertenece al usuario;
         $user = auth()->user();
         $client_id = $user->stripe_client_id;
-        $stripe = new \Stripe\StripeClient("sk_test_51OkclSL4tJJe6uDw32VnV8I1sqyoCRmJs10oGZApZeG4JQuP1rHeAnOwjOJrsPGlecS7LbYC9vObiLSU4bp0TcIh00NfFbEFhK");
+        $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
         $paymentMethod = $stripe->paymentMethods->detach(
             $id
         );

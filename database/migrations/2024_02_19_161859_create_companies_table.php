@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('web')->nullable();
             $table->string('video_url')->nullable();
             $table->boolean('verified')->default(false);
+            $table->boolean('has_card')->default(false);
             $table->boolean('pause')->default(false);
             $table->unsignedInteger('country_id')->nullable();
             $table->string('logo_url')->nullable();
