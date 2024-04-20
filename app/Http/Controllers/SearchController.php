@@ -89,23 +89,29 @@ class SearchController extends Controller
 
                     }
 
-                    if($payment_method_id){
-                        if($service->price > 0){
-                            $payment = $stripe->paymentIntents->create([
-                                'amount' => $service->price  * 100,
-                                'currency' => 'usd',
-                                'customer' => $user->stripe_client_id,
-                                'payment_method' => $payment_method_id,
-                                'confirm' => true,
-                                'description' => 'Match '.$service->name,
-                                'confirmation_method' => 'automatic', // Utiliza 'automatic' para pagos automáticos
-                                'metadata' => [
-                                    'customer_name' => 'Juan Pérez',
-                                    // Agrega más metadatos según sea necesario
-                                ],
-                                'return_url'=>'https://example.com/success'
-                            ]);
+
+                    try{
+                        if($payment_method_id){
+                            if($service->price > 0){
+                                $payment = $stripe->paymentIntents->create([
+                                    'amount' => $service->price  * 100,
+                                    'currency' => 'usd',
+                                    'customer' => $user->stripe_client_id,
+                                    'payment_method' => $payment_method_id,
+                                    'confirm' => true,
+                                    'description' => 'Match '.$service->name,
+                                    'confirmation_method' => 'automatic', // Utiliza 'automatic' para pagos automáticos
+                                    'metadata' => [
+                                        'customer_name' => 'Juan Pérez',
+                                        // Agrega más metadatos según sea necesario
+                                    ],
+                                    'return_url'=>'https://example.com/success'
+                                ]);
+                            }
                         }
+                    }catch (\Stripe\Exception\ApiErrorException $e) {
+                        // Maneja el error de Stripe aquí
+
                     }
 
                 }
