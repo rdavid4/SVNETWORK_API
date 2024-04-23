@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('slug');
             $table->string('description')->nullable();
             $table->float('price',8, 2)->default(0.00);
+            $table->string('image')->nullable();
+            $table->string('icon')->nullable();
+            $table->string('icon_image')->nullable();
             $table->unsignedInteger('category_id')->nullable();
             $table->timestamps();
             $table->softDeletes();

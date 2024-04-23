@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('matches', function (Blueprint $table) {
+        Schema::create('no_matches', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->nullable();
-            $table->foreignId('service_id')->constrained()->onDelete('NO ACTION');
-            $table->foreignId('company_id')->constrained()->onDelete('NO ACTION');
+            $table->foreignId('service_id')->constrained();
+            $table->foreignId('company_id')->nullable();
             $table->foreignId('project_id');
             $table->string('email')->nullable();
             $table->timestamps();

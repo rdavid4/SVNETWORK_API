@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\BalanceResource;
 use App\Http\Resources\PaymentResource;
 use Exception;
 use Illuminate\Http\Request;
 use PhpParser\Node\Expr\Cast\Object_;
+use Stripe\Balance;
 
 class PaymentController extends Controller
 {
@@ -129,5 +131,26 @@ class PaymentController extends Controller
         ]);
 
         return $charges;
+    }
+
+    public function getAllCharges()
+    {
+        $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
+            $user = auth()->user();
+
+
+            try{
+                $charges = $stripe?->charges->all();
+            }catch(Exception $e){
+
+            }
+            return new PaymentResource($charges);
+    }
+    public function getBalance()
+    {
+        $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
+            $user = auth()->user();
+            $balance = $stripe->balance->retrieve([]);
+            return new BalanceResource($balance);
     }
 }

@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 use Cviebrock\EloquentSluggable\Sluggable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Company extends Model
 {
-    use HasFactory, Sluggable;
+    use HasFactory, SoftDeletes, Sluggable;
     public $timestamps = true;
     protected $fillable = [
         'name',
@@ -30,7 +31,7 @@ class Company extends Model
         'video_url',
         'logo_url'
     ];
-
+    protected $dates = ['deleted_at'];
     protected static function boot()
     {
         parent::boot();

@@ -65,9 +65,11 @@ class CompanyController extends Controller
             'company_id' => 'required',
             'user_id' => 'required',
         ]);
-
+        $user = User::find($request->user_id);
+        $user->pro = true;
         $company = Company::findOrFail($request->company_id);
         $company->users()->syncWithoutDetaching($request->user_id);
+        $user->save();
         return new CompanyResource($company);
     }
     public function showbySlug($slug)

@@ -19,6 +19,9 @@ class ServiceResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'pause' => $this->pause,
+            'image' => $this->image,
+            'icon' => $this->icon,
+            'icon_image' => $this->icon_image,
             'category' => new CategoryResource($this->category),
         ];
     }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Matches extends Model
+class NoMatches extends Model
 {
     use HasFactory;
 
@@ -17,7 +17,6 @@ class Matches extends Model
         'project_id',
         'user_id'
     ];
-    protected $dates = ['deleted_at'];
 
     public function client():BelongsTo
     {
@@ -25,6 +24,6 @@ class Matches extends Model
     }
     public function company():BelongsTo
     {
-        return $this->belongsTo(Company::class)->withTrashed();
+        return $this->belongsTo(Company::class);
     }
 }

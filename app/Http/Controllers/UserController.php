@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\Project;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
@@ -37,8 +38,15 @@ class UserController extends Controller
     public function company()
     {
         $user = auth()->user();
+
         $company = $user->companies->first();
-        return new UserCompanyResource($company);
+        if($company){
+            return new UserCompanyResource($company);
+        }else{
+        return abort(404,'Company not found');
+        }
+
+
     }
     public function update(Request $request)
     {

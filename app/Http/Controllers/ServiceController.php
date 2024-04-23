@@ -14,11 +14,16 @@ use Illuminate\Http\Request;
 use App\Models\Zipcode;
 use App\Models\CompanyServiceZip;
 use App\Models\State;
+use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
 {
     public function list(){
         $services =  Service::all();
+        return ServiceResource::collection($services);
+    }
+    public function top10(){
+        $services =  Service::all()->take(8);
         return ServiceResource::collection($services);
     }
 
@@ -245,5 +250,26 @@ class ServiceController extends Controller
 
         return $serviceCompany;
 
+    }
+
+    public function storeImage(Service $service, Request $request)
+    {
+        $request->validate([
+            'image' => 'required'
+        ]);
+        // 'required|mimes:doc,docx,odt,pdf|max:2048'
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+
+            $nombreArchivo = $service->id . '/image-' . uniqid() . '.' . $image->extension();;
+            Storage::disk('services')->put($nombreArchivo, file_get_contents($image));
+            $urlArchivo = Storage::disk('services')->url($nombreArchivo);
+            $service->image = $urlArchivo;
+        }
+
+        $service->save();
+
+        return $service;
     }
 }

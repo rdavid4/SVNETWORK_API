@@ -31,6 +31,7 @@ class PaymentMethodController extends Controller
             ['customer' => $user->stripe_client_id]
             );
 
+
         }catch(Exception $e){
 
         }
