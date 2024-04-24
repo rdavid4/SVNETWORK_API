@@ -17,7 +17,7 @@ class CreateStripeClient
     public $paymentGateway;
     public function __construct()
     {
-        $gateway = new StripeClient("sk_test_51OkclSL4tJJe6uDw32VnV8I1sqyoCRmJs10oGZApZeG4JQuP1rHeAnOwjOJrsPGlecS7LbYC9vObiLSU4bp0TcIh00NfFbEFhK");
+        $gateway = new StripeClient(config('app.stripe_pk'));
         $this->paymentGateway = new PaymentGateway($gateway);
     }
 
