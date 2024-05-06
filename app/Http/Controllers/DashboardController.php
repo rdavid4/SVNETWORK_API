@@ -14,11 +14,11 @@ class DashboardController extends Controller
     public function registeredUsers(){
         $dates = User::selectRaw("DATE_FORMAT(created_at, '%b %d %Y') as date")
         ->groupBy('date')
-        ->orderBy('date', 'desc')
+        ->orderBy('date', 'asc')
         ->pluck('date');
         $totals = User::selectRaw('DATE(created_at) as date, COUNT(*) as total')
                ->groupBy('date')
-               ->orderBy('date', 'desc')
+               ->orderBy('date', 'asc')
                ->pluck('total');
         $data = [
             'categories' => $dates,
@@ -30,11 +30,11 @@ class DashboardController extends Controller
     public function registeredCompanies(){
         $dates = Company::selectRaw("DATE_FORMAT(created_at, '%b %d %Y') as date")
         ->groupBy('date')
-        ->orderBy('date', 'desc')
+        ->orderBy('date', 'asc')
         ->pluck('date');
         $totals = Company::selectRaw('DATE(created_at) as date, COUNT(*) as total')
                ->groupBy('date')
-               ->orderBy('date', 'desc')
+               ->orderBy('date', 'asc')
                ->pluck('total');
         $data = [
             'categories' => $dates,
@@ -46,11 +46,11 @@ class DashboardController extends Controller
     public function totalMatches(){
         $dates = Matches::selectRaw("DATE_FORMAT(created_at, '%b %d %Y') as date")
         ->groupBy('date')
-        ->orderBy('date', 'desc')
+        ->orderBy('date', 'asc')
         ->pluck('date');
         $totals = Matches::selectRaw('DATE(created_at) as date, COUNT(*) as total')
                ->groupBy('date')
-               ->orderBy('date', 'desc')
+               ->orderBy('date', 'asc')
                ->pluck('total');
         $data = [
             'categories' => $dates,

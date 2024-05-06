@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-
+use App\Models\User;
 class ChargeResource extends JsonResource
 {
     /**
@@ -12,9 +12,9 @@ class ChargeResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+
     public function toArray(Request $request): array
     {
-
         return [
             "id" => $this->id,
             "object" => $this->object,
@@ -31,6 +31,7 @@ class ChargeResource extends JsonResource
             "created" => $this->created,
             "currency" => $this->currency,
             "customer" => $this->customer,
+            "user" => User::where('stripe_client_id', $this->customer)->first(),
             "description" => $this->description,
             "destination" => $this->destination,
             "dispute" => $this->dispute,

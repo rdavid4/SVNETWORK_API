@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class NoMatches extends Model
 {
     use HasFactory;
-
+    protected $table = 'no_matches';
     protected $fillable =[
         'email',
         'company_id',

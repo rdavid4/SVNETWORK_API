@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->foreignId('project_id');
             $table->foreignId('service_id');
+            $table->string('stripe_payment_method');
             $table->float('price')->nullable();
             $table->boolean('paid')->default(false);
             $table->timestamps();
