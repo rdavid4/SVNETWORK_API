@@ -37,7 +37,8 @@ class CompanyFactory extends Factory
             'city' => fake()->city(),
             'zip_code' => fake()->postcode(),
             'video_url' => fake()->imageUrl(),
-            'logo_url' => fake()->imageUrl()
+            'logo_url' => fake()->imageUrl(),
+            'created_at' => fake()->dateTimeBetween('-60 days', 'now')->format('Y-m-d')
         ];
 
     }

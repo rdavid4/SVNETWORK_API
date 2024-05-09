@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('rate')->nullable();
             $table->integer('is_visible')->nullable();
             $table->boolean('reported')->default(false);
+            $table->boolean('edited')->default(false);
             $table->foreignId('user_id')->constrained();
             $table->foreignId('company_id')->constrained();
             $table->timestamps();

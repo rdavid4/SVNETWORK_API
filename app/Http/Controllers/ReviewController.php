@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use App\Models\Review;
+use App\Models\ReviewReply;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
@@ -28,6 +29,49 @@ class ReviewController extends Controller
         ]);
 
         return $review;
+    }
+    public function update(Review $review,Request $request)
+    {
+        $request->validate([
+            'description' => 'required',
+            'rate' => 'required'
+        ]);
+
+        $review->description = $request->description;
+        $review->rate = $request->rate;
+        $review->edited = true;
+        $review->save();
+        return $review;
+    }
+    public function reply(Request $request)
+    {
+        $request->validate([
+            'review_id' => 'required',
+            'description' => 'required'
+        ]);
+
+        $reply =  ReviewReply::create([
+            'description' => $request->description,
+            'review_id' => $request->review_id
+        ]);
+        return $reply;
+    }
+    public function updateReply(ReviewReply $reviewReply, Request $request)
+    {
+        return $reviewReply;
+        $request->validate([
+            'description' => 'required'
+        ]);
+
+        $reviewReply->description = $request->description;
+
+        $reviewReply->save();
+        return $reviewReply;
+    }
+    public function delete(Review $review)
+    {
+        $review->delete();
+        return 'ok';
     }
 
     public function report(Review $review){

@@ -17,13 +17,20 @@ class NoMatches extends Model
         'project_id',
         'user_id'
     ];
-
+    public function service():BelongsTo
+    {
+        return $this->belongsTo(Service::class, 'user_id', 'id');
+    }
     public function client():BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+    public function project():BelongsTo
+    {
+        return $this->belongsTo(Project::class, 'project_id', 'id');
     }
     public function company():BelongsTo
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Company::class, 'company_id','id');
     }
 }

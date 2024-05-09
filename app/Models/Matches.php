@@ -19,12 +19,20 @@ class Matches extends Model
     ];
     protected $dates = ['deleted_at'];
 
+    public function service():BelongsTo
+    {
+        return $this->belongsTo(Service::class, 'user_id', 'id');
+    }
     public function client():BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+    public function project():BelongsTo
+    {
+        return $this->belongsTo(Project::class, 'project_id', 'id');
     }
     public function company():BelongsTo
     {
-        return $this->belongsTo(Company::class)->withTrashed();
+        return $this->belongsTo(Company::class);
     }
 }

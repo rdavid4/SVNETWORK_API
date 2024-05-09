@@ -84,4 +84,17 @@ class Company extends Model
     public function getPublicUrlAttribute(){
         return config('app.app_url').'/companies/'.$this->slug;
     }
+    public function getReviewRateAttribute(){
+        $total = 0;
+        $countReviews = $this->reviews->count();
+        $sumaReviews = $this->reviews->reduce(function($suma, $review){
+            return $suma + $review->rate;
+        },0);
+
+        if($countReviews > 0){
+            $total = $sumaReviews / $countReviews;
+        }
+
+        return number_format($total, 2);
+    }
 }

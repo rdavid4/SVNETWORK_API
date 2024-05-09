@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\ShareController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Resources\CompanyResource;
 use App\Models\Company;
@@ -28,6 +29,7 @@ use App\Notifications\UserCreatedNotification;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('share/companies/{slug}', [ShareController::class, 'companies']);
 
 Route::get('register/verification', [VerificationController::class, 'verifyEmail'])->name('auth.verify')->middleware('signed');
 Route::post('reset-password', [ResetPasswordController::class, 'verify'])->name('auth.change-password')->middleware('signed');
@@ -44,8 +46,9 @@ Route::get('/notification', function () {
         return new CompanyResource($match->company);
     });
 
+    $matches = Company::all()->take(3);
+
     $data = ['matches' => $matches, 'service'=>$service];
     //  $user->notify(new MatchesUserNotification($matches));
-    return (new MatchesUserNotification($data))
-                ->toMail($user);
+    return view('mail.invoice.paid', ['matches' => $data]);
 });

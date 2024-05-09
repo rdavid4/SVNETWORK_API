@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ReviewUserResource extends JsonResource
+class ReplyResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,10 +16,9 @@ class ReviewUserResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'surname' => $this->surname,
-            'avatar_text' => $this->avatarText,
-            'image' => $this->image
+            'review_id' => $this->review_id,
+            'description' => $this->description,
+            "date" => date_format($this->created_at, 'm/d/Y h:i A')
         ];
     }
 }

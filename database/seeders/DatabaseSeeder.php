@@ -18,7 +18,11 @@ class DatabaseSeeder extends Seeder
             CategoriesSeeder::class,
             ServicesSeeder::class,
             ZipcodesSeeder::class,
-            CompanySeeder::class
+            CompanySeeder::class,
+            MatchSeeder::class,
+            NoMatchesSeeder::class,
+            ProjectSeeder::class,
+            ReviewSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 

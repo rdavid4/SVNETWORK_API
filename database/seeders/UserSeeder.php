@@ -17,17 +17,20 @@ class UserSeeder extends Seeder
         ->count(1)
         ->create([
             'email'=>'rogerdavid444@gmail.com',
-            'is_admin'=>0,
+            'is_admin'=> 1,
             'name' => 'Roger',
             'surname' => 'Quinonez',
         ]);
 
         $user = User::where('email', 'rogerdavid444@gmail.com')->first();
         $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
-        $stripe->customers->create([
+        $response = $stripe->customers->create([
         'name' => $user->name.' '.$user->surname,
         'email' => $user->email,
         ]);
+
+        $user->stripe_client_id = $response->id;
+        $user->save();
 
         User::factory()
         ->count(1)

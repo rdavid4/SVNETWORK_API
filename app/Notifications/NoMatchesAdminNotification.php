@@ -39,7 +39,7 @@ class NoMatchesAdminNotification extends Notification
                     ->subject('Alerta: No matches')
                     ->line('Alerta:')
                     ->line('No results found for the service '.$this->data['service']->name.' in the state of '. $this->data['zipcode']->state)
-                    ->action('Show Dashboard', config('app.app_url').'/admin/nomatches');
+                    ->action('Show Dashboard', config('app.app_url').'/admin/matches');
     }
 
     /**

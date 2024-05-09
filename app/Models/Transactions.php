@@ -16,6 +16,17 @@ class Transactions extends Model
         'price',
         'paid',
         'message',
-        'payment_code'
+        'payment_code',
+        'company_id'
     ];
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+    public function project(){
+        return $this->belongsTo(Project::class, 'project_id', 'id');
+    }
+    public function service(){
+        return $this->belongsTo(Service::class, 'service_id', 'id');
+    }
 }

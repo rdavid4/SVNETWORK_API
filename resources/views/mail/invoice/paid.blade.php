@@ -1,81 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Match</title>
+    <title>Company Results</title>
     <style>
-        /* Reset de estilos */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        /* Estilo general del cuerpo */
+        /* General Styles */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
             padding: 20px;
         }
 
-        /* Contenedor de la lista */
-        .list-container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Estilo de la lista */
-        .company-list {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        /* Estilo de cada elemento de la lista */
-        .company-item {
-            background-color: #fff;
-            border-radius: 4px;
-            margin-bottom: 10px;
+        /* Company Section Styles */
+        .company {
+            margin-bottom: 30px;
             padding: 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
         }
 
-        /* Estilo del logo */
-        .company-logo {
-            width: 50px;
-            height: 50px;
-            margin-right: 20px;
+        .company img {
+            max-width: 100px;
+            height: auto;
+            margin-right: 10px;
+            margin-bottom: 5px;
         }
 
-        /* Estilo del nombre de la compañía */
-        .company-name {
-            flex: 1;
+        .company h3 {
+            margin-top: 0;
         }
+
+        /* Call to Action Button Styles */
+        .cta-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #070510;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 15px;
+
+        }
+
+        /* Results Container Styles */
+        .results-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        /* Footer Styles */
+        .footer {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #ccc;
+        }
+
+        .disclaimer {
+            font-size: 12px;
+            color: #777;
+        }
+        .logo{
+            width: 200px;
+        }
+        .logo-container{
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            background-color: rgb(255, 255, 255);
+        }
+        .logo-container img {
+            max-width: 100%;
+            height: auto;
+        }
+
     </style>
 </head>
+
 <body>
+    <div class="container">
 
-<div class="list-container">
-    <div>
+        <div class="logo-container" >
+                <img class="logo" src="{{config('app.app_url').'/public/images/logo-mail.png'}}" alt="SVNetwork Logo">
+        </div>
+        <div class="logo-container" >
+            <h2>Your matches for service {{$matches['service']['name']}}</h2>
+        </div>
 
+        <div class="results-container">
+            @foreach ($matches['matches'] as $company)
+            <div class="company">
+                <img src="{{$company->logo_url}}" alt="Logo {{$company->name}}" style="max-width: 85px">
+                <h3>{{$company->name}}</h3>
+                <p>{{$company->description}}</p>
+                <a href="{{$company->public_url}}" class="cta-button">Show company</a>
+            </div>
+            @endforeach
+        </div>
+        <div class="footer">
+            <p class="disclaimer">
+                This email was sent by SVNetwork. For legal information and email alerts, visit our <a href="{{config('app.app_url').'/legal/terms'}}">Terms & Conditions</a>.
+            </p>
+            <p class="disclaimer">SVNetwork | Registered Address: 123 Main St, City, Country</p>
+        </div>
     </div>
-    <h2>Your matches for service {{$matches['service']['name']}}</h2>
-    <div style="margin-bottom: 15px"></div>
-    <ul class="company-list">
-        @foreach ($matches['matches'] as $company)
-        <a href="{{$company->public_url}}" class="company-link">
-            <li class="company-item">
-                <img src="{{$company->logo_url}}" alt="Company Logo" class="company-logo">
-                <span class="company-name">{{$company->name}}</span>
-            </li>
-        </a>
-        @endforeach
-    </ul>
-</div>
 
 </body>
+
 </html>

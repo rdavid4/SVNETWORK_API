@@ -64,7 +64,7 @@ class ChargeResource extends JsonResource
             "status" => $this->status,
             "transfer_data" => $this->transfer_data,
             "transfer_group" => $this->transfer_group,
-            "date" => date("m-d-Y H:i:s", $this->create)
+            "date" => date("m-d-Y H:i:s", $this->created)
         ];
     }
 }

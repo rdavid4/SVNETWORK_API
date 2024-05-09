@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('no_matches', function (Blueprint $table) {
+        Schema::create('review_replies', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id')->nullable();
-            $table->foreignId('service_id')->constrained();
-            $table->foreignId('company_id')->nullable();
-            $table->foreignId('project_id')->nullable();
-            $table->string('email')->nullable();
+            $table->foreignId('review_id');
+            $table->text('description');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('matches');
+        Schema::dropIfExists('review_replies');
     }
 };

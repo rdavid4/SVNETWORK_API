@@ -21,6 +21,8 @@ class ReviewResource extends JsonResource
             'date'=>$this->dateHumans,
             'reported'=>$this->reported,
             'rate'=>$this->rate,
+            'reply'=> new ReplyResource($this->reply),
+            'was_updated' => $this->wasUpdated()
         ];
     }
 }

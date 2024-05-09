@@ -23,7 +23,8 @@ class UserFactory extends Factory
             'password' => bcrypt(12341234),
             'email' => fake()->unique()->safeEmail(),
             'surname' => fake()->lastName(),
-            'image' => fake()->imageUrl()
+            'image' => fake()->imageUrl(),
+            'created_at' => fake()->dateTimeBetween('-60 days', 'now')->format('Y-m-d')
         ];
     }
 

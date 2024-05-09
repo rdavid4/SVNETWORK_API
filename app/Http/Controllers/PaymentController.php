@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\BalanceResource;
 use App\Http\Resources\PaymentResource;
+use App\Models\Service;
+use App\Models\Transactions;
 use Exception;
 use Illuminate\Http\Request;
 use PhpParser\Node\Expr\Cast\Object_;
@@ -94,6 +96,52 @@ class PaymentController extends Controller
         // );
         return $setup;
     }
+
+    public function recharge(Request $request)
+    {
+        $request->validate([
+            'transaction_id' => 'required'
+        ]);
+
+        $transaction = Transactions::find($request->transaction_id);
+        $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
+        try{
+            $user = $transaction->user;
+            $service = $transaction->service;
+            $stripe_client_id = $user->stripe_client_id;
+            $payment = $stripe->paymentIntents->create([
+                'amount' => $transaction->price  * 100,
+                'currency' => 'usd',
+                'customer' => $stripe_client_id,
+                'payment_method' => $transaction->stripe_payment_method,
+                'confirm' => true,
+                'description' => 'Match '.$service->name,
+                'confirmation_method' => 'automatic', // Utiliza 'automatic' para pagos automáticos
+                'metadata' => [
+                    'customer_name' => $user->name.' '.$user->surname,
+                    // Agrega más metadatos según sea necesario
+                ],
+                'return_url'=> config('app.app_url').'/user/companies/profile'
+            ]);
+
+            $transaction->paid = 1;
+            $transaction->message = null;
+            $transaction->payment_code = null;
+            $transaction->save();
+            return 'Ok';
+        }catch (\Stripe\Exception\ApiErrorException $e) {
+            $status = false;
+            $payment_message = $e->getError()->message;
+            $payment_code = $e->getError()->decline_code;
+
+            $transaction->message = $payment_message;
+            $transaction->payment_code = $payment_code;
+            $transaction->save();
+            abort(422, $payment_message);
+        }
+
+    }
+
     public function retrieveIntent($id)
     {
         $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));

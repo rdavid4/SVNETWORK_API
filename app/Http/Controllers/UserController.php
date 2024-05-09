@@ -62,6 +62,11 @@ class UserController extends Controller
         if ($request->filled('phone')) {
             $user->phone = $request->phone;
         }
+
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+
         $user->save();
         return new UserResource($user);
     }

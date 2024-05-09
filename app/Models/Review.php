@@ -12,7 +12,8 @@ class Review extends Model
         'description',
         'company_id',
         'rate',
-        'user_id'
+        'user_id',
+        'edited'
     ];
 
     public function user(){
@@ -21,11 +22,17 @@ class Review extends Model
     public function company(){
         return $this->belongsTo(Company::class);
     }
+    public function reply(){
+        return $this->hasOne(ReviewReply::class);
+    }
     public function getDateHumansAttribute()
     {
-        $date1 = Carbon::parse($this->created_at);
+        $date1 = Carbon::parse($this->updated_at);
         $date2 = Carbon::now(); // Represents the current date and time
         $diff = $date1->diffForHumans($date2);
         return  $diff;
+    }
+    public function wasUpdated(){
+        return $this->edited;
     }
 }
