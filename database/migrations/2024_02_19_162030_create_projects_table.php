@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('user_id');
             $table->integer('zipcode_id');
             $table->integer('service_id');
+            $table->string('state_iso')->nullable();
             $table->timestamps();
         });
     }

@@ -213,4 +213,9 @@ class SearchController extends Controller
 
         return MatchesResource::collection($matches);
     }
+    function updateNoMatches(NoMatches $noMatches){
+        $noMatches->done = true;
+        $noMatches->save();
+        return $noMatches;
+    }
 }

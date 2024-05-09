@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('company_id')->nullable();
             $table->foreignId('project_id')->nullable();
             $table->string('email')->nullable();
+            $table->boolean('done')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -21,6 +21,7 @@ class NoMatchesResource extends JsonResource
             "service" => $this->service?->name,
             "company" => $this->company?->name,
             "project" => $this->project?->title,
+            "done" => $this->done,
             'date' => $this->created_at->format('m/d/Y h:i A'),
         ];
     }

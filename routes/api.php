@@ -161,15 +161,19 @@ Route::delete('/admin/questions/{question}', [QuestionController::class, 'destro
 Route::get('/admin/question-types', [QuestionTypeController::class, 'list']);
 Route::get('/admin/matches', [SearchController::class, 'matchesList']);
 Route::get('/admin/nomatches', [SearchController::class, 'noMatchesList']);
+Route::put('/admin/nomatches/done/{noMatches}', [SearchController::class, 'updateNoMatches']);
 Route::post('/admin/answers', [AnswerController::class, 'store']);
 Route::delete('/admin/answers/{answer}', [AnswerController::class, 'destroy']);
 Route::post('/admin/categories', [CategoryController::class, 'store']);
 Route::get('/admin/user/check-email/{email}', [UserController::class, 'AdminEmailExist']);
+
 Route::get('/admin/dashboard/users', [DashboardController::class, 'registeredUsers']);
 Route::get('/admin/dashboard/companies', [DashboardController::class, 'registeredCompanies']);
 Route::get('/admin/dashboard/matches', [DashboardController::class, 'totalMatches']);
 Route::get('/admin/dashboard/nomatches', [DashboardController::class, 'totalNomatches']);
 Route::get('/admin/dashboard/services', [DashboardController::class, 'topServices']);
+Route::get('/admin/dashboard/stats', [DashboardController::class, 'getStats'])->middleware('auth:sanctum');
+
 Route::get('/admin/companies/services/{slug}/{company_id}', [CompanyController::class, 'getService'])->middleware('auth:sanctum');
 Route::post('/admin/companies/services/states', [CompanyController::class, 'storeStates'])->middleware('auth:sanctum');
 Route::post('/admin/companies/services/zipcodes', [ServiceController::class, 'zipcodesByRegion'])->middleware('auth:sanctum');
@@ -177,5 +181,4 @@ Route::get('/admin/payments/all-charges', [PaymentController::class, 'getAllChar
 Route::get('/admin/payments/balance', [PaymentController::class, 'getBalance'])->middleware('auth:sanctum');
 Route::post('/admin/payments/recharge', [PaymentController::class, 'recharge'])->middleware('auth:sanctum');
 Route::get('/admin/transactions', [TransactionController::class, 'list'])->middleware('auth:sanctum');
-Route::get('/admin/dashboard/stats', [DashboardController::class, 'getStats'])->middleware('auth:sanctum');
 

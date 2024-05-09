@@ -13,6 +13,7 @@ use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Models\Zipcode;
 use App\Models\CompanyServiceZip;
+use App\Models\Project;
 use App\Models\State;
 use Illuminate\Support\Facades\Storage;
 
@@ -22,9 +23,47 @@ class ServiceController extends Controller
         $services =  Service::all();
         return ServiceResource::collection($services);
     }
-    public function top10(){
-        $services =  Service::all()->take(8);
-        return ServiceResource::collection($services);
+    public function top10(Request $request){
+        $zipcode = $request->query('zipcode');
+        $zipcode = Zipcode::where('zipcode', $zipcode)->first();
+        $results = collect([]);
+
+        //Zipcode == project
+        $projectsZip = Project::where('zipcode_id', $zipcode->id)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $results = $results->concat($projectsZip->pluck('service_id'))->unique();
+
+        //State iso == project
+        if($results->count() < 10){
+            $stateZipcodes = Zipcode::where('state_iso', $zipcode->state_iso)->get()->pluck('id');
+            $projectsState = Project::whereIn('zipcode_id', $stateZipcodes)->whereNotIn('id', $projectsZip->pluck('id'))
+            ->orderBy('id', 'desc')
+            ->get();
+            $results = $results->concat($projectsState->pluck('service_id'))->unique();
+        }
+
+        // Any project
+        if($results->count() < 10){
+            $projectsAll = Project::whereNotIn('id', $projectsZip->pluck('id'))->whereNotIn('id', $projectsState->pluck('id'))
+            ->orderBy('id', 'desc')
+            ->get();
+            $results = $results->concat($projectsAll->pluck('service_id'))->unique();
+        }
+
+        //Any Service
+        if($results->count() < 10){
+            $servicesAll = Service::whereNotIn('id', $results)->orderBy('id', 'desc')->get();
+            $results = $results->concat($servicesAll->pluck('id'))->unique();
+        }
+
+        $results = $results->values();
+        $services = $results->map(function($service){
+            return Service::find($service);
+        });
+
+        return ServiceResource::collection($services->take(8));
     }
 
     public function prices(){

@@ -26,6 +26,7 @@ class ProjectFactory extends Factory
             'description' => fake()->realText($maxNbChars = 200),
             'user_id' => 1,
             'zipcode_id' => $zip->id,
+            'state_iso' => $zip->state_iso,
             'service_id' => $service->id,
             'created_at' => fake()->dateTimeBetween('-120 days', 'now')->format('Y-m-d')
         ];
