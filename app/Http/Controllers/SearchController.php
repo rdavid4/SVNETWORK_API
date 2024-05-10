@@ -146,21 +146,22 @@ class SearchController extends Controller
                                         'return_url'=> config('app.app_url').'/user/companies/profile'
                                     ]);
                                 }
+
+                                $status = true;
+
+                                Transactions::create([
+                                    'user_id'=> $match->company->users[0]->id,
+                                    'project_id'=> $project_id,
+                                    'service_id'=> $service->id,
+                                    'stripe_payment_method'=> $payment_method_id,
+                                    'price'=> $service->price,
+                                    'company_id'=> $match->company->id,
+                                    'paid' => $status,
+                                    'message' => null,
+                                    'payment_code' => $payment_code,
+                                ]);
                             }
 
-                            $status = true;
-
-                            Transactions::create([
-                                'user_id'=> $match->company->users[0]->id,
-                                'project_id'=> $project_id,
-                                'service_id'=> $service->id,
-                                'stripe_payment_method'=> $payment_method_id,
-                                'price'=> $service->price,
-                                'company_id'=> $match->company->id,
-                                'paid' => $status,
-                                'message' => null,
-                                'payment_code' => $payment_code,
-                            ]);
 
                         }catch (\Stripe\Exception\ApiErrorException $e) {
                             $status = false;
