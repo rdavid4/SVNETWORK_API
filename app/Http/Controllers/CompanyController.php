@@ -323,6 +323,45 @@ class CompanyController extends Controller
 
         return $company;
     }
+
+    public function storeImages(Company $company, Request $request)
+    {
+        if ($request->hasFile('images')) {
+            $imagenes = $request->file('images');
+
+            foreach ($imagenes as $image) {
+                if ($image->isValid()) {
+                    // Realizar acciones con cada imagen, como guardarla en el servidor
+
+                    $nombreArchivo = $company->id . '/projects/image-' . uniqid() . '.' . $image->extension();
+                    Storage::disk('companies')->put($nombreArchivo, file_get_contents($image));
+                    $extension = $image->extension();
+                    $size = $image->getSize();
+                    $mimetype = $image->getMimeType();
+                    $ancho = null;
+                    $alto = null;
+                    $infoImagen = getimagesize($image);
+                    if ($infoImagen) {
+                        $ancho = $infoImagen[0]; // Ancho de la imagen
+                        $alto = $infoImagen[1]; // Alto de la imagen
+                    }
+                   $company->images()->create([
+                        'filename' => $nombreArchivo,
+                        'mime_type' => $mimetype,
+                        'extension' => $extension,
+                        'width' => $ancho,
+                        'height' => $alto,
+                        'size' => $size
+                    ]);
+                }
+            }
+
+            return "Imágenes subidas correctamente.";
+        } else {
+            return "No se encontraron imágenes para subir.";
+        }
+    }
+
     public function storeVideo(Company $company, Request $request)
     {
         $request->validate([
@@ -334,7 +373,7 @@ class CompanyController extends Controller
         if ($video->isValid()) {
             // Generar un nombre único para el archivo de video
             $nombreArchivo = '/video-' . uniqid() . '.' . $video->getClientOriginalExtension();
-            $patch = $company->id.'/'.$nombreArchivo;
+            $patch = $company->id . '/' . $nombreArchivo;
             try {
                 // Guardar el archivo de video en el disco 'companies'
                 $video->storeAs($company->id, $nombreArchivo, 'companies');
@@ -474,25 +513,25 @@ class CompanyController extends Controller
 
         if ($request->filled('social_facebook')) {
             $company->social_facebook = $request->social_facebook;
-        }else{
+        } else {
             $company->social_facebook = '';
         }
 
         if ($request->filled('social_x')) {
             $company->social_x = $request->social_x;
-        }else{
+        } else {
             $company->social_x = '';
         }
 
         if ($request->filled('social_youtube')) {
             $company->social_youtube = $request->social_youtube;
-        }else{
+        } else {
             $company->social_youtube = '';
         }
 
         if ($request->filled('video_url')) {
             $company->video_url = $request->video_url;
-        }else{
+        } else {
             $company->video_url = '';
         }
 
@@ -509,11 +548,11 @@ class CompanyController extends Controller
 
         $company = Company::find($request->company_id);
         $service = Service::find($request->service);
-                $company->services()->syncWithoutDetaching([
-                    $request->service => [
-                        'pause' => 0
-                    ]
-                ]);
+        $company->services()->syncWithoutDetaching([
+            $request->service => [
+                'pause' => 0
+            ]
+        ]);
 
         return new UserCompanyResource($company);
     }
@@ -526,11 +565,11 @@ class CompanyController extends Controller
 
         $company = Company::find($request->company_id);
         $service = Service::find($request->state_id);
-                $company->services()->syncWithoutDetaching([
-                    $request->service => [
-                        'pause' => 0
-                    ]
-                ]);
+        $company->services()->syncWithoutDetaching([
+            $request->service => [
+                'pause' => 0
+            ]
+        ]);
 
         return new UserCompanyResource($company);
     }
@@ -543,7 +582,7 @@ class CompanyController extends Controller
 
         $company = Company::find($request->company_id);
         $service = Service::find($request->service_id);
-                $company->services()->where('service_id', $service->id)->delete();
+        $company->services()->where('service_id', $service->id)->delete();
 
         return new UserCompanyResource($company);
     }

@@ -112,6 +112,7 @@ Route::get('/companies/{company}/projects', [CompanyController::class, 'projects
 Route::post('/companies', [CompanyController::class, 'storeFromRegister']);
 Route::put('/companies/{company}', [CompanyController::class, 'update']);
 Route::post('/companies/{company}/logo', [CompanyController::class, 'storeLogo']);
+Route::post('/companies/{company}/images', [CompanyController::class, 'storeImages']);
 Route::post('/companies/{company}/video', [CompanyController::class, 'storeVideo']);
 Route::get('/companies/{company}/reviews', [CompanyController::class, 'reviews'])->middleware('auth:sanctum');
 

@@ -95,6 +95,11 @@ class Company extends Model
             $total = $sumaReviews / $countReviews;
         }
 
-        return number_format($total, 2);
+        return floatval(number_format($total, 2));
+    }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
     }
 }

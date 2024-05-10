@@ -45,8 +45,8 @@ class RenewPasswordNotification extends Notification
         $link = $this->link;
         return (new MailMessage)
                     ->subject('Reset password.')
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url($link))
+                    ->line('You have received this email because you have requested to change your account password. Click on the following button')
+                    ->action('Reset password', url($link))
                     ->line('Thank you for using our application!');
     }
 

@@ -35,7 +35,8 @@ class CompanyResource extends JsonResource
             'services' => CompanyServiceListResource::collection($this->services),
             'states' => StateResource::collection($this->states),
             'reviews' => ReviewResource::collection($this->reviews),
-            'review_rate' => $this->reviewRate,
+            'images' => ImageCompanyResource::collection($this->images),
+            'review_rate' =>  $this->reviewRate,
             'categories' => CategoryResource::collection($this->categories)
         ];
     }

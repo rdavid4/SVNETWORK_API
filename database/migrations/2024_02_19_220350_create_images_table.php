@@ -18,6 +18,8 @@ return new class extends Migration
 			$table->string('filename')->nullable();
             $table->string('mime_type')->nullable();
 			$table->string('extension')->nullable();
+			$table->string('width')->nullable();
+			$table->string('height')->nullable();
             $table->text('description')->nullable();
             $table->integer('size')->unsigned()->nullable();
             $table->timestamps();
