@@ -171,17 +171,19 @@ class SearchController extends Controller
                             // Maneja el error de Stripe aquí
                             // Puedes registrar el error, mostrar un mensaje al usuario, etc.
                             // Pero el código continuará ejecutándose después de este bloque catch
-                            Transactions::create([
-                                'user_id'=> $match->company->users[0]->id,
-                                'project_id'=> $project_id,
-                                'service_id'=> $service->id,
-                                'company_id'=> $match->company->id,
-                                'stripe_payment_method'=> $payment_method_id,
-                                'price'=> $service->price,
-                                'paid' => $status,
-                                'message' => $payment_message,
-                                'payment_code' => $payment_code,
-                            ]);
+                            if($payment_method_id){
+                                Transactions::create([
+                                    'user_id'=> $match->company->users[0]->id,
+                                    'project_id'=> $project_id,
+                                    'service_id'=> $service->id,
+                                    'company_id'=> $match->company->id,
+                                    'stripe_payment_method'=> $payment_method_id,
+                                    'price'=> $service->price,
+                                    'paid' => $status,
+                                    'message' => $payment_message,
+                                    'payment_code' => $payment_code,
+                                ]);
+                            }
                         }
 
                     }
@@ -205,7 +207,7 @@ class SearchController extends Controller
     }
 
     function noMatchesList(){
-        $noMatches = NoMatches::all();
+        $noMatches = NoMatches::orderBy('id','desc')->get();
 
         return NoMatchesResource::collection($noMatches);
     }

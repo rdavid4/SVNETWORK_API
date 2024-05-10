@@ -74,7 +74,7 @@ class Company extends Model
     }
     public function reviews():HasMany
     {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(Review::class)->orderBy('updated_at','desc');
     }
 
     public function state(){
