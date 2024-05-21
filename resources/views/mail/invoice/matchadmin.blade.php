@@ -93,18 +93,17 @@
                 <img class="logo" src="{{config('app.api_url').'/storage/images/logo.png'}}" alt="SVNetwork Logo">
         </div>
         <div class="logo-container" >
-            <h2>Your matches for service {{$matches['service']['name']}}</h2>
+            <h2>Your matches for service {{$company['service']['name']}}</h2>
         </div>
 
         <div class="results-container">
-            @foreach ($matches['matches'] as $company)
+
             <div class="company">
-                <img src="{{$company->logo_url}}" alt="Logo {{$company->name}}" style="max-width: 85px">
-                <h3>{{$company->name}}</h3>
-                <p>{{$company->description}}</p>
-                <a href="{{$company->public_url}}" class="cta-button">Show company</a>
+                <h3>Company name: {{$company['company_name']}}</h3>
+                <p>Phone: <a href="tel:+{{$company['company_phone']}}"> {{$company['company_phone']}}</a> </p>
+                <p>Address: {{$company['company_address']}}</p>
             </div>
-            @endforeach
+
         </div>
         <div class="footer">
             <p class="disclaimer">

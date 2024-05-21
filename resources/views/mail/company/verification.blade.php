@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Company Results</title>
+    <title>Company Verification</title>
     <style>
         /* General Styles */
         body {
@@ -69,46 +69,52 @@
             font-size: 12px;
             color: #777;
         }
-        .logo{
+
+        .logo {
             width: 200px;
         }
-        .logo-container{
+
+        .logo-container {
             width: 100%;
             padding: 15px 0;
             text-align: center;
             background-color: rgb(255, 255, 255);
         }
+
         .logo-container img {
             max-width: 100%;
             height: auto;
         }
-
     </style>
 </head>
 
 <body>
     <div class="container">
 
-        <div class="logo-container" >
-                <img class="logo" src="{{config('app.api_url').'/storage/images/logo.png'}}" alt="SVNetwork Logo">
+        <div class="logo-container">
+            <img class="logo" src="{{ config('app.api_url') . '/storage/images/logo.png' }}" alt="SVNetwork Logo">
         </div>
-        <div class="logo-container" >
-            <h2>Your matches for service {{$matches['service']['name']}}</h2>
+        <div class="logo-container">
+            <h2>Congratulations {{ $user['name'] }}</h2>
         </div>
 
         <div class="results-container">
-            @foreach ($matches['matches'] as $company)
-            <div class="company">
-                <img src="{{$company->logo_url}}" alt="Logo {{$company->name}}" style="max-width: 85px">
-                <h3>{{$company->name}}</h3>
-                <p>{{$company->description}}</p>
-                <a href="{{$company->public_url}}" class="cta-button">Show company</a>
-            </div>
-            @endforeach
+            <p>Your company has been successfully verified.</p>
+            <p>You are now officially listed on our platform and visible in
+                search results.</p>
+            <p>This means you can start connecting with new clients and expanding your business
+                opportunities.</p>
+            <p>We're thrilled to have you join our community of verified businesses. If you have any questions or need
+                assistance, feel free to reach out to our support team.</p>
+            <p><a href="<?= $user->link ?>" class="cta-button">Show my company profile</a></p>
+            <p>Thank you for using our application!</p>
+            <p>We invite you to review our terms of use for professionals. <a href="<?= $user->link2 ?>">Pro
+                    Terms</a>.</p>
         </div>
         <div class="footer">
             <p class="disclaimer">
-                This email was sent by SVNetwork. For legal information and email alerts, visit our <a href="{{config('app.app_url').'/legal/terms'}}">Terms & Conditions</a>.
+                This email was sent by SVNetwork. For legal information and email alerts, visit our <a
+                    href="{{ config('app.app_url') . '/legal/terms' }}">Terms & Conditions</a>.
             </p>
             <p class="disclaimer">SVNetwork | Registered Address: 123 Main St, City, Country</p>
         </div>

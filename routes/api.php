@@ -181,5 +181,6 @@ Route::post('/admin/companies/services/zipcodes', [ServiceController::class, 'zi
 Route::get('/admin/payments/all-charges', [PaymentController::class, 'getAllCharges'])->middleware('auth:sanctum');
 Route::get('/admin/payments/balance', [PaymentController::class, 'getBalance'])->middleware('auth:sanctum');
 Route::post('/admin/payments/recharge', [PaymentController::class, 'recharge'])->middleware('auth:sanctum');
+Route::post('/admin/send-lead', [SearchController::class, 'sendLead'])->middleware('auth:sanctum');
 Route::get('/admin/transactions', [TransactionController::class, 'list'])->middleware('auth:sanctum');
 

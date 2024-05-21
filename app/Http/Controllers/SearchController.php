@@ -18,6 +18,7 @@ use App\Models\User;
 use App\Notifications\MatchesCompanyNotification;
 use App\Notifications\MatchesUserNotification;
 use App\Notifications\NoMatchesAdminNotification;
+use App\Notifications\SendLeadNotification;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 class SearchController extends Controller
@@ -207,7 +208,7 @@ class SearchController extends Controller
     }
 
     function noMatchesList(){
-        $noMatches = NoMatches::orderBy('id','desc')->get();
+        $noMatches = NoMatches::where('done', 0)->orderBy('id','desc')->get();
 
         return NoMatchesResource::collection($noMatches);
     }
@@ -220,5 +221,33 @@ class SearchController extends Controller
         $noMatches->done = true;
         $noMatches->save();
         return $noMatches;
+    }
+    function sendLead(Request $request){
+        $request->validate([
+            'name' => 'required',
+            'phone' => 'required',
+            'address' => 'required',
+            'nomatch' => 'required',
+        ]);
+        $nomatch = NoMatches::find($request->nomatch);
+        $service = Service::withTrashed()->find($nomatch->service_id);
+        $data = [
+            'company_name' => $request->name,
+            'company_phone' => $request->phone,
+            'company_address' => $request->address,
+            'service' => $service
+        ];
+        if($nomatch){
+            $user = User::where('email',$nomatch->email)->first();
+            if($user){
+                $user->notify(new SendLeadNotification($data));
+                $nomatch->done = 1;
+                $nomatch->save();
+                return 'ok';
+            }
+        }else{
+            abort(422, 'User dows not exist');
+        }
+
     }
 }

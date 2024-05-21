@@ -64,16 +64,15 @@ class DashboardController extends Controller
             ->get();
 
         $resultados = [];
-
         foreach ($matchesPorServicioYMes as $match) {
-            $service = Service::find($match->service_id)->name;
+            $service = Service::withTrashed()->find($match->service_id)?->name;
             $total = $match->total;
 
-            if (!isset($resultados[$service])) {
-                $resultados[$service] = ['name' => $service];
-            }
+                if (!isset($resultados[$service])) {
+                    $resultados[$service] = ['name' => $service];
+                }
+                $resultados[$service]['data'][] = $total;
 
-            $resultados[$service]['data'][] = $total;
         }
 
         // Convertir el array asociativo en un array simple

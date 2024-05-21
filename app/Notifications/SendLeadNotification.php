@@ -7,17 +7,17 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class MatchesCompanyNotification extends Notification
+class SendLeadNotification extends Notification
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public $user;
-    public function __construct($user)
+    protected $data;
+    public function __construct($data)
     {
-        $this->user = $user;
+        $this->data = $data;
     }
 
     /**
@@ -36,11 +36,9 @@ class MatchesCompanyNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->greeting('Hello '. $notifiable->name)
-                    ->subject('You have a new client for '.$this->user->service->name)
-                    ->line("You have received a new match for the ".$this->user->service->name." service. To view the user's details, click here.")
-                    ->action('View contact details', url($this->user->link))
-                    ->line('Thank you for using our application!');
+        ->theme('default')
+        ->subject('Your Service matches')
+        ->view('mail.invoice.matchadmin', ['company' => $this->data]);
     }
 
     /**

@@ -53,7 +53,8 @@ class CompanyController extends Controller
         $users = $company->users;
         if ($users) {
             foreach ($users as $key => $user) {
-                $user->link = config('app.app_url') . '/companies/profile';
+                $user->link = config('app.app_url') . '/user/companies/profile';
+                $user->link2 = config('app.app_url') . '/legal/pro-terms';
                 $user->notify(new CompanyVerifiedNotification($user));
             }
         }
