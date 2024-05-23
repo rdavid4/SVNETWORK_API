@@ -61,11 +61,12 @@ class ServiceController extends Controller
         $results = $results->values();
         $services = $results->map(function($service){
             return Service::find($service);
-        });
+        })->filter(function($service) {
+            return !is_null($service);
+        })->values();
 
         return ServiceResource::collection($services->take(8));
     }
-
     public function prices(){
         $services = Service::all();
         return DashboardServicePricesResource::collection($services);

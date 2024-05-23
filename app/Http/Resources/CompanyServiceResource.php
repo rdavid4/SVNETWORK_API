@@ -17,6 +17,7 @@ class CompanyServiceResource extends JsonResource
         return [
             "id" => $this->id,
             "name" => $this->name,
+            "price" => $this->price,
             "slug" => $this->slug,
             "pause" => $this->pause,
             "states" => CompanyServiceStateResource::collection($this->states)
