@@ -83,17 +83,18 @@ Route::get('/system/zipcode', [ZipcodeController::class, 'list']);
 Route::post('/search', [SearchController::class, 'search']);
 
 //PAYMENTS
-Route::get('/payments/methods/{setup}', [PaymentController::class, 'addPaymentMethod']);
-Route::get('/payments/retrieve/session/{id}', [PaymentController::class, 'retrieveSession']);
-Route::get('/payments/retrieve/setup/{id}', [PaymentController::class, 'retrieveIntent']);
+Route::get('/payments/methods/{setup}', [PaymentController::class, 'addPaymentMethod'])->middleware('auth:sanctum');
+Route::get('/payments/retrieve/session/{id}', [PaymentController::class, 'retrieveSession'])->middleware('auth:sanctum');
+Route::get('/payments/retrieve/setup/{id}', [PaymentController::class, 'retrieveIntent'])->middleware('auth:sanctum');
 Route::post('/payments/checkout', [PaymentController::class, 'checkout'])->middleware('auth:sanctum');
 Route::post('/payments/custom', [PaymentController::class, 'customCard'])->middleware('auth:sanctum');
 Route::post('/payments/customer', [PaymentController::class, 'payment'])->middleware('auth:sanctum');
 Route::post('/payments-methods/card', [PaymentMethodController::class, 'storeCard'])->middleware('auth:sanctum');
 Route::delete('/payments-methods/card/{id}', [PaymentMethodController::class, 'deleteCard'])->middleware('auth:sanctum');
-Route::get('/payments/methods', [PaymentController::class, 'getMethodCard']);
-Route::get('/customer', [PaymentController::class, 'getCustomer']);
-Route::get('/user/payments', [PaymentController::class, 'getCharges']);
+Route::get('/payments/methods', [PaymentController::class, 'getMethodCard'])->middleware('auth:sanctum');
+Route::get('/customer', [PaymentController::class, 'getCustomer'])->middleware('auth:sanctum');
+Route::get('/user/payments', [PaymentController::class, 'getCharges'])->middleware('auth:sanctum');
+Route::get('/user/payments/week', [PaymentController::class, 'totalWeek'])->middleware('auth:sanctum');
 
 
 //COMPANIES

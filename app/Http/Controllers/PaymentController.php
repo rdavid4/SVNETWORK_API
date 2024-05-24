@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\Request;
 use PhpParser\Node\Expr\Cast\Object_;
 use Stripe\Balance;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
@@ -17,13 +18,13 @@ class PaymentController extends Controller
     {
         $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
         $user = auth()->user();
-        if($user->stripe_client_id){
+        if ($user->stripe_client_id) {
             $methods = $stripe->paymentMethods->all([
                 'customer' => $user->stripe_client_id,
                 'type' => 'card',
             ]);
             return $methods;
-        }else{
+        } else {
             return null;
         }
     }
@@ -32,19 +33,17 @@ class PaymentController extends Controller
         $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
         $user = auth()->user();
 
-        if($user->stripe_client_id){
-            try{
+        if ($user->stripe_client_id) {
+            try {
                 $charges = $stripe?->charges->all([
                     'customer' => $user->stripe_client_id,
                 ]);
-            }catch(Exception $e){
-
+            } catch (Exception $e) {
             }
             return new PaymentResource($charges);
-        }else{
+        } else {
             return null;
         }
-
     }
     public function checkout()
     {
@@ -105,7 +104,7 @@ class PaymentController extends Controller
 
         $transaction = Transactions::find($request->transaction_id);
         $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
-        try{
+        try {
             $user = $transaction->user;
             $service = $transaction->service;
             $stripe_client_id = $user->stripe_client_id;
@@ -115,13 +114,13 @@ class PaymentController extends Controller
                 'customer' => $stripe_client_id,
                 'payment_method' => $transaction->stripe_payment_method,
                 'confirm' => true,
-                'description' => 'Match '.$service->name,
+                'description' => 'Match ' . $service->name,
                 'confirmation_method' => 'automatic', // Utiliza 'automatic' para pagos automáticos
                 'metadata' => [
-                    'customer_name' => $user->name.' '.$user->surname,
+                    'customer_name' => $user->name . ' ' . $user->surname,
                     // Agrega más metadatos según sea necesario
                 ],
-                'return_url'=> config('app.app_url').'/user/companies/profile'
+                'return_url' => config('app.app_url') . '/user/companies/profile'
             ]);
 
             $transaction->paid = 1;
@@ -129,7 +128,7 @@ class PaymentController extends Controller
             $transaction->payment_code = null;
             $transaction->save();
             return 'Ok';
-        }catch (\Stripe\Exception\ApiErrorException $e) {
+        } catch (\Stripe\Exception\ApiErrorException $e) {
             $status = false;
             $payment_message = $e->getError()->message;
             $payment_code = $e->getError()->decline_code;
@@ -139,7 +138,6 @@ class PaymentController extends Controller
             $transaction->save();
             abort(422, $payment_message);
         }
-
     }
 
     public function retrieveIntent($id)
@@ -184,21 +182,36 @@ class PaymentController extends Controller
     public function getAllCharges()
     {
         $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
-            $user = auth()->user();
+        $user = auth()->user();
 
 
-            try{
-                $charges = $stripe?->charges->all();
-            }catch(Exception $e){
-
-            }
-            return new PaymentResource($charges);
+        try {
+            $charges = $stripe?->charges->all();
+        } catch (Exception $e) {
+        }
+        return new PaymentResource($charges);
     }
     public function getBalance()
     {
         $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
-            $user = auth()->user();
-            $balance = $stripe->balance->retrieve([]);
-            return new BalanceResource($balance);
+        $user = auth()->user();
+        $balance = $stripe->balance->retrieve([]);
+        return new BalanceResource($balance);
+    }
+
+    public function totalWeek()
+    {
+        $startOfWeek = Carbon::now()->startOfWeek()->toDateTimeString();
+        $endOfWeek = Carbon::now()->endOfWeek()->toDateTimeString();
+        $user = auth()->user();
+        $transactions = $user->transactions->where('paid', 1)->whereBetween('created_at', [$startOfWeek, $endOfWeek]);
+        $startOfWeek = Carbon::now()->startOfWeek()->format('M-d H:i:s');
+        $endOfWeek = Carbon::now()->endOfWeek()->format('M-d H:i:s');
+        $total = $transactions->sum('price').' US$';
+        return [
+            'start_week' => $startOfWeek,
+            'end_week' => $endOfWeek,
+            'total' => $total
+        ];
     }
 }

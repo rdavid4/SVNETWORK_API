@@ -36,7 +36,10 @@ class SearchController extends Controller
         $project_id = $request->project_id;
         $project = Project::find($project_id);
         $service = Service::find($service_id);
-        $price = $service->price > 0 ? round($service->price * 100, 0) : 0;
+        if(!$service){
+            return [];
+        }
+        $price = $service?->price > 0 ? round($service->price * 100, 0) : 0;
 
         $user = User::where('email', $request->email)->first();
         $admins = User::where('is_admin',1)->get();
@@ -59,7 +62,12 @@ class SearchController extends Controller
                 return $company->users->first()->stripe_client_id != null ? $company->id : null;
              }
         })->whereNotNull()->toArray();
-        //4.-Companies has more than defaults payments
+        //4.-Companies not verified
+        $companiesNotVerified = $companies->map(function($company){
+             return $company->verified == 0 ? $company->id:null;
+        })->whereNotNull()->toArray();
+
+        //5.-Companies has more than defaults payments
         $companiesDefaults = Transactions::selectRaw('company_id, COUNT(*) as count')
         ->where('paid', 0)
         ->groupBy('company_id')
@@ -71,6 +79,7 @@ class SearchController extends Controller
 
         $matches = $service->companyServiceZip
         ->where('zipcode_id',$zipcode->id)
+        ->whereNotIn('company_id', $companiesNotVerified)
         ->whereNotIn('company_id', $companiesMatchIds)
         ->whereNotIn('company_id', $companiesServicePause)
         ->whereNotIn('company_id', $companiesDefaults)
@@ -79,6 +88,9 @@ class SearchController extends Controller
 
         //No matches actions
         if(count($matches)==0){
+            if($companiesMatchIds){
+                abort(422, 'Service Repeated');
+            }
             NoMatches::create([
                 'email' => $user->email,
                 'user_id' => $user->id,
