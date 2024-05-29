@@ -10,6 +10,7 @@ use App\Http\Resources\ServiceResource;
 use App\Http\Resources\UserCompanyResource;
 use App\Models\Company;
 use App\Models\CompanyServiceZip;
+use App\Models\Image;
 use App\Models\Project;
 use App\Models\Service;
 use App\Models\User;
@@ -331,6 +332,7 @@ class CompanyController extends Controller
             $imagenes = $request->file('images');
 
             foreach ($imagenes as $image) {
+
                 if ($image->isValid()) {
                     // Realizar acciones con cada imagen, como guardarla en el servidor
 
@@ -342,6 +344,7 @@ class CompanyController extends Controller
                     $ancho = null;
                     $alto = null;
                     $infoImagen = getimagesize($image);
+
                     if ($infoImagen) {
                         $ancho = $infoImagen[0]; // Ancho de la imagen
                         $alto = $infoImagen[1]; // Alto de la imagen
@@ -354,12 +357,27 @@ class CompanyController extends Controller
                         'height' => $alto,
                         'size' => $size
                     ]);
+                    return "Imágenes subidas correctamente.";
+                }else{
+                    return 'no valido';
                 }
             }
 
-            return "Imágenes subidas correctamente.";
         } else {
             return "No se encontraron imágenes para subir.";
+        }
+    }
+
+    public function deleteImage(Image $image){
+        $disk = Storage::disk('companies');
+        $image->delete();
+        // Verifica si el archivo existe
+        if ($disk->exists($image->filename)) {
+            // Elimina el archivo
+            $disk->delete($image->filename);
+            return response()->json(['message' => 'Image deleted successfully.'], 200);
+        } else {
+            return response()->json(['message' => 'Image not found.'], 404);
         }
     }
 

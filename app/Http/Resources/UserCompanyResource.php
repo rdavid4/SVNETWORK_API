@@ -36,6 +36,7 @@ class UserCompanyResource extends JsonResource
             "video_url" => $this->video_url,
             "verified" => $this->verified,
             "country_id" => $this->country_id,
+            "images" => ImageCompanyResource::collection($this->images),
             "logo_url" => $this->logo_url,
             "reviews" => ReviewResource::collection($this->reviews),
             "services" =>  CompanyServiceListResource::collection($this->services),
