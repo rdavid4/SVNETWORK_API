@@ -29,7 +29,7 @@ class ServiceController extends Controller
         $results = collect([]);
 
         //Zipcode == project
-        $projectsZip = Project::where('zipcode_id', $zipcode->id)
+        $projectsZip = Project::where('zipcode_id', $zipcode?->id)
             ->orderBy('id', 'desc')
             ->get();
 
@@ -37,7 +37,7 @@ class ServiceController extends Controller
 
         //State iso == project
         if($results->count() < 10){
-            $stateZipcodes = Zipcode::where('state_iso', $zipcode->state_iso)->get()->pluck('id');
+            $stateZipcodes = Zipcode::where('state_iso', $zipcode?->state_iso)->get()->pluck('id');
             $projectsState = Project::whereIn('zipcode_id', $stateZipcodes)->whereNotIn('id', $projectsZip->pluck('id'))
             ->orderBy('id', 'desc')
             ->get();
