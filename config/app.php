@@ -57,6 +57,8 @@ return [
 
     'api_url' => env('API_URL', 'http://localhost'),
     'app_url' => env('APP_URL', 'http://localhost'),
+    'mautic_url' => env('MAUTIC_URL', 'http://localhost'),
+    'mautic_token' => env('MAUTIC_TOKEN', ''),
     'stripe_pk' => env('STRIPE_APP_KEY', ''),
 
     'asset_url' => env('ASSET_URL'),

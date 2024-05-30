@@ -9,6 +9,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\GeoipController;
+use App\Http\Controllers\MauticController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\RenewPasswordController;
 use App\Http\Controllers\PaymentController;
@@ -45,6 +46,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // AUTH REGISTER + LOGIN
+Route::post('/mautic', [MauticController::class, 'createContact']);
 Route::get('/auth/user', [UserController::class, 'show'])->middleware('auth:sanctum');
 Route::get('/auth/user/check-email/{email}', [UserController::class, 'emailExist']);
 Route::post('/check/robot', [UserController::class, 'checkRobot']);

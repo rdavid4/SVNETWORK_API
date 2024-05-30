@@ -8,8 +8,10 @@ use App\Models\User;
 use App\Notifications\UserVerification;
 use Illuminate\Support\Facades\URL;
 use App\Http\Resources\UserResource;
+use App\Models\Mautic;
 use App\Notifications\CompanyCreatedNotification;
 use App\Notifications\UserCreatedNotification;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
@@ -37,6 +39,19 @@ class RegisterController extends Controller
         ];
 
         $user = User::create($params);
+
+        try{
+            $data = [
+                'firstname' => $user->name,
+                'lastname' => $user->surname,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'tags' => 'user'
+            ];
+            return Mautic::createContact($data);
+        }catch(Exception $e){
+
+        }
 
         $verifyUrl = URL::temporarySignedRoute(
             'auth.verify',

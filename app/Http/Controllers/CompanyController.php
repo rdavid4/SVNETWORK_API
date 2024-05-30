@@ -11,12 +11,14 @@ use App\Http\Resources\UserCompanyResource;
 use App\Models\Company;
 use App\Models\CompanyServiceZip;
 use App\Models\Image;
+use App\Models\Mautic;
 use App\Models\Project;
 use App\Models\Service;
 use App\Models\User;
 use App\Models\Zipcode;
 use App\Notifications\CompanyCreatedNotification;
 use App\Notifications\CompanyVerifiedNotification;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -177,7 +179,22 @@ class CompanyController extends Controller
             'zip_code' => $request->zip_code
         ]);
 
+        try{
+            $data = [
+                'firstname' => $user->name,
+                'lastname' => $user->surname,
+                'email' => $user->email,
+                'company' => $request->company_name,
+                'phone' => $request->phone,
+                'city' => $request->city,
+                'state' => $request->state['name_en'],
+                'zipcode' => $request->zip_code,
+                'tags' => 'company'
+            ];
+            return Mautic::createContact($data);
+        }catch(Exception $e){
 
+        }
         if ($request->filled('state')) {
             $company->state_id = $request->state["id"];
         }
