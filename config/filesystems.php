@@ -50,6 +50,13 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
+        'videos' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/videos'),
+            'url' => env('API_URL').'/storage/videos',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
         'services' => [
             'driver' => 'local',
             'root' => storage_path('app/public/services'),
