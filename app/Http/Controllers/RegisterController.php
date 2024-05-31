@@ -48,7 +48,7 @@ class RegisterController extends Controller
                 'phone' => $user->phone,
                 'tags' => 'user'
             ];
-            return Mautic::createContact($data);
+            Mautic::createContact($data);
         }catch(Exception $e){
 
         }

@@ -191,7 +191,7 @@ class CompanyController extends Controller
                 'zipcode' => $request->zip_code,
                 'tags' => 'company'
             ];
-            return Mautic::createContact($data);
+            Mautic::createContact($data);
         }catch(Exception $e){
 
         }
