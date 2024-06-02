@@ -186,6 +186,7 @@ class CompanyController extends Controller
                 'email' => $user->email,
                 'company' => $request->company_name,
                 'phone' => $request->phone,
+                'country' => $request->country,
                 'city' => $request->city,
                 'state' => $request->state['name_en'],
                 'zipcode' => $request->zip_code,
@@ -193,7 +194,7 @@ class CompanyController extends Controller
             ];
             Mautic::createContact($data);
         }catch(Exception $e){
-
+            return $e;
         }
         if ($request->filled('state')) {
             $company->state_id = $request->state["id"];

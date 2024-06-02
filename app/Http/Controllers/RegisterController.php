@@ -29,7 +29,6 @@ class RegisterController extends Controller
             'surname' => 'required'
         ]);
 
-
         $params = [
             'password' => $request->password,
             'email' => $request->email,
@@ -46,6 +45,10 @@ class RegisterController extends Controller
                 'lastname' => $user->surname,
                 'email' => $user->email,
                 'phone' => $user->phone,
+                'country' => $request->country,
+                'zipcode' => $request->zipcode,
+                'city' => $request->city,
+                'state' => $request->state[0]['names']['en'],
                 'tags' => 'user'
             ];
             Mautic::createContact($data);
@@ -140,7 +143,21 @@ class RegisterController extends Controller
             $user->save();
 
         }
+        try{
+            $data = [
+                'firstname' => $request->name,
+                'lastname' => $request->surname,
+                'email' => $user->email,
+                'country' => $request->country,
+                'zipcode' => $request->zipcode,
+                'city' => $request->city,
+                'state' => $request->state[0]['names']['en'],
+                'tags' => 'guess-user'
+            ];
+            Mautic::createContact($data);
+        }catch(Exception $e){
 
+        }
         Auth::login($user);
 
         return new UserResource($user);

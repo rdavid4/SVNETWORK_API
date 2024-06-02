@@ -16,10 +16,12 @@ class Mautic extends Model
             'firstname' => $data['firstname'],
             'lastname' => $data['lastname'],
             'email' => $data['email'],
-            'company' => $data['company'],
-            'phone' => $data['phone'],
-            'state' => $data['state'],
-            'zipcode' => $data['zipcode'],
+            'company' => $data['company'] ?? null,
+            'phone' => $data['state']?? null,
+            'state' => $data['state']?? null,
+            'country' => $data['country']?? null,
+            'city' => $data['city']?? null,
+            'zipcode' => $data['zipcode'] ?? null,
             'tags' => $data['tags'],
             'ipAddress' => $_SERVER['REMOTE_ADDR']
         ]);
