@@ -25,6 +25,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ZipcodeController;
 use App\Models\AnswerProject;
+use App\Models\Mautic;
 use App\Models\QuestionType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -188,3 +189,6 @@ Route::post('/admin/payments/recharge', [PaymentController::class, 'recharge'])-
 Route::post('/admin/send-lead', [SearchController::class, 'sendLead'])->middleware('auth:sanctum');
 Route::get('/admin/transactions', [TransactionController::class, 'list'])->middleware('auth:sanctum');
 
+
+Route::get('/mautic', [MauticController::class, 'token']);
+Route::get('/mautic/callback', [MauticController::class, 'callback']);
