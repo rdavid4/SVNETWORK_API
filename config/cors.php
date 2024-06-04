@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => ['*','https://website-with-cropper.me'],
 
     'allowed_origins_patterns' => ['*'],
 

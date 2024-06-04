@@ -28,6 +28,7 @@ class CompanyResource extends JsonResource
             'zip_code' => $this->zip_code,
             'verified' => $this->verified,
             'logo_url' => $this->logo_url,
+            'cover_url' => $this->cover_url,
             'state' => $this->state,
             'owners' => $this->users,
             'public_url' => $this->publicUrl,

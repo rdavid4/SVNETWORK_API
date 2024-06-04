@@ -75,6 +75,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Project::class)->orderBy('created_at', 'asc');
     }
+    public function matches(): HasMany
+    {
+        return $this->hasMany(Project::class)->whereHas('matches')->orderBy('created_at', 'asc');
+    }
     public function answers(): BelongsToMany
     {
         return $this->belongsToMany(Answer::class, 'answer_project', 'user_id', 'answer_id');

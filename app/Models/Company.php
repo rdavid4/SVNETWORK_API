@@ -29,7 +29,8 @@ class Company extends Model
         'social_youtube',
         'zip_code',
         'video_url',
-        'logo_url'
+        'logo_url',
+        'cover_url',
     ];
     protected $dates = ['deleted_at'];
     protected static function boot()

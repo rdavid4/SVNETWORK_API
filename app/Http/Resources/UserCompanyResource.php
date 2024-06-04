@@ -38,6 +38,7 @@ class UserCompanyResource extends JsonResource
             "country_id" => $this->country_id,
             "images" => ImageCompanyResource::collection($this->images),
             "logo_url" => $this->logo_url,
+            "cover_url" => $this->cover_url,
             "reviews" => ReviewResource::collection($this->reviews),
             "services" =>  CompanyServiceListResource::collection($this->services),
             'projects' => CompanyProjectsResource::collection($this->projects),

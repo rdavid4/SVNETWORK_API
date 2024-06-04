@@ -343,6 +343,26 @@ class CompanyController extends Controller
 
         return $company;
     }
+    public function storeCover(Company $company, Request $request)
+    {
+        $request->validate([
+            'image' => 'required'
+        ]);
+        // 'required|mimes:doc,docx,odt,pdf|max:2048'
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+
+            $nombreArchivo = $company->id . '/cover-' . uniqid() . '.' . $image->extension();;
+            Storage::disk('companies')->put($nombreArchivo, file_get_contents($image));
+            $urlArchivo = Storage::disk('companies')->url($nombreArchivo);
+            $company->cover_url = $urlArchivo;
+        }
+
+        $company->save();
+
+        return $company;
+    }
 
     public function storeImages(Company $company, Request $request)
     {
