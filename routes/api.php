@@ -155,7 +155,7 @@ Route::post('/admin/companies/{company}/video', [CompanyController::class, 'stor
 Route::get('/admin/users/pro', [UserController::class, 'listPro']);
 Route::get('/admin/users', [UserController::class, 'list']);
 Route::post('/admin/users', [UserController::class, 'store']);
-Route::post('/admin/services/add', [ServiceController::class, 'addService']);
+Route::post('/admin/services/add', [ServiceController::class, 'store']);
 Route::delete('/admin/services/remove', [ServiceController::class, 'removeService']);
 Route::post('/admin/services', [ServiceController::class, 'store']);
 Route::post('/admin/services/{service}/images', [ServiceController::class, 'storeImage']);

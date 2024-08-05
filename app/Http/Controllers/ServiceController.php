@@ -73,8 +73,7 @@ class ServiceController extends Controller
     }
     public function addService(Request $request){
         $request->validate([
-            'company_id' => 'required',
-            'service' => 'required',
+            'name' => 'required'
         ]);
 
         $company = Company::find($request->company_id);
@@ -96,16 +95,16 @@ class ServiceController extends Controller
             'name' => $request->name
         ]);
 
-        if($request->filled('category_id')){
-            $service->category_id = $request->category_id;
-        }
+        // if($request->filled('category_id')){
+        //     $service->category_id = $request->category_id;
+        // }
 
-        if($request->filled('description')){
-            $service->description = $request->description;
-            $service->save();
-        }
+        // if($request->filled('description')){
+        //     $service->description = $request->description;
+        //     $service->save();
+        // }
 
-        return ServiceResource::collection(Service::all());
+        return $service;
     }
 
     public function removeService(Request $request){
