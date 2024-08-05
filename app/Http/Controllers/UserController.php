@@ -187,7 +187,7 @@ class UserController extends Controller
     function checkRobot(Request $request)
     {
         $client = new Client(); // Instancia de Guzzle
-        $secret = '6Ldhxr4pAAAAABRZA1oXE9I3SgHS9syhmt9NpHs3'; // Clave secreta de reCAPTCHA
+        $secret = config('app.recaptcha_secret'); // Clave secreta de reCAPTCHA
         $response = $request->input('response'); // Respuesta de reCAPTCHA
 
 

@@ -60,6 +60,7 @@ return [
     'mautic_url' => env('MAUTIC_URL', 'http://localhost'),
     'mautic_token' => env('MAUTIC_TOKEN', ''),
     'stripe_pk' => env('STRIPE_APP_KEY', ''),
+    'recaptcha_secret' => env('RECAPTCHA_SECRET', ''),
 
     'asset_url' => env('ASSET_URL'),
 
