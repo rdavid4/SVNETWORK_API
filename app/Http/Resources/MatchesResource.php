@@ -16,10 +16,10 @@ class MatchesResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "user" => $this->client->email,
-            "service" => $this->service->name,
-            "company" => $this->company->name,
-            "project" => $this->project->title,
+            "user" => $this->client?->email,
+            "service" => $this->service?->name,
+            "company" => $this->company?->name,
+            "project" => $this->project?->title,
             'date' => $this->created_at->format('m/d/Y h:i A')
         ];
     }
