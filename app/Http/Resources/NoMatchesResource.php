@@ -16,8 +16,8 @@ class NoMatchesResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "user" => $this->client->email,
-            "user_phone" => $this->client->phone,
+            "user" => $this->client?->email,
+            "user_phone" => $this->client?->phone,
             "service" => $this->service?->name,
             "company" => $this->company?->name,
             "project" => $this->project?->title,
