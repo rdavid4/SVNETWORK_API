@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserProjectResource;
+use App\Models\AnswerProject;
 use App\Models\Project;
 use App\Models\Service;
 use Illuminate\Http\Request;
@@ -67,6 +68,8 @@ class ProjectController extends Controller
     }
 
     public function show(Project $project){
+        $openAnswers = AnswerProject::where('project_id', $project->id)->whereNull('answer_id')->get();
+        $project->openAnswers = $openAnswers;
         return new ProjectResource($project);
     }
 }

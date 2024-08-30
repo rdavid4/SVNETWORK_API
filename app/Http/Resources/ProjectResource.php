@@ -20,7 +20,8 @@ class ProjectResource extends JsonResource
             'description' => $this->description,
             'images' => ImageResource::collection($this->images),
             'user' => new UserDataResource($this->user),
-            'answers' => ProjectAnswerResource::collection($this->answers)
+            'answers' => ProjectAnswerResource::collection($this->answers),
+            'openAnswers' => $this->openAnswers
         ];
     }
 }

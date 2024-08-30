@@ -177,6 +177,7 @@ class SearchController extends Controller
 
 
                         }catch (\Stripe\Exception\ApiErrorException $e) {
+
                             $status = false;
                             $payment_message = $e->getError()->message;
                             $payment_code = $e->getError()->decline_code;
@@ -197,6 +198,7 @@ class SearchController extends Controller
                                     'payment_code' => $payment_code,
                                 ]);
                             }
+
                         }
 
                     }

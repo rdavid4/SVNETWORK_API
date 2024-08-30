@@ -13,6 +13,7 @@ class AnswerProject extends Model
         'answer_id',
         'user_id',
         'project_id',
-        'text'
+        'text',
+        'question_text'
     ];
 }
