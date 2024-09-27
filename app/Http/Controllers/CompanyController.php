@@ -638,8 +638,12 @@ class CompanyController extends Controller
         ]);
 
         $company = Company::find($request->company_id);
-        $service = Service::find($request->service_id);
-        $company->services()->where('service_id', $service->id)->delete();
+        $user = auth()->user();
+        if(!$user->companies->where('id', $company->id)->count()){
+            abort(403);
+        }
+
+        $company->services()->detach($request->service_id);
 
         return new UserCompanyResource($company);
     }

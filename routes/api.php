@@ -106,6 +106,8 @@ Route::get('/companies/config/{company}', [CompanyController::class, 'getConfigu
 Route::post('/companies/services/remove', [CompanyController::class, 'destroyService'])->middleware('auth:sanctum');
 Route::post('/companies/services', [CompanyController::class, 'addService'])->middleware('auth:sanctum');
 Route::post('/companies/services/zipcodes', [ServiceController::class, 'zipcodesByRegion'])->middleware('auth:sanctum');
+Route::post('/companies/services/county', [ServiceController::class, 'zipcodesByCounty'])->middleware('auth:sanctum');
+Route::delete('/companies/services/county', [ServiceController::class, 'deleteZipcodesByCounty'])->middleware('auth:sanctum');
 Route::post('/companies/services/states', [CompanyController::class, 'storeStates'])->middleware('auth:sanctum');
 Route::post('/companies/services/zipcodes/update', [ServiceController::class, 'updateZipcodes'])->middleware('auth:sanctum');
 Route::post('/companies/services/zipcodes/all', [ServiceController::class, 'selectAllState'])->middleware('auth:sanctum');

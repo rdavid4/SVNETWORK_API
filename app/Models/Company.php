@@ -67,7 +67,7 @@ class Company extends Model
 
     public function services(): BelongsToMany
     {
-        return $this->belongsToMany(Service::class)->withPivot('pause');
+        return $this->belongsToMany(Service::class)->withPivot('pause')->withTimestamps();
     }
     public function categories(): BelongsToMany
     {

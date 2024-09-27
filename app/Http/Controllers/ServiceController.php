@@ -197,6 +197,49 @@ class ServiceController extends Controller
 
         return $zipcodes;
     }
+    public function zipcodesByCounty(Request $request){
+        $request->validate([
+            'region' => 'required',
+            'state_iso' => 'required',
+            'service_id' => 'required',
+            'company_id' => 'required'
+        ]);
+        //Necesita politica
+        $service = Service::findOrfail($request->service_id);
+        $company = Company::findOrfail($request->company_id);
+
+        $zipcodes = Zipcode::where('region', $request->region)->where('state_iso', $request->state_iso)->get();
+
+        $zipcodes_return = array_map(function($zip)use($service, $request, $company){
+            $service->zipcodes()->syncWithoutDetaching([
+                $zip['id'] => ['company_id' => $company->id, 'region_text' => $request->region,'active' => true, 'state_iso' => $zip['state_iso']]
+            ]);
+        }, $zipcodes->toArray());
+        return 'Ok';
+    }
+    public function deleteZipcodesByCounty(Request $request){
+        $request->validate([
+            'region' => 'required',
+            'state_iso' => 'required',
+            'service_id' => 'required',
+            'company_id' => 'required'
+        ]);
+        //Necesita politica
+
+        $company = Company::findOrfail($request->company_id);
+        $service = $company->services()->where('company_id', $request->company_id)->first();
+        // $zipcodes = Zipcode::where('region', $request->region)->where('state_iso', $request->state_iso)->where('company_id', $request->company_id)->get();
+
+
+        $zipcodes =  $service->zipcodes()
+        ->newPivotStatement()
+        ->where('service_id', $service->id)  // Asegúrate de incluir la clave foránea del modelo principal
+        ->where('region_text', $request->region)
+        ->where('state_iso', $request->state_iso)
+        ->delete();
+
+        return $zipcodes;
+    }
 
     public function updateZipcodes(Request $request){
         $request->validate([
@@ -275,6 +318,7 @@ class ServiceController extends Controller
 
     }
     public function pause(Request $request){
+
         $request->validate([
             'service_id' => 'required',
             'company_id' => 'required',
@@ -283,6 +327,7 @@ class ServiceController extends Controller
 
         $company = Company::find($request->company_id);
         $service = $company->services->where('id', $request->service_id)->first();
+
         $serviceCompany = CompanyService::where('company_id', $company->id)->where('service_id', $service->id)->first();
         $serviceCompany->pause = $request->pause;
         $serviceCompany->save();
