@@ -23,6 +23,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VerificationCodeController;
 use App\Http\Controllers\ZipcodeController;
 use App\Models\AnswerProject;
 use App\Models\Mautic;
@@ -192,6 +193,8 @@ Route::post('/admin/payments/recharge', [PaymentController::class, 'recharge'])-
 Route::post('/admin/send-lead', [SearchController::class, 'sendLead'])->middleware('auth:sanctum');
 Route::get('/admin/transactions', [TransactionController::class, 'list'])->middleware('auth:sanctum');
 
+Route::post('/send-verification-code', [VerificationCodeController::class, 'sendSmsVerification']);
+Route::post('/verification-code', [VerificationCodeController::class, 'verifyCode']);
 
 Route::get('/mautic', [MauticController::class, 'token']);
 Route::get('/mautic/callback', [MauticController::class, 'callback']);
