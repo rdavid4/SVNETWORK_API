@@ -20,9 +20,6 @@ class VerificationCodeController extends Controller
         ]);
 
         $verifiedPhone = VerificationCode::where('phone_number', $request->phone_number)->where('is_verified', true)->first();
-        if( $verifiedPhone ){
-            return response()->json(['message' => 'Verified User'], 200);
-        }
 
         $phoneNumber = $request->input('phone_number');
         $verificationCode = rand(100000, 999999); // Generar un código de 6 dígitos
