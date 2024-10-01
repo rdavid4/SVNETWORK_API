@@ -250,15 +250,21 @@ class ServiceController extends Controller
 
         $service = Service::find($request->service_id);
         if(isset($request->zipcodes)){
+
             $service->companyServiceZip()
             ->where('region_text',$request->region)
             ->where('company_id', $request->company_id)
+            ->where('service_id', $request->service_id)
             ->delete();
 
-            $zipcodes = array_map(function($zip)use($service, $request){
-                $service->zipcodes()->syncWithoutDetaching([
-                    $zip['id'] => ['company_id' => $request->company_id, 'region_text' => $request->region,'active' => true, 'state_iso' => $zip['state_iso']]
-                ]);
+
+
+            return array_map(function($zip)use($service, $request){
+                $service->companyServiceZip()->create(['zipcode_id' => $zip['id'], 'company_id' => $request->company_id, 'region_text' => $request->region,'active' => true, 'state_iso' => $zip['state_iso']]);
+                //  $service->zipcodes()->syncWithoutDetaching([
+                //     $zip['id'] => ['company_id' => $request->company_id, 'region_text' => $request->region,'active' => true, 'state_iso' => $zip['state_iso']]
+                // ]);
+                return $zip['zipcode'];
             }, $request->zipcodes);
 
 
@@ -270,7 +276,7 @@ class ServiceController extends Controller
             //     ]);
             // }
         }
-        return  $zipcodes;
+        // return  $zipcodes;
     }
 
     public function selectAllState(Request $request){
