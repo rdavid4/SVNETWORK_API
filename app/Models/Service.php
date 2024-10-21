@@ -27,7 +27,12 @@ class Service extends Model
     {
         return [
             'slug' => [
-                'source' => 'name'
+                'source' => 'name',
+                'unique' => true,
+                'uniqueSuffix' => function ($slug, $separator, $list) {
+                    // Genera un sufijo numérico que se incrementa automáticamente
+                    return count($list);
+                }
             ]
         ];
     }

@@ -176,7 +176,7 @@ class UserController extends Controller
 
     function emailExist($email)
     {
-        $exist = User::where("email", $email)->whereNotNull('password')->exists();
+        $exist = User::where("email", $email)->exists();
         return $exist;
     }
     function AdminEmailExist($email)

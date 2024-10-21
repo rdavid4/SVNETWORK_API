@@ -40,6 +40,7 @@ class Company extends Model
         // Registering the creating event
         static::creating(function ($model) {
             $model->uuid = Str::uuid(); // Genera un UUID único
+            $model->slug = $model->generateUniqueSlug($model->name);
         });
     }
 
@@ -47,11 +48,27 @@ class Company extends Model
     {
         return [
             'slug' => [
-                'source' => 'name'
+                'source' => 'name',
+                'unique' => true,
+                'separator' => '-',
             ]
         ];
     }
+    private function generateUniqueSlug($name)
+    {
+        // Generar el slug base
+        $slug = Str::slug($name);
+        $originalSlug = $slug;
+        $count = 1;
 
+        // Verificar si el slug ya existe
+        while (self::withTrashed()->where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $count;
+            $count++;
+        }
+
+        return $slug;
+    }
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
@@ -62,7 +79,7 @@ class Company extends Model
     }
     public function projects(): BelongsToMany
     {
-        return $this->BelongsToMany(Project::class)->orderBy('created_at','desc')->withTimestamps();
+        return $this->BelongsToMany(Project::class)->orderBy('created_at', 'desc')->withTimestamps();
     }
 
     public function services(): BelongsToMany
@@ -73,26 +90,29 @@ class Company extends Model
     {
         return $this->belongsToMany(Category::class)->withTimestamps();
     }
-    public function reviews():HasMany
+    public function reviews(): HasMany
     {
-        return $this->hasMany(Review::class)->orderBy('updated_at','desc');
+        return $this->hasMany(Review::class)->orderBy('updated_at', 'desc');
     }
 
-    public function state(){
+    public function state()
+    {
         return $this->belongsTo(State::class);
     }
 
-    public function getPublicUrlAttribute(){
-        return config('app.app_url').'/companies/'.$this->slug;
+    public function getPublicUrlAttribute()
+    {
+        return config('app.app_url') . '/companies/' . $this->slug;
     }
-    public function getReviewRateAttribute(){
+    public function getReviewRateAttribute()
+    {
         $total = 0;
         $countReviews = $this->reviews->count();
-        $sumaReviews = $this->reviews->reduce(function($suma, $review){
+        $sumaReviews = $this->reviews->reduce(function ($suma, $review) {
             return $suma + $review->rate;
-        },0);
+        }, 0);
 
-        if($countReviews > 0){
+        if ($countReviews > 0) {
             $total = $sumaReviews / $countReviews;
         }
 
