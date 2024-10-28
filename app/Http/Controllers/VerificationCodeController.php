@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\VerificationCode;
 use App\Services\TwilioService;
 use Illuminate\Http\Request;
-
+use App\Models\User;
 class VerificationCodeController extends Controller
 {
     public function __construct(TwilioService $twilioService)
@@ -42,13 +42,17 @@ class VerificationCodeController extends Controller
             'code' => 'required',
         ]);
 
+        $user = User::find($request->user_id);
        $verificationCodes = VerificationCode::where('phone_number', $request->phone_number)->get();
        $codeExist = $verificationCodes->where('code', $request->code);
 
         if($codeExist->count() == 1){
+
             $code = $codeExist->first();
             $code->is_verified = true;
             $code->save();
+            $user->verified_phone = true;
+            $user->save();
             return response()->json(['message' => 'Verification successfully!']);
         }else{
             VerificationCode::where('phone_number', $request->phone_number)->delete();

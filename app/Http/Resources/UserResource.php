@@ -24,6 +24,7 @@ class UserResource extends JsonResource
             'is_pro' => $this->pro,
             'is_admin' => $this->is_admin,
             'phone' => $this->phone,
+            'verified_phone' => $this->verified_phone,
             'companies' => CompanyResource::collection($this->companies),
             'projects' => CompanyProjectsResource::collection($this->matches),
             'stripe_client_id' => $this->stripe_client_id,

@@ -119,7 +119,6 @@ class RegisterController extends Controller
             'email' => 'required|email|max:100',
             'google_id'=>'required',
             'name'=>'required',
-            'surname'=>'required',
             'image'=>'required',
         ]);
 

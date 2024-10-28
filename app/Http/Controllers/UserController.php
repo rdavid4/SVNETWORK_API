@@ -51,8 +51,7 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'surname' => 'required'
+            'name' => 'required'
         ]);
 
         $user = auth()->user();
@@ -61,6 +60,9 @@ class UserController extends Controller
 
         if ($request->filled('phone')) {
             $user->phone = $request->phone;
+        }
+        if ($request->filled('verified_phone')) {
+            $user->verified_phone = $request->verified_phone;
         }
 
         if ($request->filled('password')) {

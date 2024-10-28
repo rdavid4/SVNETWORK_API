@@ -9,6 +9,7 @@ use App\Http\Resources\DashboardCompanyResource;
 use App\Http\Resources\ServiceResource;
 use App\Http\Resources\UserCompanyResource;
 use App\Models\Company;
+use App\Models\CompanyServiceState;
 use App\Models\CompanyServiceZip;
 use App\Models\Image;
 use App\Models\Mautic;
@@ -261,15 +262,7 @@ class CompanyController extends Controller
         ]);
         // 'required|mimes:doc,docx,odt,pdf|max:2048'
         $service = Service::find($request->service_id);
-        $service->companyServiceState()->where('company_id', $request->company_id)->delete();
-        if ($request->filled('states')) {
-            if (isset($request->states)) {
-                foreach ($request->states as $key => $state) {
-                    $service->states()->attach([$state['id'] => ["company_id" => $request->company_id]]);
-                }
-            }
-        }
-
+        $service->addStates($request->company_id, $request->states);
 
         $company_id = $request->company_id;
         $states = $service->states()->where('company_id', $company_id)->get();
@@ -605,6 +598,11 @@ class CompanyController extends Controller
 
         $company = Company::find($request->company_id);
         $service = Service::find($request->service);
+        $states = CompanyServiceState::where('company_id', $request->company_id)->get();
+
+        $service->addStates($request->company_id, $states->unique());
+        $zipcodes = CompanyServiceZip::where('company_id', $request->company_id)->pluck('zipcode_id');
+
         $company->services()->syncWithoutDetaching([
             $request->service => [
                 'pause' => 0
