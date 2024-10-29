@@ -36,6 +36,7 @@ class CompanyCreatedNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
+        ->subject('NOTIFICATION - New company')
                     ->line("A new company called ".$this->company->name." was created with address at ". $this->company->address_line1)
                     ->action('Go to Dashboard', url($this->company->link))
                     ->salutation('SVNETWORK.COM');

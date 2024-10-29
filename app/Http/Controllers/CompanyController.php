@@ -15,6 +15,7 @@ use App\Models\Service;
 use App\Models\User;
 use App\Notifications\CompanyCreatedNotification;
 use App\Notifications\CompanyVerifiedNotification;
+use App\Notifications\LicenceVerificationNotification;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -394,6 +395,13 @@ class CompanyController extends Controller
                     'height' => $alto,
                     'size' => $size
                 ]);
+
+                $admins = User::where('is_admin', 1)->get();
+                $link = config('app.app_url') . '/admin/companies/' . $company->id;
+                $company->link = $link;
+                foreach ($admins as $user) {
+                    $user->notify(new LicenceVerificationNotification($company));
+                }
                 return "Imágenes subidas correctamente.";
             } else {
                 return 'no valido';
@@ -434,6 +442,13 @@ class CompanyController extends Controller
                     'height' => $alto,
                     'size' => $size
                 ]);
+
+                $admins = User::where('is_admin', 1)->get();
+                $link = config('app.app_url') . '/admin/companies/' . $company->id;
+                $company->link = $link;
+                foreach ($admins as $user) {
+                    $user->notify(new LicenceVerificationNotification($company));
+                }
                 return "Imágenes subidas correctamente.";
             } else {
                 return 'no valido';

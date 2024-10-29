@@ -36,7 +36,7 @@ class NoMatchesAdminNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-                    ->subject('Alerta: No matches')
+        ->subject('NOTIFICATION - No matches '. $this->data['service']->name)
                     ->line('Alerta:')
                     ->line('No results found for the service '.$this->data['service']->name.' in the state of '. $this->data['zipcode']->state)
                     ->action('Show Dashboard', config('app.app_url').'/admin/matches');

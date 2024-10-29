@@ -35,9 +35,10 @@ class LicenceVerificationNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-        ->theme('default')
-        ->subject('Your Service matches')
-        ->view('mail.company.verification', ['company' => $this->company]);
+        ->subject('NOTIFICATION - Submission for Review from Company')
+        ->line("A new company called ".$this->company->name." has submitted documents for verification")
+        ->action('Go to Dashboard', url($this->company->link))
+        ->salutation('SVNETWORK.COM');
     }
 
     /**

@@ -95,7 +95,7 @@
             <img class="logo" src="{{ config('app.api_url') . '/storage/images/logo.png' }}" alt="SVNetwork Logo">
         </div>
         <div class="logo-container">
-            <h2>Congratulations {{ $user['name'] }}</h2>
+            <h2>Congratulations </h2>
         </div>
 
         <div class="results-container">
@@ -106,9 +106,9 @@
                 opportunities.</p>
             <p>We're thrilled to have you join our community of verified businesses. If you have any questions or need
                 assistance, feel free to reach out to our support team.</p>
-            <p><a href="<?= $user->link ?>" class="cta-button">Show my company profile</a></p>
+            <p><a href="" class="cta-button">Show my company profile</a></p>
             <p>Thank you for using our application!</p>
-            <p>We invite you to review our terms of use for professionals. <a href="<?= $user->link2 ?>">Pro
+            <p>We invite you to review our terms of use for professionals. <a href="">Pro
                     Terms</a>.</p>
         </div>
         <div class="footer">

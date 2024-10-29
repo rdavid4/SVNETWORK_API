@@ -12,6 +12,7 @@ use App\Notifications\UserVerification;
 use App\Models\User;
 use App\Notifications\CompanyCreatedNotification;
 use App\Notifications\CompanyVerifiedNotification;
+use App\Notifications\LicenceVerificationNotification;
 use App\Notifications\MatchesUserNotification;
 use App\Notifications\UserCreatedNotification;
 
@@ -36,19 +37,23 @@ Route::post('reset-password', [ResetPasswordController::class, 'verify'])->name(
 
 Route::get('/notification', function () {
     $user = User::where('email', 'rogerdavid444@gmail.com')->first();
-    $user->link = 'localhost:8000/asdasdadsdadasd.com';
-    $match = Matches::all();
-    $service = Service::find(1);
-    $matches = $service->companyServiceZip
-    ->where('zipcode_id', 16281)
-    ->take(3);
-    $matches = $matches->map(function($match) use($user,$service){
-        return new CompanyResource($match->company);
-    });
+    // $user->link = 'localhost:8000/asdasdadsdadasd.com';
+    // $match = Matches::all();
+    // $service = Service::find(1);
+    // $matches = $service->companyServiceZip
+    // ->where('zipcode_id', 16281)
+    // ->take(3);
+    // $matches = $matches->map(function($match) use($user,$service){
+    //     return new CompanyResource($match->company);
+    // });
 
-    $matches = Company::all()->take(3);
+    // $matches = Company::all()->take(3);
 
-    $data = ['matches' => $matches, 'service'=>$service];
-    //  $user->notify(new MatchesUserNotification($matches));
-    return view('mail.invoice.paid', ['matches' => $data]);
+    // $data = ['matches' => $matches, 'service'=>$service];
+    // //  $user->notify(new MatchesUserNotification($matches));
+    // return view('mail.invoice.paid', ['matches' => $data]);
+    $company = Company::first();
+    // $link = config('app.app_url') . '/admin/companies/'. $company->id;
+    // $company->link = $link;
+    // $user->notify(new LicenceVerificationNotification($company));
 });
