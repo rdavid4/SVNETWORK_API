@@ -56,17 +56,15 @@ class ReviewController extends Controller
         ]);
         return $reply;
     }
-    public function updateReply(ReviewReply $reviewReply, Request $request)
+    public function updateReply(ReviewReply $reviewReplay, Request $request)
     {
-        return $reviewReply;
         $request->validate([
             'description' => 'required'
         ]);
 
-        $reviewReply->description = $request->description;
-
-        $reviewReply->save();
-        return $reviewReply;
+        $reviewReplay->description = $request->description;
+        $reviewReplay->save();
+        return $reviewReplay;
     }
     public function delete(Review $review)
     {
