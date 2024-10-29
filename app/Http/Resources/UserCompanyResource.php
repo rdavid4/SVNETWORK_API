@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -36,7 +37,8 @@ class UserCompanyResource extends JsonResource
             "video_url" => $this->video_url,
             "verified" => $this->verified,
             "country_id" => $this->country_id,
-            "images" => ImageCompanyResource::collection($this->images),
+            "images" => ImageCompanyResource::collection($this->images->where('type',Image::TYPE_IMAGE)),
+            "licence" => new ImageCompanyResource($this->images->where('type',Image::TYPE_LICENCE)->first()),
             "logo_url" => $this->logo_url,
             "cover_url" => $this->cover_url,
             "reviews" => ReviewResource::collection($this->reviews),

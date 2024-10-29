@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -38,9 +39,14 @@ class DashboardCompanyResource extends JsonResource
             "verified" => $this->verified,
             "country_id" => $this->country_id,
             "logo_url" => $this->logo_url,
+            "documents"=> ImageCompanyResource::collection($this->images->where('type',Image::TYPE_DOCUMENT)),
+            "images"=> ImageCompanyResource::collection($this->images->where('type',Image::TYPE_IMAGE)),
+            "licence"=> new ImageCompanyResource($this->images->where('type',Image::TYPE_LICENCE)->first()),
             "services" => CompanyServiceListResource::collection($this->services),
             "format_date" => $this->created_at->format('m/d/Y h:i A'),
-            "updated_at" => $this->updated_at
+            "updated_at" => $this->updated_at,
+            "hasLicence" => $this->licence,
+            "hasInsurance" => $this->insurance
         ];
     }
 }

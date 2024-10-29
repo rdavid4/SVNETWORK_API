@@ -19,6 +19,8 @@ class ImageCompanyResource extends JsonResource
             'url' => $this->urlCompany,
             'width' => $this->width,
             'height' => $this->height,
+            'extension' => $this->extension,
+            'isImage'=>$this->isImage
         ];
     }
 }

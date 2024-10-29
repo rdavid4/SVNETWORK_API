@@ -15,8 +15,8 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(true){
-            return abort(403, 'aasdas');
+        if(!auth()->user()->is_admin){
+            return abort(403, 'Forbidden access');
         }
         return $next($request);
     }
