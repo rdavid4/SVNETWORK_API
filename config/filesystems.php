@@ -50,6 +50,13 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
+        'companies-docs' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/companies/docs'),
+            'url' => env('API_URL').'/storage/companies/docs',
+            'visibility' => 'private',
+            'throw' => false,
+        ],
         'videos' => [
             'driver' => 'local',
             'root' => storage_path('app/public/videos'),

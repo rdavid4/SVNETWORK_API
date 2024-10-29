@@ -31,6 +31,8 @@ class Company extends Model
         'video_url',
         'logo_url',
         'cover_url',
+        'licence',
+        'insurance',
     ];
     protected $dates = ['deleted_at'];
     protected static function boot()

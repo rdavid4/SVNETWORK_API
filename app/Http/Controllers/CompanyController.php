@@ -6,17 +6,13 @@ use App\Http\Resources\CompanyConfigurationResource;
 use App\Http\Resources\CompanyResource;
 use App\Http\Resources\CompanyServiceResource;
 use App\Http\Resources\DashboardCompanyResource;
-use App\Http\Resources\ServiceResource;
 use App\Http\Resources\UserCompanyResource;
 use App\Models\Company;
-use App\Models\CompanyServiceState;
 use App\Models\CompanyServiceZip;
 use App\Models\Image;
 use App\Models\Mautic;
-use App\Models\Project;
 use App\Models\Service;
 use App\Models\User;
-use App\Models\Zipcode;
 use App\Notifications\CompanyCreatedNotification;
 use App\Notifications\CompanyVerifiedNotification;
 use Exception;
@@ -25,6 +21,7 @@ use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
+
     public function list()
     {
         $companies = Company::orderBy('updated_at', 'desc')->get();
@@ -62,6 +59,44 @@ class CompanyController extends Controller
                 $user->notify(new CompanyVerifiedNotification($user));
             }
         }
+        return new CompanyResource($company);
+    }
+    public function verifyLicence(Request $request)
+    {
+        $request->validate([
+            'company_id' => 'required'
+        ]);
+
+        $company = Company::findOrFail($request->company_id);
+        $company->licence = 1;
+        $company->save();
+        // $users = $company->users;
+        // if ($users) {
+        //     foreach ($users as $key => $user) {
+        //         $user->link = config('app.app_url') . '/user/companies/profile';
+        //         $user->link2 = config('app.app_url') . '/legal/pro-terms';
+        //         $user->notify(new CompanyVerifiedNotification($user));
+        //     }
+        // }
+        return new CompanyResource($company);
+    }
+    public function verifyInsurance(Request $request)
+    {
+        $request->validate([
+            'company_id' => 'required'
+        ]);
+
+        $company = Company::findOrFail($request->company_id);
+        $company->insurance = 1;
+        $company->save();
+        // $users = $company->users;
+        // if ($users) {
+        //     foreach ($users as $key => $user) {
+        //         $user->link = config('app.app_url') . '/user/companies/profile';
+        //         $user->link2 = config('app.app_url') . '/legal/pro-terms';
+        //         $user->notify(new CompanyVerifiedNotification($user));
+        //     }
+        // }
         return new CompanyResource($company);
     }
     public function addUser(Request $request)
@@ -180,7 +215,7 @@ class CompanyController extends Controller
             'zip_code' => $request->zip_code
         ]);
 
-        try{
+        try {
             $data = [
                 'firstname' => $user->name,
                 'lastname' => $user->surname,
@@ -194,7 +229,7 @@ class CompanyController extends Controller
                 'tags' => 'company'
             ];
             Mautic::createContact($data);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return $e;
         }
         if ($request->filled('state')) {
@@ -260,9 +295,20 @@ class CompanyController extends Controller
             'service_id' => 'required',
             'company_id' => 'required'
         ]);
-        // 'required|mimes:doc,docx,odt,pdf|max:2048'
+        $company = Company::find($request->company_id);
+        $this->authorize('update', $company);
+
+
         $service = Service::find($request->service_id);
-        $service->addStates($request->company_id, $request->states);
+        $service->companyServiceState()->where('company_id', $request->company_id)->delete();
+        if ($request->filled('states')) {
+            if (isset($request->states)) {
+                foreach ($request->states as $key => $state) {
+                    $service->states()->attach([$state['id'] => ["company_id" => $request->company_id]]);
+                }
+            }
+        }
+
 
         $company_id = $request->company_id;
         $states = $service->states()->where('company_id', $company_id)->get();
@@ -316,12 +362,96 @@ class CompanyController extends Controller
 
         return $company;
     }
+    public function  storeDocument(Company $company, Request $request)
+    {
+
+        $this->authorize('update', $company);
+
+        if ($request->hasFile('images')) {
+            $image = $request->file('images');
+            if ($image->isValid()) {
+                // Realizar acciones con cada imagen, como guardarla en el servidor
+
+                $nombreArchivo = $company->id . '/documents/image-' . uniqid() . '.' . $image->extension();
+                Storage::disk('companies')->put($nombreArchivo, file_get_contents($image));
+                $extension = $image->extension();
+                $size = $image->getSize();
+                $mimetype = $image->getMimeType();
+                $ancho = null;
+                $alto = null;
+                $infoImagen = getimagesize($image);
+
+                if ($infoImagen) {
+                    $ancho = $infoImagen[0]; // Ancho de la imagen
+                    $alto = $infoImagen[1]; // Alto de la imagen
+                }
+                $company->images()->create([
+                    'filename' => $nombreArchivo,
+                    'type' => Image::TYPE_DOCUMENT,
+                    'mime_type' => $mimetype,
+                    'extension' => $extension,
+                    'width' => $ancho,
+                    'height' => $alto,
+                    'size' => $size
+                ]);
+                return "Imágenes subidas correctamente.";
+            } else {
+                return 'no valido';
+            }
+        } else {
+            return "No se encontraron imágenes para subir.";
+        }
+    }
+    public function  storeLicence(Company $company, Request $request)
+    {
+
+        $this->authorize('update', $company);
+
+        if ($request->hasFile('images')) {
+            $image = $request->file('images');
+            if ($image->isValid()) {
+                // Realizar acciones con cada imagen, como guardarla en el servidor
+
+                $nombreArchivo = $company->id . '/documents/image-' . uniqid() . '.' . $image->extension();
+                Storage::disk('companies')->put($nombreArchivo, file_get_contents($image));
+                $extension = $image->extension();
+                $size = $image->getSize();
+                $mimetype = $image->getMimeType();
+                $ancho = null;
+                $alto = null;
+                $infoImagen = getimagesize($image);
+
+                if ($infoImagen) {
+                    $ancho = $infoImagen[0]; // Ancho de la imagen
+                    $alto = $infoImagen[1]; // Alto de la imagen
+                }
+                $company->images()->create([
+                    'filename' => $nombreArchivo,
+                    'type' => Image::TYPE_LICENCE,
+                    'mime_type' => $mimetype,
+                    'extension' => $extension,
+                    'width' => $ancho,
+                    'height' => $alto,
+                    'size' => $size
+                ]);
+                return "Imágenes subidas correctamente.";
+            } else {
+                return 'no valido';
+            }
+        } else {
+            return "No se encontraron imágenes para subir.";
+        }
+    }
+
     public function storeLogo(Company $company, Request $request)
     {
         $request->validate([
             'image' => 'required'
         ]);
-        // 'required|mimes:doc,docx,odt,pdf|max:2048'
+
+
+        //Policy
+        $this->authorize('update', $company);
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -341,7 +471,8 @@ class CompanyController extends Controller
         $request->validate([
             'image' => 'required'
         ]);
-        // 'required|mimes:doc,docx,odt,pdf|max:2048'
+
+        $this->authorize('update', $company);
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -359,6 +490,8 @@ class CompanyController extends Controller
 
     public function storeImages(Company $company, Request $request)
     {
+        $this->authorize('update', $company);
+
         if ($request->hasFile('images')) {
             $imagenes = $request->file('images');
 
@@ -380,26 +513,31 @@ class CompanyController extends Controller
                         $ancho = $infoImagen[0]; // Ancho de la imagen
                         $alto = $infoImagen[1]; // Alto de la imagen
                     }
-                   $company->images()->create([
+                    $company->images()->create([
                         'filename' => $nombreArchivo,
                         'mime_type' => $mimetype,
                         'extension' => $extension,
+                        'type' => Image::TYPE_IMAGE,
                         'width' => $ancho,
                         'height' => $alto,
                         'size' => $size
                     ]);
                     return "Imágenes subidas correctamente.";
-                }else{
+                } else {
                     return 'no valido';
                 }
             }
-
         } else {
             return "No se encontraron imágenes para subir.";
         }
     }
 
-    public function deleteImage(Image $image){
+    public function deleteImage(Image $image)
+    {
+
+        $company = $image->imageable;
+        $this->authorize('deleteImage', $company);
+
         $disk = Storage::disk('companies');
         $image->delete();
         // Verifica si el archivo existe
@@ -598,11 +736,6 @@ class CompanyController extends Controller
 
         $company = Company::find($request->company_id);
         $service = Service::find($request->service);
-        $states = CompanyServiceState::where('company_id', $request->company_id)->get();
-
-        $service->addStates($request->company_id, $states->unique());
-        $zipcodes = CompanyServiceZip::where('company_id', $request->company_id)->pluck('zipcode_id');
-
         $company->services()->syncWithoutDetaching([
             $request->service => [
                 'pause' => 0
@@ -637,7 +770,7 @@ class CompanyController extends Controller
 
         $company = Company::find($request->company_id);
         $user = auth()->user();
-        if(!$user->companies->where('id', $company->id)->count()){
+        if (!$user->companies->where('id', $company->id)->count()) {
             abort(403);
         }
 

@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Storage;
 class Image extends Model
 {
     use HasFactory;
-
+    const TYPE_IMAGE = 1;
+    const TYPE_LICENCE = 2;
+    const TYPE_DOCUMENT = 3;
     protected $fillable = [
         'filename',
         'extension',
@@ -17,23 +19,32 @@ class Image extends Model
         'mime_type',
         'width',
         'height',
-        'size'
+        'size',
+        'type',
     ];
     public function imageable()
     {
         return $this->morphTo();
     }
 
-    public function getSizeMegas(){
+    public function getSizeMegas()
+    {
         return $this->size / (1024 * 1024);
     }
 
-    public function getUrlAttribute(){
+    public function getUrlAttribute()
+    {
         $url = Storage::disk('projects')->url($this->filename);
         return $url;
     }
-    public function getUrlCompanyAttribute(){
+    public function getUrlCompanyAttribute()
+    {
         $url = Storage::disk('companies')->url($this->filename);
         return $url;
+    }
+    public function getIsImageAttribute()
+    {
+        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+        return in_array($this->extension, $imageExtensions);
     }
 }

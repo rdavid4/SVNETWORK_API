@@ -41,6 +41,10 @@ class Service extends Model
     {
         return $this->BelongsTo(Category::class);
     }
+    public function companies():BelongsToMany
+    {
+        return $this->BelongsToMany(Company::class);
+    }
     public function questions():HasMany
     {
         return $this->hasMany(Question::class)->orderBy('id', 'asc');

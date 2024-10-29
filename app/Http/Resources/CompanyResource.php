@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -39,7 +40,7 @@ class CompanyResource extends JsonResource
             'services' => CompanyServiceListResource::collection($this->services),
             'states' => StateResource::collection($this->states),
             'reviews' => ReviewResource::collection($this->reviews),
-            'images' => ImageCompanyResource::collection($this->images),
+            'images' => ImageCompanyResource::collection($this->images->where('type',Image::TYPE_IMAGE)),
             'review_rate' =>  $this->reviewRate,
             'categories' => CategoryResource::collection($this->categories)
         ];
