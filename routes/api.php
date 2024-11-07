@@ -165,7 +165,8 @@ Route::group(['middleware' => 'auth:sanctum', 'isAdmin'], function () {
     Route::get('/admin/users', [UserController::class, 'list']);
     Route::post('/admin/users', [UserController::class, 'store']);
     Route::post('/admin/services/add', [ServiceController::class, 'store']);
-    Route::delete('/admin/services/remove', [ServiceController::class, 'removeService']);
+    Route::post('/admin/companies/services', [ServiceController::class, 'adminStore']);
+    Route::post('/admin/services/remove', [ServiceController::class, 'removeService']);
     Route::post('/admin/services', [ServiceController::class, 'store']);
     Route::post('/admin/services/{service}/images', [ServiceController::class, 'storeImage']);
     Route::delete('/admin/services/{service}', [ServiceController::class, 'destroy']);

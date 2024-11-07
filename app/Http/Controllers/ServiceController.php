@@ -106,6 +106,22 @@ class ServiceController extends Controller
 
         return $service;
     }
+    public function adminStore(Request $request){
+        $request->validate([
+            'company_id' => 'required',
+            'service' => 'required',
+        ]);
+
+        $company = Company::find($request->company_id);
+        $service = Service::find($request->service);
+        $company->services()->syncWithoutDetaching([
+            $request->service => [
+                'pause' => 0
+            ]
+        ]);
+
+         return new DashboardCompanyResource($company);
+    }
 
     public function removeService(Request $request){
         $request->validate([
