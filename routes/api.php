@@ -117,7 +117,7 @@ Route::post('/companies/services/zipcodes/remove', [ServiceController::class, 'r
 Route::post('/companies/services/pause', [ServiceController::class, 'pause'])->middleware('auth:sanctum');
 Route::get('/companies/services/{slug}/{company_id}', [CompanyController::class, 'getService'])->middleware('auth:sanctum');
 Route::get('/companies/{company}/projects', [CompanyController::class, 'projects']);
-Route::post('/companies', [CompanyController::class, 'storeFromRegister'])->middleware('auth:sanctum');
+Route::post('/companies', [CompanyController::class, 'storeFromRegister']);
 Route::put('/companies/{company}', [CompanyController::class, 'update'])->middleware('auth:sanctum');
 Route::post('/companies/{company}/logo', [CompanyController::class, 'storeLogo'])->middleware('auth:sanctum');
 Route::post('/companies/{company}/cover', [CompanyController::class, 'storeCover'])->middleware('auth:sanctum');
