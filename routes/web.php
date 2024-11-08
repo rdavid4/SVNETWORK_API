@@ -49,6 +49,7 @@ Route::get('/notification', function () {
 
     // $matches = Company::all()->take(3);
 
+
     // $data = ['matches' => $matches, 'service'=>$service];
     // //  $user->notify(new MatchesUserNotification($matches));
     // return view('mail.invoice.paid', ['matches' => $data]);

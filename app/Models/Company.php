@@ -83,6 +83,10 @@ class Company extends Model
     {
         return $this->BelongsToMany(Project::class)->orderBy('created_at', 'desc')->withTimestamps();
     }
+    public function leads()
+    {
+        return $this->hasMany(Matches::class, 'company_id', 'id')->orderBy('created_at', 'desc');
+    }
 
     public function services(): BelongsToMany
     {

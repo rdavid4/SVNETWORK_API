@@ -72,4 +72,7 @@ class Project extends Model
     public function matches(){
         return $this->hasMany(Matches::class);
     }
+    public function zipcode(){
+        return $this->belongsTo(Zipcode::class, 'zipcode_id', 'id');
+    }
 }

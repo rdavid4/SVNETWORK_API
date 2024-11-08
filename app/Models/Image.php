@@ -12,6 +12,7 @@ class Image extends Model
     const TYPE_IMAGE = 1;
     const TYPE_LICENCE = 2;
     const TYPE_DOCUMENT = 3;
+    const TYPE_REFUND = 4;
     protected $fillable = [
         'filename',
         'extension',

@@ -65,6 +65,7 @@ Route::post('/auth/renew-password/send', [RenewPasswordController::class, 'send'
 // USER PRIVATE
 Route::post('/user/password', [UserController::class, 'updatePassword'])->middleware('auth:sanctum');
 Route::get('/user/companies', [UserController::class, 'company'])->middleware('auth:sanctum');
+Route::post('/user/companies/refund', [UserController::class, 'requestRefund'])->middleware('auth:sanctum');
 Route::get('/user/projects/{project}', [UserController::class, 'showProject']);
 Route::get('/user/projects', [UserController::class, 'projects']);
 Route::post('/user/image', [UserController::class, 'storeImageAuthUser'])->middleware('auth:sanctum');

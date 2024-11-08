@@ -7,13 +7,19 @@ use App\Http\Resources\DashboardUserResource;
 use App\Http\Resources\UserCompanyResource;
 use App\Http\Resources\UserProjectResource;
 use App\Http\Resources\UserResource;
+use App\Models\Company;
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\Project;
+use App\Models\Matches;
+use App\Models\Service;
+use App\Notifications\RefundRequestNotification;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
+
 class UserController extends Controller
 {
     public function list()
@@ -40,13 +46,11 @@ class UserController extends Controller
         $user = auth()->user();
 
         $company = $user->companies->first();
-        if($company){
+        if ($company) {
             return new UserCompanyResource($company);
-        }else{
-        return abort(404,'Company not found');
+        } else {
+            return abort(404, 'Company not found');
         }
-
-
     }
     public function update(Request $request)
     {
@@ -88,6 +92,64 @@ class UserController extends Controller
             'pro' => 1
         ]);
 
+        return new UserResource($user);
+    }
+    public function requestRefund(Request $request)
+    {
+        $request->validate([
+            'lead_id' => 'required',
+            'reason' => 'required'
+        ]);
+        $lead = Matches::findOrFail($request->lead_id);
+        $service = Service::findOrFail($lead->service_id);
+
+        $user = auth()->user();
+        $admins = User::where('is_admin', 1)->get();
+        $company = Company::findOrFail($lead->company_id);
+
+        $urlArchivo = null;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            if ($image->isValid()) {
+                // Realizar acciones con cada imagen, como guardarla en el servidor
+
+                $nombreArchivo = $company->id . '/refund/image-' . uniqid() . '.' . $image->extension();
+                Storage::disk('companies')->put($nombreArchivo, file_get_contents($image));
+                $urlArchivo = Storage::disk('companies')->url($nombreArchivo);
+                $extension = $image->extension();
+                $size = $image->getSize();
+                $mimetype = $image->getMimeType();
+                $ancho = null;
+                $alto = null;
+                $infoImagen = getimagesize($image);
+
+                if ($infoImagen) {
+                    $ancho = $infoImagen[0]; // Ancho de la imagen
+                    $alto = $infoImagen[1]; // Alto de la imagen
+                }
+                $company->images()->create([
+                    'filename' => $nombreArchivo,
+                    'type' => Image::TYPE_REFUND,
+                    'mime_type' => $mimetype,
+                    'extension' => $extension,
+                    'width' => $ancho,
+                    'height' => $alto,
+                    'size' => $size
+                ]);
+            }
+        }
+        $form = ['description' =>$request->description, 'reason'=>$request->reason];
+        $data = [
+            'service' => $service,
+            'lead' => $lead,
+            'user' => $user,
+            'form' => $form,
+            'image'=> $urlArchivo
+        ];
+
+        foreach ($admins as $admin) {
+            $admin->notify(new RefundRequestNotification($data));
+        }
         return new UserResource($user);
     }
     public function storeGuess(Request $request)
@@ -194,11 +256,11 @@ class UserController extends Controller
 
 
 
-        $response = $client->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [ 'form_params'=>['secret' => $secret, 'response' => $response]]);
+        $response = $client->request('POST', 'https://www.google.com/recaptcha/api/siteverify', ['form_params' => ['secret' => $secret, 'response' => $response]]);
 
         $body = $response->getBody();
         $data = json_decode($body, true);
 
-       return $data;
+        return $data;
     }
 }
