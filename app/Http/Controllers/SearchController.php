@@ -178,7 +178,6 @@ class SearchController extends Controller
                             }
 
                             $status = true;
-
                             $match = Matches::create([
                                 'email' => $user->email,
                                 'user_id' => $user->id,
@@ -186,7 +185,6 @@ class SearchController extends Controller
                                 'project_id' => $project_id,
                                 'service_id' => $service_id
                             ]);
-
                             Transactions::create([
                                 'user_id' => $match->company->users[0]->id,
                                 'project_id' => $project_id,
@@ -213,15 +211,22 @@ class SearchController extends Controller
                             // Puedes registrar el error, mostrar un mensaje al usuario, etc.
                             // Pero el código continuará ejecutándose después de este bloque catch
                             if ($payment_method_id) {
+                                $match = Matches::create([
+                                    'email' => $user->email,
+                                    'user_id' => $user->id,
+                                    'company_id' => $match->company->id,
+                                    'project_id' => $project_id,
+                                    'service_id' => $service_id
+                                ]);
                                 Transactions::create([
                                     'user_id' => $match->company->users[0]->id,
                                     'project_id' => $project_id,
                                     'service_id' => $service->id,
                                     'company_id' => $match->company->id,
                                     'stripe_payment_method' => $payment_method_id,
-                                    'stripe_payment_intent' => $payment->id,
                                     'price' => $service->price,
                                     'paid' => $status,
+                                    'match_id' => $match->id,
                                     'message' => $payment_message,
                                     'payment_code' => $payment_code,
                                 ]);

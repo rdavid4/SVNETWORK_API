@@ -19,6 +19,7 @@ use App\Notifications\RefundRequestNotification;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
+use PhpParser\Node\Expr\Match_;
 
 class UserController extends Controller
 {
@@ -138,6 +139,7 @@ class UserController extends Controller
                 ]);
             }
         }
+
         $form = ['description' =>$request->description, 'reason'=>$request->reason];
         $data = [
             'service' => $service,
@@ -146,6 +148,9 @@ class UserController extends Controller
             'form' => $form,
             'image'=> $urlArchivo
         ];
+
+        $lead->refund_status = Matches::REFUND_REQUESTED;
+        $lead->save();
 
         foreach ($admins as $admin) {
             $admin->notify(new RefundRequestNotification($data));

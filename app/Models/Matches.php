@@ -19,7 +19,6 @@ class Matches extends Model
         'service_id',
         'project_id',
         'user_id',
-        'stripe_payment_intent',
         'refund_status'
     ];
     protected $dates = ['deleted_at'];
