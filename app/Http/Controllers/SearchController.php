@@ -22,6 +22,7 @@ use App\Notifications\NoMatchesAdminNotification;
 use App\Notifications\SendLeadNotification;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class SearchController extends Controller
 {
@@ -107,7 +108,15 @@ class SearchController extends Controller
                 'zipcode' => $zipcode
             ];
             foreach ($admins as $key => $admin) {
-                $admin->notify(new NoMatchesAdminNotification($data));
+                try {
+                    $admin->notify(new NoMatchesAdminNotification($data));
+                } catch (\Exception $e) {
+                    // Capturar el error y almacenarlo en el archivo de log
+                    Log::error('Error occurred: ' . $e->getMessage(), [
+                        'exception' => $e,
+                        'trace' => $e->getTraceAsString(),
+                    ]);
+                }
             }
 
             return [];
@@ -170,13 +179,13 @@ class SearchController extends Controller
 
                             $status = true;
 
-                            // $match = Matches::create([
-                            //     'email' => $user->email,
-                            //     'user_id' => $user->id,
-                            //     'company_id' => $match->company->id,
-                            //     'project_id' => $project_id,
-                            //     'service_id' => $service_id
-                            // ]);
+                            $match = Matches::create([
+                                'email' => $user->email,
+                                'user_id' => $user->id,
+                                'company_id' => $match->company->id,
+                                'project_id' => $project_id,
+                                'service_id' => $service_id
+                            ]);
 
                             Transactions::create([
                                 'user_id' => $match->company->users[0]->id,
@@ -191,9 +200,11 @@ class SearchController extends Controller
                                 'stripe_payment_intent' => $payment->id,
                                 'payment_code' => $payment_code,
                             ]);
-
                         } catch (\Stripe\Exception\ApiErrorException $e) {
-
+                            Log::error('Error matches: ' . $e->getMessage(), [
+                                'exception' => $e,
+                                'trace' => $e->getTraceAsString(),
+                            ]);
                             $status = false;
                             $payment_message = $e->getError()->message;
                             $payment_code = $e->getError()->decline_code;
@@ -219,23 +230,39 @@ class SearchController extends Controller
 
                         $user->link = config('app.app_url') . '/user/companies/profile/projects/' . $project_id;
                         $user->service = $service;
-                        $match->company->users[0]->notify(new MatchesCompanyNotification($user));
+                        try {
+                            $match->company->users[0]->notify(new MatchesCompanyNotification($user));
+                        } catch (\Exception $e) {
+                            // Capturar el error y almacenarlo en el archivo de log
+                            Log::error('Error occurred: ' . $e->getMessage(), [
+                                'exception' => $e,
+                                'trace' => $e->getTraceAsString(),
+                            ]);
+                        }
+
                         return $match->company;
                     } else {
                         return null;
                     }
                 }
             }
-        });//matches map
+        }); //matches map
 
-        $matches =  array_filter($matches->toArray(), function ($value) {
-            return !is_null($value) && $value !== null;
+        $matches = $matches->filter(function ($value) {
+            return !is_null($value);
         });
 
-        dd($matches);
         if (count($matches)) {
             $data = ['matches' => $matches, 'service' => $service];
-            $user->notify(new MatchesUserNotification($data));
+            try {
+                $user->notify(new MatchesUserNotification($data));
+            } catch (\Exception $e) {
+                // Capturar el error y almacenarlo en el archivo de log
+                Log::error('Error occurred: ' . $e->getMessage(), [
+                    'exception' => $e,
+                    'trace' => $e->getTraceAsString(),
+                ]);
+            }
         }
 
         return MatchResource::collection($matches);

@@ -92,6 +92,11 @@ class Company extends Model
     {
         return $this->belongsToMany(Service::class)->withPivot('pause')->withTimestamps();
     }
+
+    public function companyServiceZip():HasMany
+    {
+        return $this->hasMany(CompanyServiceZip::class);
+    }
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class)->withTimestamps();
