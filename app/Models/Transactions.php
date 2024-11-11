@@ -12,12 +12,14 @@ class Transactions extends Model
         'user_id',
         'project_id',
         'service_id',
+        'stripe_payment_intent',
         'stripe_payment_method',
         'price',
         'paid',
         'message',
         'payment_code',
-        'company_id'
+        'company_id',
+        'match_id',
     ];
 
     public function user(){

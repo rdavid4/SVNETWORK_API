@@ -9,13 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Matches extends Model
 {
     use HasFactory;
+    const REFUND_REQUESTED = 0;
+    const REFUND_PAID = 1;
+    const REFUND_DENIED = 2;
 
     protected $fillable =[
         'email',
         'company_id',
         'service_id',
         'project_id',
-        'user_id'
+        'user_id',
+        'stripe_payment_intent',
+        'refund_status'
     ];
     protected $dates = ['deleted_at'];
 
