@@ -56,6 +56,7 @@ Route::post('/auth/register/company', [RegisterController::class, 'registerCompa
 Route::post('/auth/register', [RegisterController::class, 'register']);
 Route::post('/auth/register-guess', [UserController::class, 'storeGuess']);
 Route::post('/auth/register/google', [RegisterController::class, 'registerGoogle']);
+Route::post('/auth/register/google/reviews', [RegisterController::class, 'registerGoogleReviews']);
 Route::post('/auth/login', [LoginController::class, 'login']);
 Route::post('/auth/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
 Route::post('/auth/register/verification', [VerificationController::class, 'verifyEmail'])->middleware('signed');

@@ -56,7 +56,7 @@ class SearchController extends Controller
         $today = Carbon::today();
         $companiesMatchIds = Matches::where('service_id', $service_id)->where('email', $user->email)->whereDate('created_at', $today)->pluck('company_id')
             ->toArray();
-        //2.-Non companies where service is paused
+        //2.- companies where service is paused
         $companiesServicePause = CompanyService::where('service_id', $service_id)->where('pause', 1)->pluck('company_id');
         $companies = Company::all();
 

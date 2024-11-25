@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Models\Review;
 use App\Models\ReviewReply;
+use App\Notifications\NewReviewNotification;
+use Exception;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
@@ -27,6 +29,20 @@ class ReviewController extends Controller
             'user_id' => auth()->id(),
             'rate' => $request->rate
         ]);
+
+        try{
+            $company = Company::findOrFail($request->company_id);
+            $users = $company->users;
+            if ($users) {
+                foreach ($users as $key => $user) {
+                    $user->link = config('app.app_url') . '/user/companies/profile';
+                    $user->notify(new NewReviewNotification($user));
+                }
+            }
+
+        } catch (Exception $e) {
+            return $e;
+        }
 
         return $review;
     }

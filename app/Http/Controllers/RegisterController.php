@@ -162,4 +162,53 @@ class RegisterController extends Controller
         return new UserResource($user);
 
     }
+    function registerGoogleReviews(Request $request){
+
+        $request->validate([
+            'email' => 'required|email|max:100',
+            'google_id'=>'required',
+            'name'=>'required',
+            'image'=>'required',
+        ]);
+
+        $user = User::where('email', $request->get('email'))->first();
+
+        if ($user) {
+            $user->google_id = $request->google_id;
+            $user->image = $request->image;
+            $user->save();
+        }else{
+            $params = [
+                'google_id' => $request->google_id,
+                'name' => $request->name,
+                'surname' => $request->surname,
+                'image' => $request->image,
+                'email' => $request->email
+            ];
+
+            $user = User::create($params);
+            $user->markEmailAsVerified();
+            $user->save();
+
+        }
+        try{
+            $data = [
+                'firstname' => $request->name,
+                'lastname' => $request->surname,
+                'email' => $user->email,
+                'country' => $request->country ?? null,
+                'zipcode' => $request->zipcode ?? null,
+                'city' => $request->city ?? null,
+                'state' => $request->state[0]['names']['en'] ?? null,
+                'tags' => 'guess-user, review'
+            ];
+            Mautic::createContact($data);
+        }catch(Exception $e){
+
+        }
+        Auth::login($user);
+
+        return new UserResource($user);
+
+    }
 }
