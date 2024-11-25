@@ -54,6 +54,7 @@ Route::get('/auth/user/check-email/{email}', [UserController::class, 'emailExist
 Route::post('/check/robot', [UserController::class, 'checkRobot']);
 Route::post('/auth/register/company', [RegisterController::class, 'registerCompany']);
 Route::post('/auth/register', [RegisterController::class, 'register']);
+Route::post('/auth/google/token', [RegisterController::class, 'googleToken']);
 Route::post('/auth/register-guess', [UserController::class, 'storeGuess']);
 Route::post('/auth/register/google', [RegisterController::class, 'registerGoogle']);
 Route::post('/auth/register/google/reviews', [RegisterController::class, 'registerGoogleReviews']);

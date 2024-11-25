@@ -13,14 +13,34 @@ use App\Notifications\CompanyCreatedNotification;
 use App\Notifications\UserCreatedNotification;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Http;
 
 class RegisterController extends Controller
 {
-    public function __construct() {
+    public function __construct() {}
+    function googleToken(Request $request)
+    {
+        try {
+            // Obtén el access token desde la solicitud
+            $accessToken = $request->input('access_token');
 
+            // Usa Socialite para obtener los datos del usuario
+            $googleUser = Socialite::driver('google')->stateless()->userFromToken($accessToken);
+
+            // Retorna los datos del usuario en formato JSON
+            return response()->json([
+                'id' => $googleUser->getId(),
+                'name' => $googleUser->getName(),
+                'email' => $googleUser->getEmail(),
+                'avatar' => $googleUser->getAvatar(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
-
-    function register(Request $request){
+    function register(Request $request)
+    {
         $request->validate([
             'email' => 'required|email|max:100',
             'password' => 'required|min:6',
@@ -39,7 +59,7 @@ class RegisterController extends Controller
 
         $user = User::create($params);
 
-        try{
+        try {
             $data = [
                 'firstname' => $user->name,
                 'lastname' => $user->surname,
@@ -52,8 +72,7 @@ class RegisterController extends Controller
                 'tags' => 'user'
             ];
             Mautic::createContact($data);
-        }catch(Exception $e){
-
+        } catch (Exception $e) {
         }
 
         $verifyUrl = URL::temporarySignedRoute(
@@ -75,7 +94,8 @@ class RegisterController extends Controller
 
         return response()->json(["message" => "Succesful user registration"], 201);
     }
-    function registerCompany(Request $request){
+    function registerCompany(Request $request)
+    {
         $request->validate([
             'name' => 'required',
             'surname' => 'required',
@@ -113,13 +133,14 @@ class RegisterController extends Controller
         $user->notify(new UserCreatedNotification($user));
         return new UserResource($user);
     }
-    function registerGoogle(Request $request){
+    function registerGoogle(Request $request)
+    {
 
         $request->validate([
             'email' => 'required|email|max:100',
-            'google_id'=>'required',
-            'name'=>'required',
-            'image'=>'required',
+            'google_id' => 'required',
+            'name' => 'required',
+            'image' => 'required',
         ]);
 
         $user = User::where('email', $request->get('email'))->first();
@@ -128,7 +149,7 @@ class RegisterController extends Controller
             $user->google_id = $request->google_id;
             $user->image = $request->image;
             $user->save();
-        }else{
+        } else {
             $params = [
                 'google_id' => $request->google_id,
                 'name' => $request->name,
@@ -140,9 +161,8 @@ class RegisterController extends Controller
             $user = User::create($params);
             $user->markEmailAsVerified();
             $user->save();
-
         }
-        try{
+        try {
             $data = [
                 'firstname' => $request->name,
                 'lastname' => $request->surname,
@@ -154,21 +174,20 @@ class RegisterController extends Controller
                 'tags' => 'guess-user'
             ];
             Mautic::createContact($data);
-        }catch(Exception $e){
-
+        } catch (Exception $e) {
         }
         Auth::login($user);
 
         return new UserResource($user);
-
     }
-    function registerGoogleReviews(Request $request){
+    function registerGoogleReviews(Request $request)
+    {
 
         $request->validate([
             'email' => 'required|email|max:100',
-            'google_id'=>'required',
-            'name'=>'required',
-            'image'=>'required',
+            'google_id' => 'required',
+            'name' => 'required',
+            'image' => 'required',
         ]);
 
         $user = User::where('email', $request->get('email'))->first();
@@ -177,7 +196,7 @@ class RegisterController extends Controller
             $user->google_id = $request->google_id;
             $user->image = $request->image;
             $user->save();
-        }else{
+        } else {
             $params = [
                 'google_id' => $request->google_id,
                 'name' => $request->name,
@@ -189,9 +208,8 @@ class RegisterController extends Controller
             $user = User::create($params);
             $user->markEmailAsVerified();
             $user->save();
-
         }
-        try{
+        try {
             $data = [
                 'firstname' => $request->name,
                 'lastname' => $request->surname,
@@ -203,12 +221,10 @@ class RegisterController extends Controller
                 'tags' => 'guess-user, review'
             ];
             Mautic::createContact($data);
-        }catch(Exception $e){
-
+        } catch (Exception $e) {
         }
         Auth::login($user);
 
         return new UserResource($user);
-
     }
 }

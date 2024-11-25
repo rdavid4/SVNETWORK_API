@@ -35,5 +35,10 @@ return [
         'token' => env('TWILIO_AUTH_TOKEN'),
         'phone_number' => env('TWILIO_PHONE_NUMBER'),
     ],
+    'google' => [
+    'client_id' => env('GOOGLE_CLIENT_ID'),
+    'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+    'redirect' => env('GOOGLE_CALLBACK_URL'),
+],
 
 ];
