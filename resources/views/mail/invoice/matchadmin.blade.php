@@ -143,7 +143,7 @@
                 This email was sent by SVNetwork. For legal information and email alerts, visit our <a
                     href="{{ config('app.app_url') . '/legal/terms' }}">Terms & Conditions</a>.
             </p>
-            <p class="disclaimer">SVNetwork | Registered Address: 123 Main St, City, Country</p>
+
         </div>
         <div>
             <h2>Looking for your next home improvement project? Here are some of the most in-demand services in your
