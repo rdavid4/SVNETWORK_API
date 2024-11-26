@@ -40,7 +40,7 @@ Route::get('/notification', function () {
     $user = User::where('email', 'rogerdavid444@gmail.com')->first();
     $company = Company::first();
     $servicesId = Project::pluck('service_id')->unique()->values();
-    $servicesTrend = Service::whereIn('id', $servicesId)->get();
+    $servicesTrend = Service::whereIn('id', $servicesId)->take(6)->get();
     $data = [
         'company_name' => 'company name',
         'company_phone' => '13123123123123',

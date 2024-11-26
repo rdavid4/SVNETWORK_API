@@ -303,7 +303,7 @@ class SearchController extends Controller
         $nomatch = NoMatches::find($request->nomatch);
         $service = Service::withTrashed()->find($nomatch->service_id);
         $servicesId = Project::pluck('service_id')->unique()->values();
-        $servicesTrend = Service::whereIn('id', $servicesId)->get();
+        $servicesTrend = Service::whereIn('id', $servicesId)->take(6)->get();
         $data = [
             'company_name' => $request->name,
             'company_phone' => $request->phone,
