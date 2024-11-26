@@ -69,49 +69,103 @@
             font-size: 12px;
             color: #777;
         }
-        .logo{
+
+        .logo {
             width: 200px;
         }
-        .logo-container{
+
+        .logo-container {
             width: 100%;
             padding: 15px 0;
             text-align: center;
             background-color: rgb(255, 255, 255);
         }
+
         .logo-container img {
             max-width: 100%;
             height: auto;
         }
 
+         /* Estilos generales */
+    ul {
+      padding: 0;
+      margin: 0;
+      list-style-type: none;
+    }
+    li {
+      padding: 10px;
+      background-color: #f0f0f0;
+      margin-bottom: 10px;
+    }
+
+    /* Estilos para pantallas grandes */
+    @media (min-width: 600px) {
+      .columns {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+    }
+
+    /* Estilos para pantallas móviles */
+    @media (max-width: 599px) {
+      .columns {
+        display: block;
+      }
+      li {
+        width: 100%;
+      }
+    }
     </style>
 </head>
 
 <body>
     <div class="container">
 
-        <div class="logo-container" >
-                <img class="logo" src="{{config('app.api_url').'/storage/images/logo.png'}}" alt="SVNetwork Logo">
+        <div class="logo-container">
+            <img class="logo" src="{{ config('app.api_url') . '/storage/images/logo.png' }}" alt="SVNetwork Logo">
         </div>
-        <div class="logo-container" >
-            <h2>Your matches for service {{$company['service']['name']}}</h2>
+        <div class="logo-container">
+            <h2>We’ve found these results for your {{ $company['service']['name'] }} project</h2>
         </div>
 
         <div class="results-container">
 
             <div class="company">
-                <h3>Company name: {{$company['company_name']}}</h3>
-                <p>Phone: <a href="tel:+{{$company['company_phone']}}"> {{$company['company_phone']}}</a> </p>
-                <p>Address: {{$company['company_address']}}</p>
+                <h3>Company name: {{ $company['company_name'] }}</h3>
+                <p>Phone: <a href="tel:+{{ $company['company_phone'] }}"> {{ $company['company_phone'] }}</a> </p>
+                <p>Address: {{ $company['company_address'] }}</p>
             </div>
 
         </div>
         <div class="footer">
             <p class="disclaimer">
-                This email was sent by SVNetwork. For legal information and email alerts, visit our <a href="{{config('app.app_url').'/legal/terms'}}">Terms & Conditions</a>.
+                This email was sent by SVNetwork. For legal information and email alerts, visit our <a
+                    href="{{ config('app.app_url') . '/legal/terms' }}">Terms & Conditions</a>.
             </p>
             <p class="disclaimer">SVNetwork | Registered Address: 123 Main St, City, Country</p>
         </div>
+        <div>
+            <h2>Looking for your next home improvement project? Here are some of the most in-demand services in your
+                area:</h2>
+                <ul class="columns">
+            @foreach ($company['services'] as $service)
+                    <li style="width: 100%">
+                        <a href="https://app.thesvnetwork.com/search/{{$service->slug}}" style="width: 100%">
+                            <div style="width: 100%">
+                                <img src="{{ $service->image }}" alt="Logo {{ $service->name }}" style="border-radius: 15px; width: 100%; max-width: 200px;">
+                                <h3>{{ $service->name }}</h3>
+                            </div>
+                        </a>
+                    </li>
+
+            @endforeach
+                </ul>
+
+        </div>
     </div>
+
+
 
 </body>
 

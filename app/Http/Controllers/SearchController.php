@@ -23,6 +23,7 @@ use App\Notifications\SendLeadNotification;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use League\OAuth1\Client\Server\Server;
 
 class SearchController extends Controller
 {
@@ -301,11 +302,14 @@ class SearchController extends Controller
         ]);
         $nomatch = NoMatches::find($request->nomatch);
         $service = Service::withTrashed()->find($nomatch->service_id);
+        $servicesId = Project::pluck('service_id')->unique()->values();
+        $servicesTrend = Service::whereIn('id', $servicesId)->get();
         $data = [
             'company_name' => $request->name,
             'company_phone' => $request->phone,
             'company_address' => $request->address,
-            'service' => $service
+            'service' => $service,
+            'services' => $servicesTrend
         ];
         if ($nomatch) {
             $user = User::where('email', $nomatch->email)->first();
