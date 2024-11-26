@@ -37,6 +37,9 @@ Route::post('reset-password', [ResetPasswordController::class, 'verify'])->name(
 
 Route::get('/notification', function () {
     $user = User::where('email', 'rogerdavid444@gmail.com')->first();
+    $user->link = config('app.app_url') . '/user/companies/profile';
+    $user->link2 = config('app.app_url') . '/legal/pro-terms';
+    return view('mail.company.verification', ['user' => $user]);
     // $user->link = 'localhost:8000/asdasdadsdadasd.com';
     // $match = Matches::all();
     // $service = Service::find(1);

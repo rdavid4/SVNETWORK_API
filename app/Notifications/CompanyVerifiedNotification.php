@@ -38,7 +38,7 @@ class CompanyVerifiedNotification extends Notification
     {
         return (new MailMessage)
         ->theme('default')
-        ->subject('Your Service matches')
+        ->subject('Your company has been successfully verified')
         ->view('mail.company.verification', ['user' => $this->user]);
 
     //     return (new MailMessage)
