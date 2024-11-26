@@ -131,9 +131,9 @@ Route::post('/companies/{company}/video', [CompanyController::class, 'storeVideo
 Route::get('/companies/{company}/reviews', [CompanyController::class, 'reviews'])->middleware('auth:sanctum');
 
 //PROJECTS
-Route::post('/projects/images', [ProjectController::class, 'storeImage']);
-Route::post('/projects', [ProjectController::class, 'store']);
-Route::get('/projects/{project}', [ProjectController::class, 'show']);
+Route::post('/projects/images', [ProjectController::class, 'storeImage'])->middleware('auth:sanctum');
+Route::post('/projects', [ProjectController::class, 'store'])->middleware('auth:sanctum');
+Route::get('/projects/{project}', [ProjectController::class, 'show'])->middleware('auth:sanctum');
 
 //ANSWERS
 Route::post('/answers', [AnswerProjectController::class, 'store'])->middleware('auth:sanctum');

@@ -510,12 +510,12 @@ class CompanyController extends Controller
         if ($request->hasFile('images')) {
             $imagenes = $request->file('images');
 
-            foreach ($imagenes as $image) {
+            foreach ($imagenes as $key => $image ) {
 
                 if ($image->isValid()) {
                     // Realizar acciones con cada imagen, como guardarla en el servidor
 
-                    $nombreArchivo = $company->id . '/projects/image-' . uniqid() . '.' . $image->extension();
+                    $nombreArchivo = $company->id . '/projects/image-' . uniqid($key) . '.' . $image->extension();
                     Storage::disk('companies')->put($nombreArchivo, file_get_contents($image));
                     $extension = $image->extension();
                     $size = $image->getSize();
@@ -537,11 +537,13 @@ class CompanyController extends Controller
                         'height' => $alto,
                         'size' => $size
                     ]);
-                    return "Imágenes subidas correctamente.";
+
                 } else {
-                    return 'no valido';
+
                 }
             }
+
+            return "Image uploaded.";
         } else {
             return "No se encontraron imágenes para subir.";
         }
