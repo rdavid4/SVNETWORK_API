@@ -71,39 +71,48 @@ class ProjectController extends Controller
         }
     }
 
-    public function show(Project $project){
+    public function show(Project $project)
+    {
         $openAnswers = AnswerProject::where('project_id', $project->id)->whereNull('answer_id')->get();
         $project->openAnswers = $openAnswers;
         $user = auth()->user();
         $userCompaniesIds = $user->companies->pluck('id');
         $match = $project->matches->whereIn('company_id', $userCompaniesIds)->first();
-        if( !$match ){
+        if (!$match) {
             abort(403);
         }
         $project->show_contact = $match->show_contact;
         return new ProjectResource($project);
     }
-    public function showContact(Matches $match){
+    public function showContact(Matches $match)
+    {
         $user = auth()->user();
         $company = $match->company;
-        if($company->users->whereIn('id', $user->id)->count() == 0){
+        if ($company->users->whereIn('id', $user->id)->count() == 0) {
             abort(403);
         }
 
         $match->show_contact = date('Y-m-d H:i:s');
         $match->save();
-        return new UserDataResource($match->client);
+        if ($match->client) {
+            return new UserDataResource($match->client);
+        } else {
+            return null;
+        }
     }
-    public function showContactCheck(Matches $match){
+    public function showContactCheck(Matches $match)
+    {
         $user = auth()->user();
         $company = $match->company;
-        if($company->users->whereIn('id', $user->id)->count() == 0){
+        if ($company->users->whereIn('id', $user->id)->count() == 0) {
             abort(403);
         }
 
-        if($match->show_contact ){
-            return new UserDataResource($match->client);
-        }else{
+        if ($match->show_contact) {
+            if ($match->client) {
+                return new UserDataResource($match->client);
+            }
+        } else {
             return null;
         }
     }
