@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\UserDataResource;
 use App\Http\Resources\UserProjectResource;
 use App\Models\AnswerProject;
+use App\Models\Matches;
 use App\Models\Project;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Zipcode;
+use DateTime;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
@@ -70,6 +74,37 @@ class ProjectController extends Controller
     public function show(Project $project){
         $openAnswers = AnswerProject::where('project_id', $project->id)->whereNull('answer_id')->get();
         $project->openAnswers = $openAnswers;
+        $user = auth()->user();
+        $userCompaniesIds = $user->companies->pluck('id');
+        $match = $project->matches->whereIn('company_id', $userCompaniesIds)->first();
+        if( !$match ){
+            abort(403);
+        }
+        $project->show_contact = $match->show_contact;
         return new ProjectResource($project);
+    }
+    public function showContact(Matches $match){
+        $user = auth()->user();
+        $company = $match->company;
+        if($company->users->whereIn('id', $user->id)->count() == 0){
+            abort(403);
+        }
+
+        $match->show_contact = date('Y-m-d H:i:s');
+        $match->save();
+        return new UserDataResource($match->client);
+    }
+    public function showContactCheck(Matches $match){
+        $user = auth()->user();
+        $company = $match->company;
+        if($company->users->whereIn('id', $user->id)->count() == 0){
+            abort(403);
+        }
+
+        if($match->show_contact ){
+            return new UserDataResource($match->client);
+        }else{
+            return null;
+        }
     }
 }

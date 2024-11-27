@@ -134,6 +134,8 @@ Route::get('/companies/{company}/reviews', [CompanyController::class, 'reviews']
 Route::post('/projects/images', [ProjectController::class, 'storeImage'])->middleware('auth:sanctum');
 Route::post('/projects', [ProjectController::class, 'store'])->middleware('auth:sanctum');
 Route::get('/projects/{project}', [ProjectController::class, 'show'])->middleware('auth:sanctum');
+Route::get('/matches/{match}/contact/check', [ProjectController::class, 'showContactCheck'])->middleware('auth:sanctum');
+Route::get('/matches/{match}/contact', [ProjectController::class, 'showContact'])->middleware('auth:sanctum');
 
 //ANSWERS
 Route::post('/answers', [AnswerProjectController::class, 'store'])->middleware('auth:sanctum');

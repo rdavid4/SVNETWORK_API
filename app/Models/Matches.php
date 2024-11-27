@@ -19,7 +19,8 @@ class Matches extends Model
         'service_id',
         'project_id',
         'user_id',
-        'refund_status'
+        'refund_status',
+        'show_contact'
     ];
     protected $dates = ['deleted_at'];
 
