@@ -87,6 +87,7 @@ Route::get('/system/zipcode/{zipcode}', [ZipcodeController::class, 'show']);
 Route::get('/system/zipcode', [ZipcodeController::class, 'list']);
 
 //SEARCH
+Route::post('/search/custom/{noMatches}', [SearchController::class, 'searchCustom']);
 Route::post('/search', [SearchController::class, 'search']);
 
 //PAYMENTS

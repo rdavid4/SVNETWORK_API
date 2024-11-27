@@ -97,7 +97,7 @@ class SearchController extends Controller
             if ($companiesMatchIds) {
                 abort(422, 'Service Repeated');
             }
-            NoMatches::create([
+            $nomatch = NoMatches::create([
                 'email' => $user->email,
                 'user_id' => $user->id,
                 'project_id' => $project_id,
@@ -120,7 +120,7 @@ class SearchController extends Controller
                 }
             }
 
-            return [];
+            return $nomatch;
         }
 
 
@@ -272,6 +272,12 @@ class SearchController extends Controller
         }
 
         return MatchResource::collection($matches);
+    }
+
+    public function searchCustom(NoMatches $noMatches){
+        $noMatches->requested_lead = date('Y-m-d H:i:s');
+        $noMatches->save();
+        return 'ok';
     }
 
     function noMatchesList()
