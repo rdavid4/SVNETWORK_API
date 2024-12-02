@@ -7,6 +7,8 @@ use App\Http\Resources\CompanyResource;
 use App\Http\Resources\CompanyServiceResource;
 use App\Http\Resources\DashboardCompanyResource;
 use App\Http\Resources\UserCompanyResource;
+use App\Jobs\ConvertImageJob;
+use App\Jobs\ConvertVideoJob;
 use App\Models\Company;
 use App\Models\CompanyServiceZip;
 use App\Models\Image;
@@ -514,8 +516,12 @@ class CompanyController extends Controller
 
                 if ($image->isValid()) {
                     // Realizar acciones con cada imagen, como guardarla en el servidor
-
                     $nombreArchivo = $company->id . '/projects/image-' . uniqid($key) . '.' . $image->extension();
+                    $fullPath = Storage::disk('companies')->path($nombreArchivo);
+
+                    //Procesado de imagen
+                    ConvertImageJob::dispatch($fullPath);
+
                     Storage::disk('companies')->put($nombreArchivo, file_get_contents($image));
                     $extension = $image->extension();
                     $size = $image->getSize();
@@ -578,13 +584,16 @@ class CompanyController extends Controller
         if ($video->isValid()) {
             // Generar un nombre único para el archivo de video
             $nombreArchivo = '/video-' . uniqid() . '.' . $video->getClientOriginalExtension();
-            $patch = $company->id . '/' . $nombreArchivo;
+            $path = $company->id . '/' . $nombreArchivo;
+            $fullPath = Storage::disk('companies')->path($path);
+
             try {
                 // Guardar el archivo de video en el disco 'companies'
                 $video->storeAs($company->id, $nombreArchivo, 'companies');
+                ConvertVideoJob::dispatch($fullPath);
 
                 // Obtener la URL del archivo de video almacenado
-                $urlArchivo = Storage::disk('companies')->url($patch);
+                $urlArchivo = Storage::disk('companies')->url($path);
 
                 // Actualizar la URL del video en el modelo $company
                 $company->video_url = $urlArchivo;
