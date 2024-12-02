@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Models\Review;
 use App\Models\ReviewReply;
+use App\Models\User;
 use App\Notifications\NewReviewNotification;
+use App\Notifications\ReportedReviewNotification;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -89,9 +91,18 @@ class ReviewController extends Controller
     }
 
     public function report(Review $review){
+        $company = $review->company;
+        $admins = User::where('is_admin', 1)->get();
+        $link = config('app.app_url') . '/companies/' . $company->slug;
+        $company->link = $link;
+        $company->review = $review->description;
         $review->reported = true;
         $review->save();
+        foreach ($admins as $user) {
+            $user->notify(new ReportedReviewNotification($company));
+        }
 
-        return $review;
+
+        return 'Report Success';
     }
 }
