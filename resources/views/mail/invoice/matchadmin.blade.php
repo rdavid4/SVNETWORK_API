@@ -130,7 +130,9 @@
         </div>
 
         <div class="results-container">
-
+            <div style="padding: 8px">
+                {{ $company['message'] }}
+            </div>
             <div class="company">
                 <h3>Company name: {{ $company['company_name'] }}</h3>
                 <p>Phone: <a href="tel:+{{ $company['company_phone'] }}"> {{ $company['company_phone'] }}</a> </p>

@@ -16,7 +16,11 @@ class NoMatches extends Model
         'service_id',
         'project_id',
         'user_id',
-        'requested_lead'
+        'requested_lead',
+        'company_name',
+        'company_phone',
+        'company_email',
+        'message',
     ];
     public function service():BelongsTo
     {
