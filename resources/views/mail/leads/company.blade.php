@@ -25,7 +25,7 @@
                 <strong>{{ $data['service']->name }}</strong> services, and we believe your company might be the perfect fit.
             </p>
             <p style="color: #555555;">
-                We found your business online and believe it matches the client’s needs. Here's the best part: this lead is completely <strong>free</strong> and comes with no strings attached.
+                At this moment, we don’t have a registered company offering this service in this area in our database. However, we selected your business because we believe it could be a great fit for this client’s needs.
             </p>
             <p style="background-color: #8bfffd; padding: 10px; border-radius: 8px; font-weight: bold; color: #333333;">
                 Take advantage of this opportunity to connect with a new client!
