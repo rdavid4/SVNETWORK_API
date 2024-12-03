@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\MatchProcessed;
-use App\Http\Resources\CompanyResource;
 use App\Http\Resources\MatchesResource;
 use App\Http\Resources\MatchResource;
 use App\Http\Resources\NoMatchesResource;
+use App\Http\Resources\ProjectResource;
 use App\Models\CompanyService;
 use App\Models\Matches;
 use App\Models\Company;
@@ -20,10 +19,11 @@ use App\Notifications\MatchesCompanyNotification;
 use App\Notifications\MatchesUserNotification;
 use App\Notifications\NoMatchesAdminNotification;
 use App\Notifications\SendLeadNotification;
+use App\Notifications\SendLeadToCompanyNotification;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Log;
-use League\OAuth1\Client\Server\Server;
 
 class SearchController extends Controller
 {
@@ -274,7 +274,8 @@ class SearchController extends Controller
         return MatchResource::collection($matches);
     }
 
-    public function searchCustom(NoMatches $noMatches){
+    public function searchCustom(NoMatches $noMatches)
+    {
         $noMatches->requested_lead = date('Y-m-d H:i:s');
         $noMatches->save();
         return 'ok';
@@ -305,26 +306,46 @@ class SearchController extends Controller
             'phone' => 'required',
             'address' => 'required',
             'nomatch' => 'required',
+            'email' => 'required',
         ]);
         $nomatch = NoMatches::find($request->nomatch);
         $service = Service::withTrashed()->find($nomatch->service_id);
         $servicesId = Project::pluck('service_id')->unique()->values();
         $servicesTrend = Service::whereIn('id', $servicesId)->take(6)->get();
+
+
+        $nomatch->company_name = $request->name;
+        $nomatch->company_phone = $request->phone;
+        $nomatch->company_email = $request->email;
+        $nomatch->message = $request->message ?? '';
+        $nomatch->save();
+
         $data = [
             'company_name' => $request->name,
             'company_phone' => $request->phone,
             'company_address' => $request->address,
             'service' => $service,
-            'services' => $servicesTrend
+            'services' => $servicesTrend,
+            'email' => $request->email,
+            'message' => $request->message ?? ''
         ];
+
         if ($nomatch) {
             $user = User::where('email', $nomatch->email)->first();
             if ($user) {
                 $user->notify(new SendLeadNotification($data));
                 $nomatch->done = 1;
                 $nomatch->save();
-                return 'ok';
+                $project = Project::find($nomatch->project_id);
+                $project =  new ProjectResource($project);
+
+                $project->company_name = $request->name;
+
+                Notification::route('mail', $request->email)->notify(new SendLeadToCompanyNotification($project));
             }
+
+
+            return 'ok';
         } else {
             abort(422, 'User dows not exist');
         }
