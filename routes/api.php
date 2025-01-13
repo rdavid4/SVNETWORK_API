@@ -102,12 +102,13 @@ Route::get('/user/payments/week', [PaymentController::class, 'totalWeek'])->midd
 //COMPANIES
 Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug']);
 Route::get('/companies/config/{company}', [CompanyController::class, 'getConfiguration'])->middleware('auth:sanctum');
-Route::post('/companies/services/remove', [CompanyController::class, 'destroyService'])->middleware('auth:sanctum');
+Route::post('/companies/services/remove', [CompanyController::class, 'detachService'])->middleware('auth:sanctum');
 Route::post('/companies/services', [CompanyController::class, 'addService'])->middleware('auth:sanctum');
 Route::post('/companies/services/zipcodes', [ServiceController::class, 'zipcodesByRegion'])->middleware('auth:sanctum');
 Route::post('/companies/services/county', [ServiceController::class, 'zipcodesByCounty'])->middleware('auth:sanctum');
 Route::delete('/companies/services/county', [ServiceController::class, 'deleteZipcodesByCounty'])->middleware('auth:sanctum');
-Route::post('/companies/services/states', [CompanyController::class, 'storeStates'])->middleware('auth:sanctum');
+Route::post('/companies/services/states/remove', [CompanyController::class, 'removeState'])->middleware('auth:sanctum');
+Route::post('/companies/services/states', [CompanyController::class, 'storeState'])->middleware('auth:sanctum');
 Route::post('/companies/services/zipcodes/update', [ServiceController::class, 'updateZipcodes'])->middleware('auth:sanctum');
 Route::post('/companies/services/zipcodes/all', [ServiceController::class, 'selectAllState'])->middleware('auth:sanctum');
 Route::post('/companies/services/zipcodes/remove', [ServiceController::class, 'removeAllState'])->middleware('auth:sanctum');
@@ -191,6 +192,7 @@ Route::group(['middleware' => 'auth:sanctum', 'isAdmin'], function () {
     Route::get('/admin/dashboard/services', [DashboardController::class, 'topServices']);
     Route::get('/admin/dashboard/stats', [DashboardController::class, 'getStats']);
 
+    Route::post('/admin/companies/welcome-notification', [CompanyController::class, 'companyWelcomeNotification']);
     Route::get('/admin/companies/services/{slug}/{company_id}', [CompanyController::class, 'getService']);
     Route::post('/admin/companies/services/states', [CompanyController::class, 'storeStates']);
     Route::post('/admin/companies/services/zipcodes', [ServiceController::class, 'zipcodesByRegion']);

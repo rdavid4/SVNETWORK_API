@@ -10,6 +10,7 @@ use App\Http\Resources\UserCompanyResource;
 use App\Jobs\ConvertImageJob;
 use App\Jobs\ConvertVideoJob;
 use App\Models\Company;
+use App\Models\CompanyServiceState;
 use App\Models\CompanyServiceZip;
 use App\Models\Image;
 use App\Models\Mautic;
@@ -292,25 +293,35 @@ class CompanyController extends Controller
         return new CompanyResource($company);
     }
 
-    public function storeStates(Request $request)
+    public function storeState(Request $request)
     {
         $request->validate([
             'service_id' => 'required',
+            'state_id' => 'required',
             'company_id' => 'required'
         ]);
         $company = Company::find($request->company_id);
         $this->authorize('update', $company);
 
-
         $service = Service::find($request->service_id);
-        $service->companyServiceState()->where('company_id', $request->company_id)->delete();
-        if ($request->filled('states')) {
-            if (isset($request->states)) {
-                foreach ($request->states as $key => $state) {
-                    $service->states()->attach([$state['id'] => ["company_id" => $request->company_id]]);
-                }
-            }
+
+
+        $user = auth()->user();
+
+        if (!$user->companies->where('id', $company->id)->count()) {
+            abort(403);
         }
+
+        $service->states()->attach([$request->state_id => ["company_id" => $request->company_id]]);
+
+        // $service->companyServiceState()->where('company_id', $request->company_id)->delete();
+        // if ($request->filled('states')) {
+        //     if (isset($request->states)) {
+        //         foreach ($request->states as $key => $state) {
+        //             $service->states()->attach([$state['id'] => ["company_id" => $request->company_id]]);
+        //         }
+        //     }
+        // }
 
 
         $company_id = $request->company_id;
@@ -326,6 +337,68 @@ class CompanyController extends Controller
                     return $zipcodes->zipcode;
                 });
 
+                return ["name" => $region["name"], "zipcodes" => $serviceZipCodes, "zipTotal" => count($serviceZipCodes)];
+            });
+
+            $zipcodesCount = 0;
+            $zipcodesCount = collect($state->regions)->reduce(function ($sum, $region) {
+                return $sum + count($region['zipcodes']);
+            }, 0);
+
+            $state->areasTotal = $zipcodesCount;
+            // if($state->region->zipcodes){
+            //     $state->region_count = 3;
+            // }
+            return $state;
+        });
+        $service->states = $states;
+        return new CompanyServiceResource($service);
+    }
+    public function removeState(Request $request)
+    {
+        $request->validate([
+            'service_id' => 'required',
+            'state_id' => 'required',
+            'company_id' => 'required'
+        ]);
+        $company = Company::find($request->company_id);
+        $this->authorize('update', $company);
+
+        $service = Service::find($request->service_id);
+
+
+        $user = auth()->user();
+
+        if (!$user->companies->where('id', $company->id)->count()) {
+            abort(403);
+        }
+
+        CompanyServiceState::where('service_id', $service->id)
+            ->where('company_id', $request->company_id)
+            ->where('state_id', $request->state_id)
+            ->delete();
+        // $service->companyServiceState()->where('company_id', $request->company_id)->delete();
+        // if ($request->filled('states')) {
+        //     if (isset($request->states)) {
+        //         foreach ($request->states as $key => $state) {
+        //             $service->states()->attach([$state['id'] => ["company_id" => $request->company_id]]);
+        //         }
+        //     }
+        // }
+
+
+        $company_id = $request->company_id;
+        $states = $service->states()->where('company_id', $company_id)->get();
+        $states->map(function ($state) use ($service, $company_id) {
+            $state->regions = $state->regions()->map(function ($region) use ($service, $company_id, $state) {
+
+                $serviceZipCodes = CompanyServiceZip::where('service_id', $service->id)
+                    ->where('company_id', $company_id)->where('region_text', $region)
+                    ->where('state_iso', $state->iso_code)
+                    ->get();
+                $serviceZipCodes = $serviceZipCodes->map(function ($zipcodes) {
+                    return $zipcodes->zipcode;
+                });
 
                 return ["name" => $region["name"], "zipcodes" => $serviceZipCodes, "zipTotal" => count($serviceZipCodes)];
             });
@@ -760,8 +833,13 @@ class CompanyController extends Controller
             'service' => 'required',
         ]);
 
+        $user = auth()->user();
         $company = Company::find($request->company_id);
-        $service = Service::find($request->service);
+        if (!$user->companies->where('id', $company->id)->count()) {
+            abort(403);
+        }
+
+        $company = Company::find($request->company_id);
         $company->services()->syncWithoutDetaching([
             $request->service => [
                 'pause' => 0
@@ -787,13 +865,13 @@ class CompanyController extends Controller
 
         return new UserCompanyResource($company);
     }
-    public function destroyService(Request $request)
+    public function detachService(Request $request)
     {
         $request->validate([
             'company_id' => 'required',
             'service_id' => 'required',
         ]);
-
+        //TODO policy
         $company = Company::find($request->company_id);
         $user = auth()->user();
         if (!$user->companies->where('id', $company->id)->count()) {
@@ -848,5 +926,9 @@ class CompanyController extends Controller
         });
         $service->states = $states;
         return new CompanyServiceResource($service);
+    }
+
+    public function companyWelcomeNotification(Company $company){
+
     }
 }

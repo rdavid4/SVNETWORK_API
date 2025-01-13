@@ -362,6 +362,11 @@ class ServiceController extends Controller
 
         $company = Company::find($request->company_id);
         $service = $company->services->where('id', $request->service_id)->first();
+        $user = auth()->user();
+
+        if (!$user->companies->where('id', $company->id)->count()) {
+            abort(403);
+        }
 
         $serviceCompany = CompanyService::where('company_id', $company->id)->where('service_id', $service->id)->first();
         $serviceCompany->pause = $request->pause;
