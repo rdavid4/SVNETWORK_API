@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\AnswerProjectController;
 use App\Http\Controllers\CategoryController;
@@ -7,7 +6,6 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\GeoipController;
 use App\Http\Controllers\MauticController;
 use App\Http\Controllers\VerificationController;
@@ -25,12 +23,8 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerificationCodeController;
 use App\Http\Controllers\ZipcodeController;
-use App\Models\AnswerProject;
-use App\Models\Mautic;
-use App\Models\QuestionType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Stripe\SearchResult;
 
 /*
 |--------------------------------------------------------------------------
@@ -172,7 +166,7 @@ Route::group(['middleware' => 'auth:sanctum', 'isAdmin'], function () {
     Route::post('/admin/users', [UserController::class, 'store']);
     Route::post('/admin/services/add', [ServiceController::class, 'store']);
     Route::post('/admin/companies/services', [ServiceController::class, 'adminStore']);
-    Route::post('/admin/services/remove', [ServiceController::class, 'removeService']);
+    Route::post('/admin/services/remove', [ServiceController::class, 'adminRemoveService']);
     Route::post('/admin/services', [ServiceController::class, 'store']);
     Route::post('/admin/services/{service}/images', [ServiceController::class, 'storeImage']);
     Route::delete('/admin/services/{service}', [ServiceController::class, 'destroy']);

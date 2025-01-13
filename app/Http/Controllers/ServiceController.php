@@ -129,7 +129,7 @@ class ServiceController extends Controller
         return new DashboardCompanyResource($company);
     }
 
-    public function removeService(Request $request)
+    public function adminRemoveService(Request $request)
     {
         $request->validate([
             'company_id' => 'required',
@@ -138,7 +138,7 @@ class ServiceController extends Controller
 
         $company = Company::find($request->company_id);
         $service = Service::find($request->service_id);
-        $company->services()->where('service_id', $service->id)->delete();
+        $company->services()->detach($service->id);
 
         return new DashboardCompanyResource($company);
     }
