@@ -923,9 +923,7 @@ class CompanyController extends Controller
     protected function copyStatesByService($company_id, $newServiceId = null)
     {
         $company = Company::findOrFail($company_id);
-        $companyStatesIds =  CompanyServiceState::where('company_id', $company_id)->distinct('state_id')->get()->map(function ($companyServiceState) {
-            return $companyServiceState->state_id;
-        })->unique()->values();
+        $companyStatesIds =  CompanyServiceState::where('company_id', $company_id)->distinct('state_id')->pluck('state_id');
 
         $companyZipcodes = CompanyServiceZip::where('company_id', $company_id)->get()->map(function ($zipcode) {
             return [
@@ -936,7 +934,6 @@ class CompanyController extends Controller
                 'company_id' => $zipcode->company_id,
             ];
         })->unique()->values();
-
 
 
         $companyStatesIds->map(function ($stateId) use ($company_id, $newServiceId, $companyZipcodes) {

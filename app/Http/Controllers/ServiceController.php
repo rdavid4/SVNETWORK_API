@@ -21,7 +21,7 @@ class ServiceController extends Controller
 {
     public function list()
     {
-        $services =  Service::all();
+        $services =  Service::orderBy('name')->get();
         return ServiceResource::collection($services);
     }
     public function top10(Request $request)
