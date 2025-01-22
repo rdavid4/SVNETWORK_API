@@ -75,6 +75,7 @@ Route::get('/system/categories', [CategoryController::class, 'list']);
 Route::post('/system/categories', [CategoryController::class, 'store']);
 Route::post('/system/services', [ServiceController::class, 'store']);
 Route::get('/system/services', [ServiceController::class, 'list']);
+Route::get('/system/services/new-added', [ServiceController::class, 'newAddedServices']);
 Route::get('/system/services/top10', [ServiceController::class, 'top10']);
 Route::get('/system/services/{service}', [ServiceController::class, 'showPublic']);
 Route::get('/system/zipcode/{zipcode}', [ZipcodeController::class, 'show']);

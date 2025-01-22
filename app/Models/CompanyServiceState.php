@@ -13,4 +13,10 @@ class CompanyServiceState extends Model
     public function state(){
         return $this->belongsTo(State::class);
     }
+    public function service(){
+        return $this->belongsTo(Service::class);
+    }
+    public function company(){
+        return $this->belongsTo(Company::class);
+    }
 }

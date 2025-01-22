@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Resources\DashboardCompanyResource;
 use App\Http\Resources\DashboardServicePricesResource;
 use App\Http\Resources\DashboardServiceResource;
+use App\Http\Resources\ServiceNewAddedResource;
 use App\Http\Resources\ServicePublicResource;
 use App\Http\Resources\ServiceResource;
 use App\Models\Company;
 use App\Models\CompanyService;
+use App\Models\CompanyServiceState;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use App\Models\Zipcode;
@@ -23,6 +25,16 @@ class ServiceController extends Controller
     {
         $services =  Service::orderBy('name')->get();
         return ServiceResource::collection($services);
+    }
+    public function newAddedServices()
+    {
+        $services = CompanyServiceState::select('state_id', 'service_id')
+        ->groupBy('state_id', 'service_id')
+        ->orderBy('updated_at', 'desc')
+        ->take(20)
+        ->get();
+
+        return ServiceNewAddedResource::collection($services);
     }
     public function top10(Request $request)
     {
