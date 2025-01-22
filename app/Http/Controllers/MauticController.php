@@ -18,6 +18,9 @@ class MauticController extends Controller
 
     }
 
+    public function jobber(Request $request){
+    return $request;
+    }
     public function callback(Request $request){
         $code = $request->get('code');
         return $code;

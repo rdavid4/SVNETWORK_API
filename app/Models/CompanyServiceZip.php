@@ -9,7 +9,7 @@ class CompanyServiceZip extends Model
 {
     use HasFactory;
     protected $table = 'company_service_zip';
-    protected $fillable = ['company_id', 'service_id', 'zipcode_id', 'active', 'region_text', 'state_iso'];
+    protected $fillable = ['company_id', 'service_id', 'zipcode_id', 'active', 'region_text', 'state_iso','active'];
     public function companyService()
     {
         return $this->belongsTo(CompanyService::class);

@@ -18,7 +18,9 @@ class CompanyServiceStateResource extends JsonResource
             "id" => $this->id,
             "name_en" => $this->name_en,
             "iso_code" => $this->iso_code,
-            "areasTotal" => $this->areasTotal,
+            "totalZipcodes" => $this->totalZipcodes,
+            "totalSelected" => $this->totalSelected,
+            "allSelected" => $this->allSelected,
             "regions" => $this->regions,
         ];
     }

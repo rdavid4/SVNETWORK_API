@@ -100,16 +100,20 @@ Route::get('/user/payments/week', [PaymentController::class, 'totalWeek'])->midd
 
 
 //COMPANIES
-Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug']);
 Route::get('/companies/config/{company}', [CompanyController::class, 'getConfiguration'])->middleware('auth:sanctum');
 Route::post('/companies/services/remove', [CompanyController::class, 'detachService'])->middleware('auth:sanctum');
 Route::post('/companies/services', [CompanyController::class, 'addService'])->middleware('auth:sanctum');
+Route::post('/companies/services/states/copy', [CompanyController::class, 'copyStates'])->middleware('auth:sanctum');
 Route::post('/companies/services/zipcodes', [ServiceController::class, 'zipcodesByRegion'])->middleware('auth:sanctum');
 Route::post('/companies/services/county', [ServiceController::class, 'zipcodesByCounty'])->middleware('auth:sanctum');
 Route::delete('/companies/services/county', [ServiceController::class, 'deleteZipcodesByCounty'])->middleware('auth:sanctum');
 Route::post('/companies/services/states/remove', [CompanyController::class, 'removeState'])->middleware('auth:sanctum');
 Route::post('/companies/services/states', [CompanyController::class, 'storeState'])->middleware('auth:sanctum');
 Route::post('/companies/services/zipcodes/update', [ServiceController::class, 'updateZipcodes'])->middleware('auth:sanctum');
+Route::post('/companies/services/zipcodes/add', [ServiceController::class, 'addZipcode'])->middleware('auth:sanctum');
+Route::post('/companies/services/zipcodes/county/add', [ServiceController::class, 'addZipcodesByCounty'])->middleware('auth:sanctum');
+Route::post('/companies/services/zipcodes/county/remove', [ServiceController::class, 'removeZipcodesByCounty'])->middleware('auth:sanctum');
+Route::post('/companies/services/zipcodes/delete', [ServiceController::class, 'removeZipcode'])->middleware('auth:sanctum');
 Route::post('/companies/services/zipcodes/all', [ServiceController::class, 'selectAllState'])->middleware('auth:sanctum');
 Route::post('/companies/services/zipcodes/remove', [ServiceController::class, 'removeAllState'])->middleware('auth:sanctum');
 Route::post('/companies/services/pause', [ServiceController::class, 'pause'])->middleware('auth:sanctum');
@@ -125,6 +129,8 @@ Route::post('/companies/{company}/licence', [CompanyController::class, 'storeLic
 Route::delete('/companies/images/{image}', [CompanyController::class, 'deleteImage'])->middleware('auth:sanctum');
 Route::post('/companies/{company}/video', [CompanyController::class, 'storeVideo'])->middleware('auth:sanctum');
 Route::get('/companies/{company}/reviews', [CompanyController::class, 'reviews'])->middleware('auth:sanctum');
+Route::get('/companies/progress', [CompanyController::class, 'getProgress'])->middleware('auth:sanctum');
+Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug']);
 
 //PROJECTS
 Route::post('/projects/images', [ProjectController::class, 'storeImage'])->middleware('auth:sanctum');

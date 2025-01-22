@@ -223,7 +223,20 @@ class ServiceController extends Controller
             return $zip;
         });
 
-        return $zipcodes;
+        $zipcodesGroupByLocation = $zipcodes->groupBy('location');
+
+        return $zipcodesGroupByLocation->map(function ($zipcodes) {
+            #total zipcodes active atributte
+            $zipcodesActive = $zipcodes->filter(function ($zip) {
+                return $zip->active;
+            });
+            return [
+                'total_locations' => $zipcodes->count(),
+                'total_active_locations' => $zipcodesActive->count(),
+                'zipcodes' => $zipcodes
+
+            ];
+        });
     }
     public function zipcodesByCounty(Request $request)
     {
@@ -309,6 +322,99 @@ class ServiceController extends Controller
         }
         // return  $zipcodes;
     }
+    public function addZipcode(Request $request)
+    {
+        $request->validate([
+            'company_id' => 'required',
+            'service_id' => 'required',
+            'region' => 'required',
+            'zipcodes' => 'required',
+        ]);
+
+        $service = Service::find($request->service_id);
+        if (isset($request->zipcodes)) {
+            return array_map(function ($zip) use ($service, $request) {
+                $service->companyServiceZip()->create(['zipcode_id' => $zip['id'], 'company_id' => $request->company_id, 'region_text' => $request->region, 'active' => true, 'state_iso' => $zip['state_iso']]);
+                return $zip['zipcode'];
+            }, $request->zipcodes);
+        }
+        return  'ok';
+    }
+    public function addZipcodesByCounty(Request $request)
+    {
+        $request->validate([
+            'region' => 'required',
+            'state_iso' => 'required',
+            'service_id' => 'required',
+            'company_id' => 'required'
+        ]);
+        //Necesita politica
+        $service = Service::findOrfail($request->service_id);
+        $company = Company::findOrfail($request->company_id);
+        $user = auth()->user();
+        if (!$user->companies->where('id', $company->id)->count()) {
+            abort(403);
+        }
+        $zipcodes = Zipcode::where('region', $request->region)->where('state_iso', $request->state_iso)->get();
+        foreach ($zipcodes as $key => $zip) {
+            # code...
+            $exists = CompanyServiceZip::where('company_id', $company->id)->where('service_id', $service->id)->where('region_text', $request->region)->where('zipcode_id', $zip->id)->exists();
+            if(!$exists){
+                CompanyServiceZip::create([
+                    'company_id' => $company->id,
+                    'region_text' => $zip->region,
+                    'state_iso' => $zip->state_iso,
+                    'service_id' => $service->id,
+                    'zipcode_id' => $zip->id,
+                    'active' => 1
+                ]);
+            }
+        }
+        return  'ok';
+    }
+    public function removeZipcodesByCounty(Request $request)
+    {
+        $request->validate([
+            'region' => 'required',
+            'state_iso' => 'required',
+            'service_id' => 'required',
+            'company_id' => 'required'
+        ]);
+        //Necesita politica
+        $service = Service::findOrfail($request->service_id);
+        $company = Company::findOrfail($request->company_id);
+        $user = auth()->user();
+        if (!$user->companies->where('id', $company->id)->count()) {
+            abort(403);
+        }
+        $zipcodes = CompanyServiceZip::where('service_id', $service->id)->where('region_text', $request->region)->where('state_iso', $request->state_iso)->where('company_id', $request->company_id)->delete();
+        return  'Deleted success';
+    }
+    public function removeZipcode(Request $request)
+    {
+        $request->validate([
+            'company_id' => 'required',
+            'service_id' => 'required',
+            'region' => 'required',
+            'zipcodes' => 'required',
+        ]);
+
+        $service = Service::find($request->service_id);
+        if (isset($request->zipcodes)) {
+
+
+            return array_map(function ($zip) use ($service, $request) {
+                $service->companyServiceZip()->where('region_text', $request->region)
+                ->where('company_id', $request->company_id)
+                ->where('company_id', $request->company_id)
+                ->where('zipcode_id', $zip['id'])
+                ->delete();
+                return $zip['zipcode'];
+            }, $request->zipcodes);
+
+        }
+        return 'eliminados';
+    }
 
     public function selectAllState(Request $request)
     {
@@ -320,6 +426,10 @@ class ServiceController extends Controller
 
         $service = Service::find($request->service_id);
         $company = Company::findOrFail($request->company_id);
+        $user = auth()->user();
+        if (!$user->companies->where('id', $company->id)->count()) {
+            abort(403);
+        }
         $state = State::find($request->state_id);
         $zipcodes = Zipcode::where('state_iso', $state->iso_code)->get();
         $service->companyServiceZip()->where('company_id', $request->company_id)->where('state_iso', $state->iso_code)->delete();
@@ -344,6 +454,11 @@ class ServiceController extends Controller
 
         $service = Service::find($request->service_id);
         $state = State::find($request->state_id);
+        $company = Company::findOrFail($request->company_id);
+        $user = auth()->user();
+        if (!$user->companies->where('id', $company->id)->count()) {
+            abort(403);
+        }
         $zipcodes = Zipcode::where('state_iso', $state->iso_code)->get();
         $service->companyServiceZip()->where('company_id', $request->company_id)->where('state_iso', $state->iso_code)->delete();
 

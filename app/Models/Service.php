@@ -63,7 +63,7 @@ class Service extends Model
     }
     public function states():BelongsToMany
     {
-        return $this->belongsToMany(State::class,'company_service_state', 'service_id', 'state_id')->withTimestamps();
+        return $this->belongsToMany(State::class,'company_service_state', 'service_id', 'state_id')->withTimestamps()->withPivot(['company_id']);
     }
     public function getQuestionsPaginatedAttribute()
     {
