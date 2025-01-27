@@ -37,7 +37,7 @@ class UserCompanyResource extends JsonResource
             "video_url" => $this->video_url,
             "verified" => $this->verified,
             "country_id" => $this->country_id,
-            "images" => ImageCompanyResource::collection($this->images->where('type',Image::TYPE_IMAGE)),
+            "images" => ImageCompanyResource::collection($this->images->where('type',Image::TYPE_IMAGE)->sortByDesc('updated_at')),
             "licence" => new ImageCompanyResource($this->images->where('type',Image::TYPE_LICENCE)->first()),
             "documents" =>  ImageCompanyResource::collection($this->images->where('type',Image::TYPE_DOCUMENT)),
             "logo_url" => $this->logo_url,

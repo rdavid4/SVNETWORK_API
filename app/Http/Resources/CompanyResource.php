@@ -40,7 +40,7 @@ class CompanyResource extends JsonResource
             'services' => CompanyServiceListResource::collection($this->services),
             'states' => StateResource::collection($this->states),
             'reviews' => ReviewResource::collection($this->reviews),
-            'images' => ImageCompanyResource::collection($this->images->where('type',Image::TYPE_IMAGE)),
+            'images' => ImageCompanyResource::collection($this->images->where('type',Image::TYPE_IMAGE)->sortByDesc('updated_at')),
             'review_rate' =>  $this->reviewRate,
             'categories' => CategoryResource::collection($this->categories)
         ];
