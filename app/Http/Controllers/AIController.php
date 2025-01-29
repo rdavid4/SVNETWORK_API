@@ -82,7 +82,7 @@ La respuesta debe ser un JSON válido, como este ejemplo no utilices la palabra 
 EOD;
 
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
+            'Authorization' => 'Bearer ' . config('app.openai_key'),
             'Content-Type' => 'application/json',
         ])->timeout(1000)->post('https://api.openai.com/v1/chat/completions', [
             'model' => 'gpt-4o-mini',

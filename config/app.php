@@ -56,6 +56,7 @@ return [
     */
 
     'api_url' => env('API_URL', 'http://localhost'),
+    'openai_key' => env('OPENAI_API_KEY', ''),
     'app_url' => env('APP_URL', 'http://localhost'),
     'mautic_url' => env('MAUTIC_URL', 'http://localhost'),
     'mautic_token' => env('MAUTIC_TOKEN', ''),
