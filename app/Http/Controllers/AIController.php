@@ -99,12 +99,15 @@ EOD;
         ]);
 
         $questions = $response->json(); // Obtiene el JSON con las preguntas
-        foreach ($questions['choices'] as $choice) {
-            // Acceder a la propiedad content dentro de cada opción
-            if (isset($choice['message']['content'])) {
-                $contents[] = json_decode($choice['message']['content']);
+        if(isset($questions['choices'])){
+            foreach ($questions['choices'] as $choice) {
+                // Acceder a la propiedad content dentro de cada opción
+                if (isset($choice['message']['content'])) {
+                    $contents[] = json_decode($choice['message']['content']);
+                }
             }
         }
+
 
         // Convertir el array $contents a JSO
 
