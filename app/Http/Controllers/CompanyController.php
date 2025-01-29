@@ -466,6 +466,52 @@ class CompanyController extends Controller
         $service->states = $states;
         return new CompanyServiceResource($service);
     }
+    public function adminRemoveState(Request $request)
+    {
+        $request->validate([
+            'service_id' => 'required',
+            'state_id' => 'required',
+            'company_id' => 'required'
+        ]);
+        $company = Company::find($request->company_id);
+
+
+        $service = Service::find($request->service_id);
+
+        CompanyServiceState::where('service_id', $service->id)
+            ->where('company_id', $request->company_id)
+            ->where('state_id', $request->state_id)
+            ->delete();
+        $state = State::find($request->state_id);
+        $zipcodes = CompanyServiceZip::where('service_id', $service->id)
+            ->where('company_id', $request->company_id)
+            ->where('state_iso', $state->iso_code)->delete();
+        $company_id = $request->company_id;
+        $states = $service->states()->where('company_id', $company_id)->get();
+        $states->map(function ($state) use ($service, $company_id) {
+            $state->regions = $state->regions()->map(function ($region) use ($service, $company_id, $state) {
+                $serviceZipCodes = CompanyServiceZip::where('service_id', $service->id)
+                    ->where('company_id', $company_id)->where('region_text', $region)
+                    ->where('state_iso', $state->iso_code)
+                    ->get();
+                $serviceZipCodes = $serviceZipCodes->map(function ($zipcodes) {
+                    return $zipcodes->zipcode;
+                });
+
+                return ["name" => $region["name"], "zipcodes" => $serviceZipCodes, "zipTotal" => count($serviceZipCodes)];
+            });
+
+            $zipcodesCount = 0;
+            $zipcodesCount = collect($state->regions)->reduce(function ($sum, $region) {
+                return $sum + count($region['zipcodes']);
+            }, 0);
+
+            $state->areasTotal = $zipcodesCount;
+            return $state;
+        });
+        $service->states = $states;
+        return new CompanyServiceResource($service);
+    }
 
     public function storeLogoAdmin(Company $company, Request $request)
     {
@@ -675,11 +721,75 @@ class CompanyController extends Controller
         }
     }
 
+    public function adminStoreImages(Company $company, Request $request)
+    {
+
+        if ($request->hasFile('images')) {
+            $imagenes = $request->file('images');
+
+            foreach ($imagenes as $key => $image) {
+
+                if ($image->isValid()) {
+                    // Realizar acciones con cada imagen, como guardarla en el servidor
+                    $nombreArchivo = $company->id . '/projects/image-' . uniqid($key) . '.' . $image->extension();
+                    $fullPath = Storage::disk('companies')->path($nombreArchivo);
+
+                    //Procesado de imagen
+                    ConvertImageJob::dispatch($fullPath);
+
+                    Storage::disk('companies')->put($nombreArchivo, file_get_contents($image));
+                    $extension = $image->extension();
+                    $size = $image->getSize();
+                    $mimetype = $image->getMimeType();
+                    $ancho = null;
+                    $alto = null;
+                    $infoImagen = getimagesize($image);
+
+                    if ($infoImagen) {
+                        $ancho = $infoImagen[0]; // Ancho de la imagen
+                        $alto = $infoImagen[1]; // Alto de la imagen
+                    }
+                    $company->images()->create([
+                        'filename' => $nombreArchivo,
+                        'mime_type' => $mimetype,
+                        'extension' => $extension,
+                        'type' => Image::TYPE_IMAGE,
+                        'width' => $ancho,
+                        'height' => $alto,
+                        'size' => $size
+                    ]);
+                } else {
+                }
+            }
+
+            return "Image uploaded.";
+        } else {
+            return "No se encontraron imágenes para subir.";
+        }
+    }
+
     public function deleteImage(Image $image)
     {
 
         $company = $image->imageable;
         $this->authorize('deleteImage', $company);
+
+        $disk = Storage::disk('companies');
+        $image->delete();
+        // Verifica si el archivo existe
+        if ($disk->exists($image->filename)) {
+            // Elimina el archivo
+            $disk->delete($image->filename);
+            return response()->json(['message' => 'Image deleted successfully.'], 200);
+        } else {
+            return response()->json(['message' => 'Image not found.'], 404);
+        }
+    }
+    public function adminDeleteImage(Image $image)
+    {
+
+        $company = $image->imageable;
+
 
         $disk = Storage::disk('companies');
         $image->delete();
@@ -704,7 +814,7 @@ class CompanyController extends Controller
         if ($video->isValid()) {
             // Generar un nombre único para el archivo de video
             $nombreArchivo = '/video-' . uniqid() . '.' . $video->getClientOriginalExtension();
-            $path = $company->id . '/' . $nombreArchivo;
+            $path = $company->id . $nombreArchivo;
             $fullPath = Storage::disk('companies')->path($path);
 
             try {
@@ -919,61 +1029,118 @@ class CompanyController extends Controller
         $repuesta = self::copyStatesByService($company->id, $request->service_id);
         return new UserCompanyResource($company);
     }
-
-    protected function copyStatesByService($company_id, $newServiceId = null)
+    public function adminServicesCopyStates(Request $request)
     {
-        $company = Company::findOrFail($company_id);
-        $companyStatesIds =  CompanyServiceState::where('company_id', $company_id)->distinct('state_id')->get()->map(function ($companyServiceState) {
-            return $companyServiceState->state_id;
-        })->unique()->values();
-
-        $companyZipcodes = CompanyServiceZip::where('company_id', $company_id)->get()->map(function ($zipcode) {
-            return [
-                'id' => $zipcode->zipcode_id,
-                'region' => $zipcode->region_text,
-                'service_id' => $zipcode->service_id,
-                'state_iso' => $zipcode->state_iso,
-                'company_id' => $zipcode->company_id,
-            ];
-        })->unique()->values();
+        $request->validate([
+            'company_id' => 'required',
+            'service_id' => 'required',
+        ]);
 
 
-        $companyStatesIds->map(function ($stateId) use ($company_id, $newServiceId, $companyZipcodes) {
+        $company = Company::find($request->company_id);
+        Service::find($request->service_id);
+        //Agrego todo los estados y zipcodes
+        $repuesta = self::copyStatesByService($company->id, $request->service_id);
 
-            $service = Service::find($newServiceId);
+        return new UserCompanyResource($company);
+    }
 
+    public function copyStatesByService($company_id, $newServiceId = null)
+    {
+
+        $companyStatesIds =  CompanyServiceState::where('company_id', $company_id)->select('state_id')->pluck('state_id')
+            ->unique()
+            ->values() // Reindexa el array para evitar claves desordenadas
+            ->toArray();
+
+
+        //1687
+        // $companyZipcodes = CompanyServiceZip::where('company_id', $company_id)->get()->map(function ($zipcode) {
+        //     return [
+        //         'id' => $zipcode->zipcode_id,
+        //         'region' => $zipcode->region_text,
+        //         'service_id' => $zipcode->service_id,
+        //         'state_iso' => $zipcode->state_iso,
+        //         'company_id' => $zipcode->company_id,
+        //     ];
+        // })->unique()->values();
+
+        $companyZipcodes = CompanyServiceZip::where('company_id', $company_id)
+            ->select(
+                'zipcode_id as id',
+                'region_text as region',
+                'service_id',
+                'state_iso',
+                'company_id'
+            )->get();
+
+        $service = Service::find($newServiceId);
+        foreach ($companyStatesIds as $key => $state_id) {
             $exists = $service?->states()
-            ->wherePivot('state_id', $stateId)
+                ->wherePivot('state_id', $state_id)
+                ->wherePivot('company_id', $company_id)
+                ->exists();
+
+            if (!$exists) {
+                $service->states()->attach([
+                    $state_id => ["company_id" => $company_id]
+                ]);
+            }
+        }
+
+        foreach ($companyZipcodes as $zipcode) {
+        $exists = $service->zipcodes()
+            ->wherePivot('zipcode_id', $zipcode['id'])
             ->wherePivot('company_id', $company_id)
             ->exists();
 
-            if (!$exists) {
+        if (!$exists) {
+            CompanyServiceZip::create([
+                'zipcode_id' => $zipcode['id'],
+                'company_id' => $company_id,
+                'service_id' => $newServiceId,
+                'region_text' => $zipcode['region'],
+                'active' => true,
+                'state_iso' => $zipcode['state_iso']
+            ]);
+        }
+    }
+        // $companyStatesIds->map(function ($stateId) use ($company_id, $newServiceId, $companyZipcodes) {
 
-                $service->states()->attach([
-                    $stateId => ["company_id" => $company_id]
-                ]);
-            }
+        //     $service = Service::find($newServiceId);
 
-            foreach ($companyZipcodes as $zipcode) {
-                $exists = $service->zipcodes()
-                    ->wherePivot('zipcode_id', $zipcode['id'])
-                    ->wherePivot('company_id', $company_id)
-                    ->exists();
+        //     $exists = $service?->states()
+        //     ->wherePivot('state_id', $stateId)
+        //     ->wherePivot('company_id', $company_id)
+        //     ->exists();
 
-                if (!$exists) {
-                    CompanyServiceZip::create([
-                        'zipcode_id' => $zipcode['id'],
-                        'company_id' => $company_id,
-                        'service_id' => $newServiceId,
-                        'region_text' => $zipcode['region'],
-                        'active' => true,
-                        'state_iso' => $zipcode['state_iso']
-                    ]);
-                }
-            }
-        });
+        //     if (!$exists) {
 
-        return $companyStatesIds;
+        //         $service->states()->attach([
+        //             $stateId => ["company_id" => $company_id]
+        //         ]);
+        //     }
+
+        //     foreach ($companyZipcodes as $zipcode) {
+        //         $exists = $service->zipcodes()
+        //             ->wherePivot('zipcode_id', $zipcode['id'])
+        //             ->wherePivot('company_id', $company_id)
+        //             ->exists();
+
+        //         if (!$exists) {
+        //             CompanyServiceZip::create([
+        //                 'zipcode_id' => $zipcode['id'],
+        //                 'company_id' => $company_id,
+        //                 'service_id' => $newServiceId,
+        //                 'region_text' => $zipcode['region'],
+        //                 'active' => true,
+        //                 'state_iso' => $zipcode['state_iso']
+        //             ]);
+        //         }
+        //     }
+        // });
+
+        // return $companyStatesIds;
     }
     public function addState(Request $request)
     {
@@ -1029,6 +1196,13 @@ class CompanyController extends Controller
     }
     public function getService($slug, $company_id)
     {
+        // Politica para poder ver los datos
+        $company = Company::find($company_id);
+        $user = auth()->user();
+        if (!$user->companies->where('id', $company->id)->count()) {
+            abort(403);
+        }
+
         $service = Service::where('slug', $slug)->first();
         $states = $service->states()->where('company_id', $company_id)->get();
         $states->map(function ($state) use ($service, $company_id) {
@@ -1058,7 +1232,7 @@ class CompanyController extends Controller
             //     $state->region_count = 3;
             // }
             $state->totalZipcodes = $state->zipcodes->count();
-            $state->allSelected =  $state->totalSelected == $state->totalZipcodes;
+            $state->allSelected =  $state->totalSelected >= $state->totalZipcodes;
             return $state;
         });
         $service->states = $states->sortBy('name_en');

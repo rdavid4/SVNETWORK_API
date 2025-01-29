@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\AnswerProjectController;
 use App\Http\Controllers\CategoryController;
@@ -173,8 +174,6 @@ Route::group(['middleware' => 'auth:sanctum', 'isAdmin'], function () {
     Route::get('/admin/users', [UserController::class, 'list']);
     Route::post('/admin/users', [UserController::class, 'store']);
     Route::post('/admin/services/add', [ServiceController::class, 'store']);
-    Route::post('/admin/companies/services', [ServiceController::class, 'adminStore']);
-    Route::post('/admin/services/remove', [ServiceController::class, 'adminRemoveService']);
     Route::post('/admin/services', [ServiceController::class, 'store']);
     Route::post('/admin/services/{service}/images', [ServiceController::class, 'storeImage']);
     Route::delete('/admin/services/{service}', [ServiceController::class, 'destroy']);
@@ -200,9 +199,23 @@ Route::group(['middleware' => 'auth:sanctum', 'isAdmin'], function () {
     Route::get('/admin/dashboard/stats', [DashboardController::class, 'getStats']);
 
     Route::post('/admin/companies/welcome-notification', [CompanyController::class, 'companyWelcomeNotification']);
-    Route::get('/admin/companies/services/{slug}/{company_id}', [CompanyController::class, 'getService']);
-    Route::post('/admin/companies/services/states', [CompanyController::class, 'storeStates']);
-    Route::post('/admin/companies/services/zipcodes', [ServiceController::class, 'zipcodesByRegion']);
+    Route::get('/admin/companies/services/{slug}/{company_id}', [ServiceController::class, 'adminGetService']);
+    Route::get('/admin/companies/payment-methods/{company}', [PaymentController::class, 'adminGetPaymentsMethodsCompany']);
+    //Companies Service Config
+    Route::post('/admin/companies/services/zipcodes', [ServiceController::class, 'adminZipcodesByRegion']);
+    Route::post('/admin/companies/services/states', [ServiceController::class, 'adminStoreState']);
+    Route::post('/admin/companies/services/remove', [ServiceController::class, 'adminRemoveService']);
+    Route::post('/admin/companies/services', [ServiceController::class, 'adminStore']);
+    Route::post('/admin/companies/services/zipcodes/add', [ServiceController::class, 'adminServiceAddZipcode'])->middleware('auth:sanctum');
+    Route::post('/admin/companies/services/states/remove', [CompanyController::class, 'adminRemoveState'])->middleware('auth:sanctum');
+    Route::post('/admin/companies/services/zipcodes/delete', [ServiceController::class, 'adminServiceRemoveZipcode'])->middleware('auth:sanctum');
+    Route::post('/admin/companies/services/zipcodes/county/add', [ServiceController::class, 'adminServiceAddZipcodesByCounty'])->middleware('auth:sanctum');
+    Route::post('/admin/companies/services/zipcodes/county/remove', [ServiceController::class, 'adminServiceRemoveZipcodesByCounty'])->middleware('auth:sanctum');
+    Route::post('/admin/companies/services/zipcodes/all', [ServiceController::class, 'adminServiceSelectAllState'])->middleware('auth:sanctum');
+    Route::post('/admin/companies/services/zipcodes/remove', [ServiceController::class, 'adminRemoveAllState'])->middleware('auth:sanctum');
+    Route::post('/admin/companies/services/states/copy', [CompanyController::class, 'adminServicesCopyStates'])->middleware('auth:sanctum');
+    Route::post('/admin/companies/{company}/images', [CompanyController::class, 'adminStoreImages'])->middleware('auth:sanctum');
+    Route::delete('/admin/companies/images/{image}', [CompanyController::class, 'adminDeleteImage'])->middleware('auth:sanctum');
     Route::get('/admin/payments/all-charges', [PaymentController::class, 'getAllCharges']);
     Route::get('/admin/payments/balance', [PaymentController::class, 'getBalance']);
     Route::post('/admin/payments/recharge', [PaymentController::class, 'recharge']);

@@ -40,13 +40,14 @@ class DashboardCompanyResource extends JsonResource
             "country_id" => $this->country_id,
             "logo_url" => $this->logo_url,
             "documents"=> ImageCompanyResource::collection($this->images->where('type',Image::TYPE_DOCUMENT)),
-            "images"=> ImageCompanyResource::collection($this->images->where('type',Image::TYPE_IMAGE)),
+            "images"=> ImageCompanyResource::collection($this->images->where('type',Image::TYPE_IMAGE)->sortByDesc('updated_at')),
             "licence"=> new ImageCompanyResource($this->images->where('type',Image::TYPE_LICENCE)->first()),
             "services" => CompanyServiceListResource::collection($this->services),
             "format_date" => $this->created_at->format('m/d/Y h:i A'),
             "updated_at" => $this->updated_at,
             "hasLicence" => $this->licence,
-            "hasInsurance" => $this->insurance
+            "hasInsurance" => $this->insurance,
+                   'owners' => UserMinimalResource::collection($this->users)
         ];
     }
 }

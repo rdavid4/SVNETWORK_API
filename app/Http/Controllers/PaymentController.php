@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\BalanceResource;
 use App\Http\Resources\PaymentResource;
+use App\Http\Resources\UserMinimalResource;
+use App\Models\Company;
 use App\Models\Service;
 use App\Models\Transactions;
 use Exception;
@@ -27,6 +29,35 @@ class PaymentController extends Controller
         } else {
             return null;
         }
+    }
+    public function adminGetPaymentsMethodsCompany(Company $company)
+    {
+
+        $users = $company->users;
+        $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
+        $methodsList = $users->map(function($user) use ($stripe){
+            if ($user->stripe_client_id) {
+                try{
+                    $methods = $stripe->paymentMethods->all([
+                        'customer' => $user->stripe_client_id,
+                        'type' => 'card',
+                    ]);
+                    return [
+                        'user' => new UserMinimalResource($user),
+                        'methods' => $methods
+                    ];
+                }catch(Exception $e){
+
+                }
+            }else {
+                return null;
+            }
+        });
+        $methods =  $methodsList->filter(function ($value) {
+            return !is_null($value);
+        });
+        return $methods->values();
+
     }
     public function getCharges()
     {
