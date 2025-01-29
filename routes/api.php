@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AIController;
 use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\AnswerProjectController;
 use App\Http\Controllers\CategoryController;
@@ -221,6 +222,10 @@ Route::group(['middleware' => 'auth:sanctum', 'isAdmin'], function () {
     Route::post('/admin/payments/recharge', [PaymentController::class, 'recharge']);
     Route::post('/admin/send-lead', [SearchController::class, 'sendLead']);
     Route::get('/admin/transactions', [TransactionController::class, 'list']);
+
+
+    //AI system
+    Route::post('/admin/ai/questions', [AIController::class, 'questions']);
 });
 
 

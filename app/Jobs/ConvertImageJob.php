@@ -28,7 +28,7 @@ class ConvertImageJob implements ShouldQueue
             'ffmpeg',
             '-i', $this->image,
             '-vf', 'scale=-2:720',             // Redimensionar la imagen manteniendo la relación de aspecto
-            '-q:v', '8',                       // Calidad de la imagen (valor entre 1 y 31, donde 1 es mejor)
+            '-q:v', '12',                       // Calidad de la imagen (valor entre 1 y 31, donde 1 es mejor)
             'temp_image.jpg'                   // Nombre del archivo de salida
         ];
 
