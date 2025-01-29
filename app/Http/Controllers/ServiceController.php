@@ -478,22 +478,9 @@ class ServiceController extends Controller
 
             return array_map(function ($zip) use ($service, $request) {
                 $service->companyServiceZip()->create(['zipcode_id' => $zip['id'], 'company_id' => $request->company_id, 'region_text' => $request->region, 'active' => true, 'state_iso' => $zip['state_iso']]);
-                //  $service->zipcodes()->syncWithoutDetaching([
-                //     $zip['id'] => ['company_id' => $request->company_id, 'region_text' => $request->region,'active' => true, 'state_iso' => $zip['state_iso']]
-                // ]);
                 return $zip['zipcode'];
             }, $request->zipcodes);
-
-
-
-            // foreach ($zipcodes as $key => $zip) {
-            //     # code...
-            //     $service->zipcodes()->syncWithoutDetaching([
-            //         $zip => ['company_id' => $request->company_id, 'region_text' => $request->region,'active' => true]
-            //     ]);
-            // }
         }
-        // return  $zipcodes;
     }
     public function addZipcode(Request $request)
     {
