@@ -99,6 +99,8 @@ EOD;
         ]);
 
         $questions = $response->json(); // Obtiene el JSON con las preguntas
+
+        return $questions;
         if(isset($questions['choices'])){
             foreach ($questions['choices'] as $choice) {
                 // Acceder a la propiedad content dentro de cada opción
