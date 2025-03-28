@@ -71,6 +71,13 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
+        'categories' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/categories'),
+            'url' => env('API_URL').'/storage/categories',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
         'users' => [
             'driver' => 'local',
             'root' => storage_path('app/public/users'),

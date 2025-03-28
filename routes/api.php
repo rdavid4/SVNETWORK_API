@@ -74,6 +74,9 @@ Route::get('/system/geoip/{ip?}', [GeoipController::class, 'show']);
 Route::get('/system/states/{iso}', [StateController::class, 'show']);
 Route::get('/system/states', [StateController::class, 'list']);
 Route::get('/system/categories', [CategoryController::class, 'list']);
+Route::get('/system/categories/{slug}/services-list', [CategoryController::class, 'getServicesListBySlug']);
+Route::get('/system/categories/{slug}/services', [CategoryController::class, 'getServicesBySlug']);
+Route::get('/system/categories/{slug}', [CategoryController::class, 'getBySlug']);
 Route::post('/system/categories', [CategoryController::class, 'store']);
 Route::post('/system/services', [ServiceController::class, 'store']);
 Route::get('/system/services', [ServiceController::class, 'list']);
@@ -189,7 +192,10 @@ Route::group(['middleware' => 'auth:sanctum', 'isAdmin'], function () {
     Route::put('/admin/nomatches/done/{noMatches}', [SearchController::class, 'updateNoMatches']);
     Route::post('/admin/answers', [AnswerController::class, 'store']);
     Route::delete('/admin/answers/{answer}', [AnswerController::class, 'destroy']);
+    Route::post('/admin/categories/{category}/images', [CategoryController::class, 'storeImage']);
     Route::post('/admin/categories', [CategoryController::class, 'store']);
+    Route::put('/admin/categories/{category}', [CategoryController::class, 'update']);
+    Route::get('/admin/categories', [CategoryController::class, 'adminList']);
     Route::get('/admin/user/check-email/{email}', [UserController::class, 'AdminEmailExist']);
 
     Route::get('/admin/dashboard/users', [DashboardController::class, 'registeredUsers']);

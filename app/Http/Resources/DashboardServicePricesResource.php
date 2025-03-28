@@ -18,6 +18,7 @@ class DashboardServicePricesResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'price' => $this->price,
+            'category' => $this->category?->name,
             'slug' => $this->slug,
             'updated_at' => $this->updated_at,
         ];
