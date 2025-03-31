@@ -193,6 +193,7 @@ Route::group(['middleware' => 'auth:sanctum', 'isAdmin'], function () {
     Route::post('/admin/answers', [AnswerController::class, 'store']);
     Route::delete('/admin/answers/{answer}', [AnswerController::class, 'destroy']);
     Route::post('/admin/categories/{category}/images', [CategoryController::class, 'storeImage']);
+    Route::post('/admin/categories/{category}/icon', [CategoryController::class, 'storeIcon']);
     Route::post('/admin/categories', [CategoryController::class, 'store']);
     Route::put('/admin/categories/{category}', [CategoryController::class, 'update']);
     Route::get('/admin/categories', [CategoryController::class, 'adminList']);

@@ -20,14 +20,18 @@ class PaymentController extends Controller
     {
         $stripe = new \Stripe\StripeClient(config('app.stripe_pk'));
         $user = auth()->user();
-        if ($user->stripe_client_id) {
-            $methods = $stripe->paymentMethods->all([
-                'customer' => $user->stripe_client_id,
-                'type' => 'card',
-            ]);
-            return $methods;
-        } else {
-            return null;
+        try{
+            if ($user->stripe_client_id) {
+                $methods = $stripe->paymentMethods->all([
+                    'customer' => $user->stripe_client_id,
+                    'type' => 'card',
+                ]);
+                return $methods;
+            } else {
+                return null;
+            }
+        }catch(Exception $e){
+            return abort(422, 'No payment method found for this user');
         }
     }
     public function adminGetPaymentsMethodsCompany(Company $company)

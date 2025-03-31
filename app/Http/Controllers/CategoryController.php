@@ -101,4 +101,24 @@ class CategoryController extends Controller
 
         return $category;
     }
+    public function storeIcon(Category $category, Request $request)
+    {
+        $request->validate([
+            'icon' => 'required'
+        ]);
+        // 'required|mimes:doc,docx,odt,pdf|max:2048'
+
+        if ($request->hasFile('icon')) {
+            $icon = $request->file('icon');
+
+            $fileName = $category->id . '/icon-' . uniqid() . '.' . 'svg';
+            Storage::disk('categories')->put($fileName, file_get_contents($icon));
+            $urlArchivo = Storage::disk('categories')->url($fileName);
+            $category->icon = $urlArchivo;
+        }
+
+        $category->save();
+
+        return $category;
+    }
 }
