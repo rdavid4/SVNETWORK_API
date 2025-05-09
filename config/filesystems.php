@@ -92,6 +92,13 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
+        'quotes' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/quotes'),
+            'url' => env('API_URL').'/storage/quotes',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
 
         's3' => [
             'driver' => 's3',

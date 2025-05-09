@@ -87,19 +87,34 @@ class Company extends Model
     {
         return $this->hasMany(Matches::class, 'company_id', 'id')->orderBy('created_at', 'desc');
     }
-
+    public function quotes()
+    {
+        return $this->hasMany(Quote::class, 'company_id', 'id')->orderBy('created_at', 'desc');
+    }
     public function services(): BelongsToMany
     {
         return $this->belongsToMany(Service::class)->withPivot('pause')->withTimestamps();
+    }
+    public function category()
+    {
+        $service =  $this->services->first();
+        $category = $service->category ?? null;
+        return $category->name ?? null;
     }
 
     public function companyServiceZip():HasMany
     {
         return $this->hasMany(CompanyServiceZip::class);
     }
-    public function categories(): BelongsToMany
+    public function categories()
     {
-        return $this->belongsToMany(Category::class)->withTimestamps();
+        $categories = $this->services
+        ->pluck('category')
+        ->filter()
+        ->unique()
+        ->values();
+
+        return $categories;
     }
     public function reviews(): HasMany
     {
@@ -133,5 +148,10 @@ class Company extends Model
     public function images()
     {
         return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function getServicesByCategory($category_id)
+    {
+        return $this->services()->where('category_id', $category_id)->get();
     }
 }

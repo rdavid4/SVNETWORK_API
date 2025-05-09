@@ -76,6 +76,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Project::class)->orderBy('created_at', 'asc');
     }
+    public function quotes(): HasMany
+    {
+        return $this->hasMany(Quote::class)->orderBy('created_at', 'asc');
+    }
     public function matches(): HasMany
     {
         return $this->hasMany(Project::class)->whereHas('matches')->orderBy('created_at', 'asc');

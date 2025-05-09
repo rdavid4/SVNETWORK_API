@@ -17,6 +17,7 @@ use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionTypeController;
+use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerificationCodeController;
 use App\Http\Controllers\ZipcodeController;
+use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -65,6 +67,7 @@ Route::post('/user/password', [UserController::class, 'updatePassword'])->middle
 Route::get('/user/companies', [UserController::class, 'company'])->middleware('auth:sanctum');
 Route::post('/user/companies/refund', [UserController::class, 'requestRefund'])->middleware('auth:sanctum');
 Route::get('/user/projects/{project}', [UserController::class, 'showProject']);
+Route::get('/user/quotes/{quote}', [UserController::class, 'showQuote']);
 Route::get('/user/projects', [UserController::class, 'projects']);
 Route::post('/user/image', [UserController::class, 'storeImageAuthUser'])->middleware('auth:sanctum');
 Route::put('/user', [UserController::class, 'update'])->middleware('auth:sanctum');
@@ -77,9 +80,11 @@ Route::get('/system/categories', [CategoryController::class, 'list']);
 Route::get('/system/categories/{slug}/services-list', [CategoryController::class, 'getServicesListBySlug']);
 Route::get('/system/categories/{slug}/services', [CategoryController::class, 'getServicesBySlug']);
 Route::get('/system/categories/{slug}', [CategoryController::class, 'getBySlug']);
+Route::get('/system/categories/{slug}/companies', [CategoryController::class, 'getCompaniesByCategory']);
 Route::post('/system/categories', [CategoryController::class, 'store']);
 Route::post('/system/services', [ServiceController::class, 'store']);
 Route::get('/system/services', [ServiceController::class, 'list']);
+Route::get('/system/companies/new-added', [CompanyController::class, 'newAddedCompanies']);
 Route::get('/system/services/new-added', [ServiceController::class, 'newAddedServices']);
 Route::get('/system/services/top10', [ServiceController::class, 'top10']);
 Route::get('/system/services/{service}', [ServiceController::class, 'showPublic']);
@@ -88,6 +93,7 @@ Route::get('/system/zipcode', [ZipcodeController::class, 'list']);
 
 //SEARCH
 Route::post('/search/custom/{noMatches}', [SearchController::class, 'searchCustom']);
+Route::post('/search/companies', [SearchController::class, 'searchCompanies']);
 Route::post('/search', [SearchController::class, 'search']);
 
 //PAYMENTS
@@ -140,8 +146,12 @@ Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug']);
 
 //PROJECTS
 Route::post('/projects/images', [ProjectController::class, 'storeImage'])->middleware('auth:sanctum');
+Route::post('/quotes/images', [QuoteController::class, 'storeImage'])->middleware('auth:sanctum');
 Route::post('/projects', [ProjectController::class, 'store'])->middleware('auth:sanctum');
+Route::post('/quotes/send', [QuoteController::class, 'send'])->middleware('auth:sanctum');
+Route::post('/quotes', [QuoteController::class, 'store'])->middleware('auth:sanctum');
 Route::get('/projects/{project}', [ProjectController::class, 'show'])->middleware('auth:sanctum');
+Route::get('/quotes/{quote}', [QuoteController::class, 'show'])->middleware('auth:sanctum');
 Route::get('/matches/{match}/contact/check', [ProjectController::class, 'showContactCheck'])->middleware('auth:sanctum');
 Route::get('/matches/{match}/contact', [ProjectController::class, 'showContact'])->middleware('auth:sanctum');
 
@@ -238,7 +248,7 @@ Route::group(['middleware' => 'auth:sanctum', 'isAdmin'], function () {
 
 
 Route::post('/send-verification-code', [VerificationCodeController::class, 'sendSmsVerification']);
-Route::post('/verification-code', [VerificationCodeController::class, 'verifyCode']);
+Route::post('/verification-code', [VerificationCodeController::class, 'verifyCode'])->middleware('auth:sanctum');
 
 Route::get('/mautic', [MauticController::class, 'token']);
 Route::get('/mautic/callback', [MauticController::class, 'callback']);

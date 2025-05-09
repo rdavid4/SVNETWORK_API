@@ -42,7 +42,8 @@ class CompanyResource extends JsonResource
             'reviews' => ReviewResource::collection($this->reviews),
             'images' => ImageCompanyResource::collection($this->images->where('type',Image::TYPE_IMAGE)->sortByDesc('updated_at')),
             'review_rate' =>  $this->reviewRate,
-            'categories' => CategoryResource::collection($this->categories)
+            'categories' => CategoryResource::collection($this->categories()),
+            'category' => $this->category()
         ];
     }
 }

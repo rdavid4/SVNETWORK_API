@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\DashboardCompanyResource;
 use App\Http\Resources\DashboardUserResource;
+use App\Http\Resources\QuoteResource;
 use App\Http\Resources\UserCompanyResource;
 use App\Http\Resources\UserProjectResource;
 use App\Http\Resources\UserResource;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\Matches;
+use App\Models\Quote;
 use App\Models\Service;
 use App\Notifications\RefundRequestNotification;
 use Exception;
@@ -40,7 +42,19 @@ class UserController extends Controller
     }
     public function showProject(Project $project)
     {
+        $user = auth()->user();
+        if($project->user_id != $user->id) {
+            return abort(403, 'Unauthorized action.');
+        }
         return new UserProjectResource($project);
+    }
+    public function showQuote(Quote $quote)
+    {
+        $user = auth()->user();
+        if($quote->user_id != $user->id) {
+            return abort(403, 'Unauthorized action.');
+        }
+        return new QuoteResource($quote);
     }
     public function company()
     {

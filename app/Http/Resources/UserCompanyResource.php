@@ -46,6 +46,7 @@ class UserCompanyResource extends JsonResource
             "services" =>  CompanyServiceListResource::collection($this->services),
             'projects' => CompanyProjectsResource::collection($this->projects),
             'leads' => LeadResource::collection($this->leads),
+            'quotes' => QuoteResource::collection($this->quotes),
             'date' => $this->created_at->format('m/d/Y h:i A'),
         ];
     }

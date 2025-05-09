@@ -37,18 +37,19 @@ class ProjectController extends Controller
             'service_id' => $request->service_id,
             'title' => $title,
             'zipcode_id' => $request->zipcode_id,
+            'state_iso' => $zipcode->state_iso
         ]);
         return $project;
     }
+
     public function storeImage(Request $request)
     {
         $request->validate([
             'project_id' => 'required',
-            'user_id' => 'required',
             'image' => 'required'
         ]);
 
-        $user = User::findOrfail($request->user_id);
+
         $project = Project::find($request->project_id);
 
         //Save image
@@ -64,6 +65,7 @@ class ProjectController extends Controller
                 'filename' => $filename,
                 'mime_type' => $mimetype,
                 'extension' => $extension,
+                'type' => 1,
                 'size' => $size
             ]);
 

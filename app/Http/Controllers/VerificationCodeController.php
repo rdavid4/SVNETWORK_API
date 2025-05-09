@@ -43,14 +43,12 @@ class VerificationCodeController extends Controller
         ]);
 
         $user = User::find($request->user_id);
-       $verificationCodes = VerificationCode::where('phone_number', $request->phone_number)->get();
-       $codeExist = $verificationCodes->where('code', $request->code);
+       $verificationCode = VerificationCode::where('phone_number', $request->phone_number)->where('code', $request->code)->first();
 
-        if($codeExist->count() == 1){
 
-            $code = $codeExist->first();
-            $code->is_verified = true;
-            $code->save();
+        if($verificationCode){
+            $verificationCode->is_verified = true;
+            $verificationCode->save();
             $user->verified_phone = true;
             $user->save();
             return response()->json(['message' => 'Verification successfully!']);

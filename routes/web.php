@@ -6,11 +6,13 @@ use App\Http\Controllers\ShareController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Resources\CompanyResource;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\QuoteResource;
 use App\Models\AnswerProject;
 use App\Models\Company;
 use App\Models\Matches;
 use App\Models\NoMatches;
 use App\Models\Project;
+use App\Models\Quote;
 use App\Models\Service;
 use App\Notifications\UserVerification;
 use App\Models\User;
@@ -42,28 +44,32 @@ Route::post('reset-password', [ResetPasswordController::class, 'verify'])->name(
 Route::get('/notification', function () {
 
 
-    $nomatch = NoMatches::find(144);
-    $user = User::find($nomatch->user_id);
-    $service = Service::withTrashed()->find($nomatch->service_id);
-    $project = Project::find($nomatch->project_id);
+    // $nomatch = NoMatches::find(144);
+    // $user = User::find($nomatch->user_id);
+    // $service = Service::withTrashed()->find($nomatch->service_id);
+    // $project = Project::find($nomatch->project_id);
 
 
 
-    $openAnswers = AnswerProject::where('project_id', $nomatch->project_id)->whereNull('answer_id')->get();
-        $project->openAnswers = $openAnswers;
-        $project->show_contact = $user;
+    // $openAnswers = AnswerProject::where('project_id', $nomatch->project_id)->whereNull('answer_id')->get();
+    //     $project->openAnswers = $openAnswers;
+    //     $project->show_contact = $user;
 
 
 
-    $nomatch->company_name = 'company 1';
-    $nomatch->company_phone = '234234234';
-    $nomatch->company_email = 'company1@gmail.com';
-    $nomatch->message = 'Message body' ?? '';
-    $nomatch->save();
-    $project =  new ProjectResource($project);
+    // $nomatch->company_name = 'company 1';
+    // $nomatch->company_phone = '234234234';
+    // $nomatch->company_email = 'company1@gmail.com';
+    // $nomatch->message = 'Message body' ?? '';
+    // $nomatch->save();
+    // $project =  new ProjectResource($project);
 
-    $project->company_name = $nomatch->company_name;
-    return view('mail.leads.company', ['data' => $project]);
+    // $project->company_name = $nomatch->company_name;
+    $data =[
+        'user' => User::first(),
+        'quote' => new QuoteResource(Quote::find(24)),
+    ];
+    return view('mail.quotes.get', ['user' => $data['user'], 'quote' => $data['quote']]);
     // $user->link = 'localhost:8000/asdasdadsdadasd.com';
     // $match = Matches::all();
     // $service = Service::find(1);

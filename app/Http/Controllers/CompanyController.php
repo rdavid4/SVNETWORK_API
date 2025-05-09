@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CompanyBasicResource;
 use App\Http\Resources\CompanyConfigurationResource;
 use App\Http\Resources\CompanyResource;
 use App\Http\Resources\CompanyServiceResource;
@@ -1239,6 +1240,11 @@ class CompanyController extends Controller
 
 
         return new CompanyServiceResource($service);
+    }
+    public function newAddedCompanies()
+    {
+        $companies = Company::where('verified', 1)->orderBy('id', 'desc')->take(10)->get();
+        return CompanyBasicResource::collection($companies);
     }
 
     public function companyWelcomeNotification(Company $company) {}

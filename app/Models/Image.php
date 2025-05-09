@@ -38,6 +38,11 @@ class Image extends Model
         $url = Storage::disk('projects')->url($this->filename);
         return $url;
     }
+    public function getUrlQuoteAttribute()
+    {
+        $url = Storage::disk('quotes')->url($this->filename);
+        return $url;
+    }
     public function getUrlCompanyAttribute()
     {
         $url = Storage::disk('companies')->url($this->filename);

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CompanySearchCollection;
+use App\Http\Resources\CompanySearchResource;
 use App\Http\Resources\MatchesResource;
 use App\Http\Resources\MatchResource;
 use App\Http\Resources\NoMatchesResource;
@@ -272,6 +274,56 @@ class SearchController extends Controller
         }
 
         return MatchResource::collection($matches);
+    }
+    public function searchCompanies(Request $request)
+    {
+        $request->validate(([
+            'zipcode' => 'required',
+            'service_id' => 'required'
+        ]));
+
+        $zipcode = $request->zipcode;
+        $service_id = $request->service_id;
+        $service = Service::find($service_id);
+        if (!$service) {
+            return [];
+        }
+
+        $zipcode = Zipcode::where('zipcode', $zipcode)->first();
+        //Companies conditions
+
+        //2.- companies where service is paused
+        $companiesServicePause = CompanyService::where('service_id', $service_id)->where('pause', 1)->pluck('company_id');
+        $companies = Company::all();
+
+        //3.-Companies without payment method
+        $companiesWithoutPaymentMethod = $companies->map(function ($company) {
+            if ($company->users->count()) {
+                return $company->users->first()->stripe_client_id != null ? $company->id : null;
+            }
+        })->whereNotNull()->toArray();
+        //4.-Companies not verified
+        $companiesNotVerified = $companies->map(function ($company) {
+            return $company->verified == 0 ? $company->id : null;
+        })->whereNotNull()->toArray();
+
+        //5.-Companies has more than defaults payments
+        $companiesDefaults = Transactions::selectRaw('company_id, COUNT(*) as count')
+            ->where('paid', 0)
+            ->groupBy('company_id')
+            ->get();
+
+        $companiesDefaults = $companiesDefaults->map(function ($row) {
+            return $row->count >= 5 ? $row->company_id : null;
+        })->whereNotNull()->toArray();
+
+        $companies = $service->companyServiceZip
+        ->where('zipcode_id', $zipcode->id);
+        // ->whereNotIn('company_id', $companiesNotVerified)
+        // ->whereNotIn('company_id', $companiesServicePause)
+        // ->whereIn('company_id', $companiesWithoutPaymentMethod);
+
+        return CompanySearchResource::collection($companies->values());
     }
 
     public function searchCustom(NoMatches $noMatches)
