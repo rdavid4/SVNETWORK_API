@@ -1244,7 +1244,7 @@ class CompanyController extends Controller
     public function newAddedCompanies()
     {
         //Companies que tienen servicios, que tienen logo y que son verificados
-        $companies = Company::where('verified', 1)->whereHas('services')->whereNotNull('logo_url')->orderBy('id', 'desc')->take(10)->get();
+        $companies = Company::where('verified', 1)->whereHas('services')->whereNotNull('logo_url')->orderBy('id', 'desc')->take(20)->get();
         // $companies = Company::where('verified', 1)->orderBy('id', 'desc')->take(10)->get();
 
         return CompanyBasicResource::collection($companies);
